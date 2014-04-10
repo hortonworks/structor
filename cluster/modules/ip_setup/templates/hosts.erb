@@ -1,0 +1,8 @@
+<%# for each node in nodes generate:
+       $ip $hostname.$domain $hostname
+ -%>
+<% eval(nodes).each do |node| -%>
+<%= node[:ip] %> <%= node[:hostname] %>.<%= domain %> <%= node[:hostname] %>
+<% end -%>
+127.0.0.1  localhost
+::1        localhost

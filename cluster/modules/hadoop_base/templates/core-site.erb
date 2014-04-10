@@ -1,0 +1,154 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+
+<!-- i/o properties -->
+
+  <property>
+    <name>io.file.buffer.size</name>
+    <value>131072</value>
+    <description>The size of buffer for use in sequence files.
+  The size of this buffer should probably be a multiple of hardware
+  page size (4096 on Intel x86), and it determines how much data is
+  buffered during read and write operations.</description>
+  </property>
+
+  <property>
+    <name>io.serializations</name>
+    <value>org.apache.hadoop.io.serializer.WritableSerialization</value>
+  </property>
+
+  <property>
+    <name>io.compression.codecs</name>
+    <value>org.apache.hadoop.io.compress.GzipCodec,org.apache.hadoop.io.compress.DefaultCodec,com.hadoop.compression.lzo.LzoCodec,com.hadoop.compression.lzo.LzopCodec,org.apache.hadoop.io.compress.SnappyCodec</value>
+    <description>A list of the compression codec classes that can be used
+                 for compression/decompression.</description>
+  </property>
+
+  <property>
+    <name>io.compression.codec.lzo.class</name>
+    <value>com.hadoop.compression.lzo.LzoCodec</value>
+    <description>The implementation for lzo codec.</description>
+  </property>
+
+<!-- file system properties -->
+
+  <property>
+    <name>fs.default.name</name>
+    <value>hdfs://<%= @namenode%>:8020</value>
+  </property>
+
+  <property>
+    <name>fs.inmemory.size.mb</name>
+    <value>100</value>
+  </property>
+
+  <property>
+    <name>fs.trash.interval</name>
+    <value>360</value>
+  </property>
+
+  <property>
+    <name>fs.checkpoint.dir</name>
+    <value><%= @data_dir %>/hdfs/snn</value>
+  </property>
+
+  <property>
+    <name>fs.checkpoint.edits.dir</name>
+    <value>${fs.checkpoint.dir}</value>
+  </property>
+
+  <property>
+    <name>fs.checkpoint.period</name>
+    <value>86400</value>
+  </property>
+
+  <property>
+    <name>fs.checkpoint.size</name>
+    <value>2048000000</value>
+  </property>
+
+  <property>
+    <name>ipc.client.idlethreshold</name>
+    <value>8000</value>
+  </property>
+
+  <property>
+    <name>ipc.client.connection.maxidletime</name>
+    <value>30000</value>
+  </property>
+
+  <property>
+    <name>ipc.client.connect.max.retries</name>
+    <value>50</value>
+  </property>
+
+  <!-- Web Interface Configuration -->
+  <property>
+    <name>webinterface.private.actions</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.authentication</name>
+    <value><%= @security %></value>
+  </property>
+
+  <property>
+    <name>hadoop.security.authorization</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.auth_to_local</name>
+    <value>DEFAULT</value>
+  </property>
+
+  <property>
+    <name>hadoop.proxyuser.hive.groups</name>
+    <value>users</value>
+  </property>
+
+  <property>
+    <name>hadoop.proxyuser.oozie.groups</name>
+    <value>users</value>
+  </property>
+
+  <property>
+    <name>hadoop.security.use-weak-http-crypto</name>
+    <value>false</value>
+  </property>
+
+  <% if @security == "kerberos" -%>
+    <property>
+      <name>hadoop.http.filter.initializers</name>
+      <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
+    </property>
+
+    <property>
+      <name>hadoop.http.authentication.type</name>
+      <value>kerberos</value>
+    </property>
+
+    <property>
+      <name>hadoop.http.authentication.cookie.domain</name>
+      <value><%= @service_realm %></value>
+    </property>
+
+    <property>
+      <name>hadoop.http.authentication.kerberos.principal</name>
+      <value>HTTP/<%= @namenode%>@<%= @service_realm %></value>
+    </property>
+
+    <property>
+      <name>hadoop.http.authentication.kerberos.keytab</name>
+      <value>/etc/security/keytabs/http.service.keytab</value>
+    </property>
+
+    <property>
+      <name>hadoop.http.authentication.signature.secret.file</name>
+      <value>/etc/security/hadoop/http-secret</value>
+    </property>
+  <% end -%>
+</configuration>

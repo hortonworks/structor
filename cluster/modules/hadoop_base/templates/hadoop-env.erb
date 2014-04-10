@@ -1,0 +1,50 @@
+# Set Hadoop-specific environment variables here.
+
+# The only required environment variable is JAVA_HOME.  All others are
+# optional.  When running a distributed configuration it is best to
+# set JAVA_HOME in this file, so that it is correctly defined on
+# remote nodes.
+
+# The java implementation to use.  Required.
+export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export HADOOP_HOME_WARN_SUPPRESS=1
+
+# Hadoop Configuration Directory
+export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/etc/hadoop/conf}
+
+# The maximum amount of heap to use, in MB. Default is 1000.
+export HADOOP_HEAPSIZE=200
+
+# Extra Java runtime options.  Empty by default.
+export HADOOP_OPTS="-Djava.net.preferIPv4Stack=true ${HADOOP_OPTS}"
+
+# Command specific options appended to HADOOP_OPTS when specified
+export HADOOP_NAMENODE_OPTS="-server <%= @hadoop_server_mem %> -Dhadoop.security.logger=INFO,DRFAS -Dhdfs.audit.logger=INFO,DRFAAUDIT ${HADOOP_NAMENODE_OPTS}"
+HADOOP_JOBTRACKER_OPTS="-server <%= @hadoop_server_mem %> -Dhadoop.security.logger=INFO,DRFAS -Dmapred.audit.logger=INFO,MRAUDIT -Dhadoop.mapreduce.jobsummary.logger=INFO,JSA ${HADOOP_JOBTRACKER_OPTS}"
+
+HADOOP_TASKTRACKER_OPTS="-server <%= @hadoop_server_mem %> -Dhadoop.security.logger=ERROR,console -Dmapred.audit.logger=ERROR,console ${HADOOP_TASKTRACKER_OPTS}"
+HADOOP_DATANODE_OPTS="<%= @hadoop_server_mem %> -Dhadoop.security.logger=ERROR,DRFAS ${HADOOP_DATANODE_OPTS}"
+HADOOP_BALANCER_OPTS="-server <%= @hadoop_server_mem %> ${HADOOP_BALANCER_OPTS}"
+
+export HADOOP_SECONDARYNAMENODE_OPTS="-server <%= @hadoop_server_mem %> -Dhadoop.security.logger=INFO,DRFAS -Dhdfs.audit.logger=INFO,DRFAAUDIT ${HADOOP_SECONDARYNAMENODE_OPTS}"
+
+# The following applies to multiple commands (fs, dfs, fsck, distcp etc)
+export HADOOP_CLIENT_OPTS="<%= @hadoop_client_mem %> ${HADOOP_CLIENT_OPTS}"
+
+# On secure datanodes, user to run the datanode as after dropping privileges
+export HADOOP_SECURE_DN_USER=hdfs
+
+# Where log files are stored.  $HADOOP_HOME/logs by default.
+export HADOOP_LOG_DIR=<%= @log_dir %>/$USER
+
+
+# Where log files are stored in the secure data environment.
+export HADOOP_SECURE_DN_LOG_DIR=<%= @log_dir %>/$HADOOP_SECURE_DN_USER
+
+# The directory where pid files are stored.
+export HADOOP_PID_DIR=<%= @pid_dir %>/$USER
+export HADOOP_SECURE_DN_PID_DIR=<%= @pid_dir %>/$HADOOP_SECURE_DN_USER
+
+# A string representing this instance of hadoop. $USER by default.
+export HADOOP_IDENT_STRING="HDP"
+
