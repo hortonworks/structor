@@ -1,3 +1,7 @@
+<% @namenode = 
+      eval(@nodes).select {|node| node[:roles].include? 'nn'}[0][:hostname] +
+      "." + @domain;
+  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -179,7 +183,7 @@
     <value>1</value>
   </property>
 
-  <% if @security == "kerberos" -%>
+  <% if @security == true -%>
     <property>
       <name>dfs.namenode.kerberos.internal.spnego.principal</name>
       <value>${dfs.web.authentication.kerberos.principal}</value>

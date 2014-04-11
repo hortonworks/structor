@@ -1,3 +1,7 @@
+<% @jobtracker = 
+      eval(@nodes).select {|node| node[:roles].include? 'jt'}[0][:hostname] +
+      "." + @domain;
+  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -178,7 +182,7 @@
 
   <property>
     <name>mapred.child.java.opts</name>
-    <value>-server <%= hadoop_client_mem %> -Djava.net.preferIPv4Stack=true</value>
+    <value>-server <%= @hadoop_client_mem %> -Djava.net.preferIPv4Stack=true</value>
   </property>
 
   <property>
@@ -280,7 +284,7 @@
     <value>1</value>
   </property> 
 
-  <% if @security == "kerberos" -%>
+  <% if @security == "true" -%>
     <property>
       <name>mapred.task.tracker.task-controller</name>
      <value>org.apache.hadoop.mapred.LinuxTaskController</value>

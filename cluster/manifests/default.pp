@@ -1,15 +1,19 @@
 include ip_setup
 include selinux
+include weak_random
 
 if hasrole($roles, 'client') {
   include hadoop_base
 }
+
 if hasrole($roles, 'nn') {
   include hadoop_namenode
 }
+
 if hasrole($roles, 'slave') {
   include hadoop_slave
 }
+
 if hasrole($roles, 'jt') {
   include hadoop_jobtracker
 }

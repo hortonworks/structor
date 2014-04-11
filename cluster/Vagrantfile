@@ -21,10 +21,6 @@
 VAGRANTFILE_API_VERSION = "2"
 
 domain = "example.com"
-realm = "EXAMPLE.COM"
-namenode = 'nn'
-jobtracker = 'nn'
-kdc = 'nn'
 
 # Valid roles are:
 #   client - client machine
@@ -37,7 +33,17 @@ nodes = [
   { :hostname => 'gw', :ip => '240.0.0.10', :roles => ['client']},
   { :hostname => 'nn', :ip => '240.0.0.11', :roles => ['nn', 'jt']},
   { :hostname => 'slave1', :ip => '240.0.0.12', :roles => ['slave']},
+  { :hostname => 'slave2', :ip => '240.0.0.13', :roles => ['slave']},
 ]
+
+# security options
+security = false
+user_realm = "EXAMPLE.COM"
+service_realm = "EXAMPLE.COM"
+
+# memory options
+hadoop_server_mem = "-Xmx300m"
+hadoop_client_mem = "-Xmx200m"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -60,17 +66,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         puppet.module_path = "modules"
         puppet.options = "--libdir /vagrant"
         puppet.facter = {
-          "namenode" => namenode + "." + domain,
-          "jobtracker" => jobtracker + "." + domain,
   	  "hostname" => node[:hostname],
 	  "roles" => node[:roles],
           "nodes" => nodes,
 	  "domain" => domain,
-  	  "service_realm" => realm,
-          "hadoop_server_mem" => "-Xmx300m",
-          "hadoop_client_mem" => "-Xmx200m",
-          "security" => "simple",
-	  "randomness" => "weak",
+          "security" => security,
+          "service_realm" => service_realm,
+          "user_realm" => user_realm,
+          "hadoop_server_mem" => hadoop_server_mem,
+          "hadoop_client_mem" => hadoop_client_mem,
         }
       end
     end

@@ -1,3 +1,7 @@
+<% @namenode = 
+      eval(@nodes).select {|node| node[:roles].include? 'nn'}[0][:hostname] +
+      "." + @domain;
+  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
 
@@ -92,7 +96,8 @@
 
   <property>
     <name>hadoop.security.authentication</name>
-    <value><%= @security %></value>
+    <value><%= if @security == "true"
+               then "kerberos" else "simple" end %></value>
   </property>
 
   <property>
@@ -120,7 +125,7 @@
     <value>false</value>
   </property>
 
-  <% if @security == "kerberos" -%>
+  <% if @security == "true" -%>
     <property>
       <name>hadoop.http.filter.initializers</name>
       <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
