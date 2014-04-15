@@ -45,4 +45,17 @@ class hadoop_namenode {
     path => "$PATH",
     user => "hdfs",
   }
+  ->
+  exec {"hive-warehouse":
+    command => "hadoop fs -mkdir /apps/hive/warehouse",
+    unless => "hadoop fs -test -e /apps/hive/warehouse",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hive-warehouse-chmod":
+    command => "hadoop fs -chmod 777 /apps/hive/warehouse",
+    path => "$PATH",
+    user => "hdfs",
+  }
 }

@@ -7,11 +7,15 @@ class hadoop_base {
   $data_dir="/var/run/hadoop"
   $pid_dir="/var/run/pid"
 
-  if security == "kerberos" {
+  if security == true {
     require kerberos_client
   }
 
   group { 'hadoop':
+    ensure => present,
+  }
+
+  group { 'mapred':
     ensure => present,
   }
 
@@ -22,7 +26,13 @@ class hadoop_base {
 
   user { 'mapred':
     ensure => present,
+    groups => ['hadoop', 'mapred'],
+  }
+
+  user { 'hive':
+    ensure => present,
     groups => ['hadoop'],
+    home => '/usr/lib/hive',
   }
 
   package { 'hadoop':

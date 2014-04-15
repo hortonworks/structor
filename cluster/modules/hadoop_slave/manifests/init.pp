@@ -18,4 +18,10 @@ class hadoop_slave {
     ensure => running,
     enable => true,
   }
+
+  if security == true {
+    package { "hadoop-sbin":
+      ensure => installed,
+    }
+  }
 }

@@ -1,0 +1,4 @@
+create user 'hive'@'%' identified by 'vagrant';
+create database hive;
+grant all privileges on hive.* to 'hive'@'%';
+flush privileges;

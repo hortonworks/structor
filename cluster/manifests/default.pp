@@ -4,6 +4,8 @@ include weak_random
 
 if hasrole($roles, 'client') {
   include hadoop_base
+  include pig
+  include hive_client
 }
 
 if hasrole($roles, 'nn') {
@@ -18,6 +20,14 @@ if hasrole($roles, 'jt') {
   include hadoop_jobtracker
 }
 
+if hasrole($roles, 'hive-meta') {
+  include hive_meta
+}
+
+if hasrole($roles, 'hive-db') {
+  include hive_db
+}
+
 if hasrole($roles, 'nn') and hasrole($roles, 'slave') {
   Class['hadoop_namenode']
   -> Class['hadoop_slave']
@@ -26,4 +36,9 @@ if hasrole($roles, 'nn') and hasrole($roles, 'slave') {
 if hasrole($roles, 'nn') and hasrole($roles, 'jt') {
   Class['hadoop_namenode']
   -> Class['hadoop_jobtracker']
+}
+
+if hasrole($roles, 'nn') and hasrole($roles, 'hive-meta') {
+  Class['hadoop_namenode']
+  -> Class['hive_meta']
 }
