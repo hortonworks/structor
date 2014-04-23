@@ -6,6 +6,12 @@ class hive_meta {
     ensure => installed,
   }
   ->
+  file { '/etc/init.d/hive-metastore':
+    ensure => file,
+    content => template('hive_meta/hive-metastore.erb'),
+    mode => 'a+rx',
+  }
+  ->
   service { 'hive-metastore':
     ensure => running,
     enable => true,

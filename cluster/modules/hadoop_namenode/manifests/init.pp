@@ -7,7 +7,7 @@ class hadoop_namenode {
     ensure => installed,
   }
 
-  exec {"format":
+  exec {"namenode-format":
     command => "hadoop namenode -format",
     path => "$PATH",
     creates => "${data_dir}/hdfs/nn",
@@ -55,6 +55,19 @@ class hadoop_namenode {
   ->
   exec {"hive-warehouse-chmod":
     command => "hadoop fs -chmod 777 /apps/hive/warehouse",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hdfs-tmp":
+    command => "hadoop fs -mkdir /tmp",
+    unless => "hadoop fs -test -e /tmp",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hdfs-tmp-chmod":
+    command => "hadoop fs -chmod 777 /tmp",
     path => "$PATH",
     user => "hdfs",
   }
