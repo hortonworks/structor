@@ -138,12 +138,12 @@
 
     <property>
       <name>hadoop.http.authentication.cookie.domain</name>
-      <value><%= @service_realm %></value>
+      <value><%= @realm %></value>
     </property>
 
     <property>
       <name>hadoop.http.authentication.kerberos.principal</name>
-      <value>HTTP/<%= @namenode%>@<%= @service_realm %></value>
+      <value>HTTP/<%= @namenode%>@<%= @realm %></value>
     </property>
 
     <property>

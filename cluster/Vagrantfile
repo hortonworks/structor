@@ -29,20 +29,20 @@ domain = "example.com"
 #   slave - HDFS DataNode & MapReduce TaskTracker
 #   hive-meta - Hive MetaStore
 #   hive-db - Hive MetaStore backing mysql
+#   kdc - kerberos kdc
 
 # For each node
 nodes = [
-  { :hostname => 'gw', :ip => '240.0.0.10', :roles => ['client']},
-  { :hostname => 'nn', :ip => '240.0.0.11', 
+  { :hostname => 'gw', :ip => "240.0.0.10", :roles => ['client']},
+  { :hostname => 'nn', :ip => "240.0.0.11", 
     :roles => ['nn', 'jt', 'hive-meta', 'hive-db']},
-  { :hostname => 'slave1', :ip => '240.0.0.12', :roles => ['slave']},
-  { :hostname => 'slave2', :ip => '240.0.0.13', :roles => ['slave']},
+  { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
+  { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
 ]
 
 # security options
 security = false
-user_realm = "EXAMPLE.COM"
-service_realm = "EXAMPLE.COM"
+realm = "EXAMPLE.COM"
 
 # memory options
 hadoop_server_mem = "-Xmx300m"
@@ -58,6 +58,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vb.customize ["modifyvm", :id, "--memory", 2048]
   end
 
+  config.vm.provider :vmware_fusion do |vm|
+    vm.vmx["memsize"] = 2048
+  end
+
   nodes.each do |node|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.hostname = node[:hostname] + "." + domain
@@ -71,8 +75,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           "nodes" => nodes,
 	  "domain" => domain,
           "security" => security,
-          "service_realm" => service_realm,
-          "user_realm" => user_realm,
+          "realm" => realm,
           "hadoop_server_mem" => hadoop_server_mem,
           "hadoop_client_mem" => hadoop_client_mem,
         }

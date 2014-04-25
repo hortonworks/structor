@@ -2,6 +2,14 @@ include ip_setup
 include selinux
 include weak_random
 
+if $security == "true" {
+  include kerberos_client
+}
+
+if $security == "true" and hasrole($roles, 'kdc') {
+  include kerberos_kdc
+}
+
 if hasrole($roles, 'client') {
   include hadoop_base
   include pig
@@ -26,6 +34,11 @@ if hasrole($roles, 'hive-meta') {
 
 if hasrole($roles, 'hive-db') {
   include hive_db
+}
+
+if $security == "true" and hasrole($roles, 'nn') and hasrole($roles, 'kdc') {
+  Class['kerberos_kdc']
+  -> Class['hadoop_namenode']
 }
 
 if hasrole($roles, 'nn') and hasrole($roles, 'slave') {

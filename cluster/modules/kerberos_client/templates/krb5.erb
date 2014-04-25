@@ -1,0 +1,36 @@
+<% @kdc = 
+      eval(@nodes).select {|node| node[:roles].include? 'kdc'}[0][:hostname] +
+      "." + @domain;
+  -%>
+[logging]
+ default = FILE:/var/log/krb5libs.log
+ kdc = FILE:/var/log/krb5kdc.log
+ admin_server = FILE:/var/log/kadmind.log
+
+[libdefaults]
+ default_realm = <%= @realm %>
+ dns_lookup_realm = false
+ dns_lookup_kdc = false
+ ticket_lifetime = 24h
+ forwardable = yes
+ udp_preference_limit=1
+
+[realms]
+ <%= @realm %> = {
+  kdc = <%= @kdc %>:88
+  admin_server = <%= @kdc %>:749
+  default_domain = <%= @domain %>
+ }
+
+[domain_realm]
+ .<%= @domain %> = <%= @realm %>
+ <%= @domain %> = <%= @realm %>
+
+[appdefaults]
+ pam = {
+   debug = false
+   ticket_lifetime = 36000
+   renew_lifetime = 36000
+   forwardable = true
+   krb4_convert = false
+ }

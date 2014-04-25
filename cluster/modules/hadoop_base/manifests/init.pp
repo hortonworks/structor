@@ -1,7 +1,6 @@
 class hadoop_base {
   require repos_setup
   require jdk
-  include ntp
 
   $log_dir="/var/log/hadoop"
   $data_dir="/var/run/hadoop"
