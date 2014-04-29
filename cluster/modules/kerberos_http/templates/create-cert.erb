@@ -1,0 +1,22 @@
+#!/bin/bash
+export PATH=<%= @path %>
+umask 077
+keytool -genkey -alias http -keyalg RSA -keystore server.jks -keysize 4096 \
+  -validity 36525 -storepass changeit << EOF
+<%= hostname %>.<%= domain %>
+<%= hostname %>
+Example Corp
+Palo Alto
+CA
+US
+yes
+EOF
+keytool -certreq -alias http -keystore server.jks -storepass changeit \
+  -file server.csr
+openssl x509 -req -days 36525 -in server.csr \
+ -CA /vagrant/generated/ssl-ca/ca.crt -CAkey /vagrant/generated/ssl-ca/ca.key \
+ -CAserial /vagrant/generated/ssl-ca/ca.ser -out server.crt
+keytool -import -alias http -keystore server.jks \
+  -storepass changeit -trustcacerts -file server.crt
+chown root:hadoop server.jks server.crt
+chmod 640 server.jks server.crt

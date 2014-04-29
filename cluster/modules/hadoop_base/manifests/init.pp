@@ -5,10 +5,8 @@ class hadoop_base {
   $log_dir="/var/log/hadoop"
   $data_dir="/var/run/hadoop"
   $pid_dir="/var/run/pid"
-
-  if security == true {
-    require kerberos_client
-  }
+  $java="/usr/java/default"
+  $path="${java}/bin:/bin:/usr/bin"
 
   group { 'hadoop':
     ensure => present,
@@ -202,4 +200,21 @@ class hadoop_base {
     group => 'mapred',
     mode => '700',
   }
+
+  if $security == "true" {
+    require kerberos_client
+    require ssl_ca
+
+    # bless the generated ca cert for java clients
+    exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${java}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
+      cwd => "/vagrant/generated/ssl-ca",
+      path => "$path",
+    }
+
+    file {"/etc/hadoop/default/ssl-client.xml":
+      ensure => file,
+      content => template("hadoop_base/ssl-client.erb"),
+    }
+  }
+
 }

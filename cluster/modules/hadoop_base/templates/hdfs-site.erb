@@ -183,89 +183,89 @@
     <value>1</value>
   </property>
 
-  <% if @security == true -%>
-    <property>
-      <name>dfs.namenode.kerberos.internal.spnego.principal</name>
-      <value>${dfs.web.authentication.kerberos.principal}</value>
-    </property>
+<% if @security == "true" -%>
+  <property>
+    <name>dfs.namenode.kerberos.internal.spnego.principal</name>
+    <value>${dfs.web.authentication.kerberos.principal}</value>
+  </property>
 
-    <property>
-      <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
-      <value>${dfs.web.authentication.kerberos.principal}</value>
-    </property>
+  <property>
+    <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
+    <value>${dfs.web.authentication.kerberos.principal}</value>
+  </property>
 
-    <property>
-      <name>dfs.namenode.kerberos.https.principal</name>
-      <value>host/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>dfs.namenode.kerberos.https.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>dfs.https.enable</name>
-      <value>true</value>
-    </property>
+  <property>
+    <name>dfs.https.enable</name>
+    <value>true</value>
+  </property>
 
-    <property>
-      <name>dfs.web.authentication.kerberos.keytab</name>
-      <value>/etc/security/keytabs/http.service.keytab</value>
-    </property>
+  <property>
+    <name>dfs.web.authentication.kerberos.keytab</name>
+    <value>/etc/security/hadoop/http.keytab</value>
+  </property>
 
-    <property>
-      <name>dfs.datanode.kerberos.principal</name>
-      <value>dn/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>dfs.datanode.kerberos.principal</name>
+    <value>dn/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>dfs.namenode.keytab.file</name>
-      <value>/etc/security/keytabs/nn.service.keytab</value>
-    </property>
+  <property>
+    <name>dfs.namenode.keytab.file</name>
+    <value>/etc/security/hadoop/nn.keytab</value>
+  </property>
 
-    <property>
-      <name>dfs.secondary.namenode.keytab.file</name>
-      <value>/etc/security/keytabs/nn.service.keytab</value>
-    </property>
+  <property>
+    <name>dfs.secondary.namenode.keytab.file</name>
+    <value>/etc/security/hadoop/nn.keytab</value>
+  </property>
 
-    <property>
-      <name>dfs.datanode.keytab.file</name>
-      <value>/etc/security/keytabs/dn.service.keytab</value>
-    </property>
+  <property>
+    <name>dfs.datanode.keytab.file</name>
+    <value>/etc/security/hadoop/dn.keytab</value>
+  </property>
 
-    <property>
-      <name>dfs.namenode.kerberos.principal</name>
-      <value>nn/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>dfs.namenode.kerberos.principal</name>
+    <value>nn/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>dfs.secondary.namenode.kerberos.principal</name>
-      <value>nn/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>dfs.secondary.namenode.kerberos.principal</name>
+    <value>nn/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>dfs.web.authentication.kerberos.principal</name>
-      <value>HTTP/<%= @namenode %>@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>dfs.web.authentication.kerberos.principal</name>
+    <value>HTTP/<%= @namenode %>@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>dfs.datanode.address</name>
-      <value>0.0.0.0:1019</value>
-    </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>0.0.0.0:1019</value>
+  </property>
 
-    <property>
-      <name>dfs.datanode.http.address</name>
-      <value>0.0.0.0:1022</value>
-    </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>0.0.0.0:1022</value>
+  </property>
 
-  <% else -%>
+<% else -%>
 
-    <property>
-      <name>dfs.datanode.address</name>
-      <value>0.0.0.0:2019</value>
-    </property>
+  <property>
+    <name>dfs.datanode.address</name>
+    <value>0.0.0.0:2019</value>
+  </property>
 
-    <property>
-      <name>dfs.datanode.http.address</name>
-      <value>0.0.0.0:2022</value>
-    </property>
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>0.0.0.0:2022</value>
+  </property>
 
-  <% end -%>
+<% end -%>
 
 </configuration>

@@ -1,6 +1,5 @@
-<% @jobtracker = 
-      eval(@nodes).select {|node| node[:roles].include? 'jt'}[0][:hostname] +
-      "." + @domain;
+<% @jtlist = eval(@nodes).select {|node| node[:roles].include? 'jt'};
+   @jobtracker = (@jtlist.size == 0 ? "unknown" : @jtlist[0]) + "." + @domain;
   -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -307,17 +306,17 @@
 
     <property>
       <name>mapreduce.jobtracker.keytab.file</name>
-      <value>/etc/security/keytabs/jt.service.keytab</value>
+      <value>/etc/security/hadoop/jt.keytab</value>
     </property>
 
     <property>
       <name>mapreduce.tasktracker.keytab.file</name>
-      <value>/etc/security/keytabs/tt.service.keytab</value>
+      <value>/etc/security/hadoop/tt.keytab</value>
     </property>
 
     <property>
       <name>mapreduce.jobhistory.keytab.file</name>
-      <value>/etc/security/keytabs/jt.service.keytab</value>
+      <value>/etc/security/hadoop/jt.keytab</value>
     </property>
   <% end -%>
 

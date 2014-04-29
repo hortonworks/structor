@@ -2,10 +2,8 @@
      eval(@nodes).select {|node| node[:roles].include? 'hive-meta'}.
        map {|node| node[:hostname]};
    @is_metastore = @metastores.include? @hostname;
-   @db =
-     eval(@nodes).
-        select {|node| node[:roles].include? 'hive-db'}[0][:hostname] +
-        "." + @domain;
+   @dblist = eval(@nodes).select {|node| node[:roles].include? 'hive-db'};
+   @db = (@dblist.size == 0 ? "unknown" : dblist[0][:hostname]) +"."+ @domain;
  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>

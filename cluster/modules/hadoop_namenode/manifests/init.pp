@@ -3,10 +3,28 @@ class hadoop_namenode {
 
   $PATH="/bin:/usr/bin"
 
+  if $security == "true" {
+    require kerberos_http
+    file { "/etc/security/hadoop/nn.keytab":
+      ensure => file,
+      source => "/vagrant/generated/keytabs/${hostname}/nn.keytab",
+      owner => hdfs,
+      group => hadoop,
+      mode => '400',
+    }
+    ->
+    exec { "kinit -k -t /etc/security/hadoop/nn.keytab nn/${hostname}.${domain}":
+      path => "$PATH",
+      user => "hdfs",
+    }
+    ->
+    Package['hadoop-namenode']
+  }
+
   package { "hadoop-namenode" :
     ensure => installed,
   }
-
+  ->
   exec {"namenode-format":
     command => "hadoop namenode -format",
     path => "$PATH",

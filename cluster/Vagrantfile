@@ -35,13 +35,15 @@ domain = "example.com"
 nodes = [
   { :hostname => 'gw', :ip => "240.0.0.10", :roles => ['client']},
   { :hostname => 'nn', :ip => "240.0.0.11", 
-    :roles => ['nn', 'jt', 'hive-meta', 'hive-db']},
+    :roles => ['kdc', 'nn']},
   { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
   { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
 ]
 
+vm_memory = 2048
+
 # security options
-security = false
+security = true
 realm = "EXAMPLE.COM"
 
 # memory options
@@ -55,11 +57,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "omalley/centos6_x64"
 
   config.vm.provider :virtualbox do |vb|
-    vb.customize ["modifyvm", :id, "--memory", 2048]
+    vb.customize ["modifyvm", :id, "--memory", vm_memory]
   end
 
   config.vm.provider :vmware_fusion do |vm|
-    vm.vmx["memsize"] = 2048
+    vm.vmx["memsize"] = vm_memory
   end
 
   nodes.each do |node|

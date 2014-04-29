@@ -11,8 +11,20 @@ class kerberos_kdc {
     ensure => file,
     content => template('kerberos_kdc/kdc.erb'),
   }
+  ->
+  file { '/vagrant/generated':
+    ensure => directory,
+    mode => 'go-rwx',
+  }
+  ->
+  file { '/vagrant/generated/create-kerberos-db':
+    ensure => file,
+    content => template('kerberos_kdc/create-kerberos-kdc.erb'),
+    mode => 'u=rwx,go=',
+  }
+  ->
   exec { 'kdc-init':
-    command => "kdb5_util create -s -P '$password'",
+    command => "/vagrant/generated/create-kerberos-db",
     creates => "/var/kerberos/krb5kdc/principal",
     path => $path,
   }
