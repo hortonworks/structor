@@ -4,6 +4,10 @@ class kerberos_http {
   require kerberos_client
   require ssl_ca
 
+  if hasrole($roles, 'kdc') {
+    Class['kerberos_kdc'] -> Class['kerberos_http']
+  }
+
   $java = "/usr/java/default"
   $path = "${java}/bin:/bin:/usr/bin"
 
@@ -16,10 +20,11 @@ class kerberos_http {
   ->
   file { "/etc/security/hadoop/http-secret":
     ensure => file,
-    content => "${kerberos_kdc::password}",
-    owner => 'root',
-    group => 'hadoop',
-    mode => '440',
+    # this needs to be a cluster wide secret
+    content => vagrant,
+    owner => root,
+    group => hadoop,
+    mode => 440,
   }
   ->
   file { "/etc/security/hadoop/http.keytab":

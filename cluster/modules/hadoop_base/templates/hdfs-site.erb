@@ -186,12 +186,12 @@
 <% if @security == "true" -%>
   <property>
     <name>dfs.namenode.kerberos.internal.spnego.principal</name>
-    <value>${dfs.web.authentication.kerberos.principal}</value>
+    <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
   <property>
     <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
-    <value>${dfs.web.authentication.kerberos.principal}</value>
+    <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
   <property>
@@ -200,18 +200,28 @@
   </property>
 
   <property>
-    <name>dfs.https.enable</name>
-    <value>true</value>
+    <name>dfs.web.authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
   <property>
-    <name>dfs.web.authentication.kerberos.keytab</name>
-    <value>/etc/security/hadoop/http.keytab</value>
+    <name>dfs.namenode.kerberos.principal</name>
+    <value>nn/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.secondary.namenode.kerberos.principal</name>
+    <value>nn/_HOST@<%= @realm %></value>
   </property>
 
   <property>
     <name>dfs.datanode.kerberos.principal</name>
     <value>dn/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.web.authentication.kerberos.keytab</name>
+    <value>/etc/security/hadoop/http.keytab</value>
   </property>
 
   <property>
@@ -230,18 +240,8 @@
   </property>
 
   <property>
-    <name>dfs.namenode.kerberos.principal</name>
-    <value>nn/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.secondary.namenode.kerberos.principal</name>
-    <value>nn/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.web.authentication.kerberos.principal</name>
-    <value>HTTP/<%= @namenode %>@<%= @realm %></value>
+    <name>dfs.https.enable</name>
+    <value>true</value>
   </property>
 
   <property>

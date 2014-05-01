@@ -198,7 +198,7 @@ class hadoop_base {
     ensure => directory,
     owner => 'mapred',
     group => 'mapred',
-    mode => '700',
+    mode => '755',
   }
 
   if $security == "true" {

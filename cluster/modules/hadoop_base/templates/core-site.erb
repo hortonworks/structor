@@ -106,11 +106,6 @@
   </property>
 
   <property>
-    <name>hadoop.security.auth_to_local</name>
-    <value>DEFAULT</value>
-  </property>
-
-  <property>
     <name>hadoop.proxyuser.hive.groups</name>
     <value>users</value>
   </property>
@@ -125,35 +120,43 @@
     <value>false</value>
   </property>
 
-  <% if @security == "true" -%>
-    <property>
-      <name>hadoop.http.filter.initializers</name>
-      <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
-    </property>
+<% if @security == "true" -%>
+  <property>
+    <name>hadoop.http.authentication.type</name>
+    <value>kerberos</value>
+  </property>
 
-    <property>
-      <name>hadoop.http.authentication.type</name>
-      <value>kerberos</value>
-    </property>
+  <property>
+    <name>hadoop.http.filter.initializers</name>
+    <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
+  </property>
 
-    <property>
-      <name>hadoop.http.authentication.cookie.domain</name>
-      <value><%= @realm %></value>
-    </property>
+  <property>
+    <name>hadoop.http.authentication.cookie.domain</name>
+    <value><%= @domain %></value>
+  </property>
 
-    <property>
-      <name>hadoop.http.authentication.kerberos.principal</name>
-      <value>HTTP/<%= @namenode%>@<%= @realm %></value>
-    </property>
+  <property>
+    <name>hadoop.http.authentication.kerberos.principal</name>
+    <value>HTTP/<%= @hostname %>.<%= @domain %>@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>hadoop.http.authentication.kerberos.keytab</name>
-      <value>/etc/security/hadoop/http.keytab</value>
-    </property>
+  <property>
+    <name>hadoop.security.auth_to_local</name>
+    <value>RULE:[2:$1@$0]([jt]t@<%= @realm %>)s/.*/mapred/
+           RULE:[2:$1@$0]([dn]n@<%= @realm %>)s/.*/hdfs/
+           DEFAULT</value>
+  </property>
 
-    <property>
-      <name>hadoop.http.authentication.signature.secret.file</name>
-      <value>/etc/security/hadoop/http-secret</value>
-    </property>
-  <% end -%>
+  <property>
+    <name>hadoop.http.authentication.kerberos.keytab</name>
+    <value>/etc/security/hadoop/http.keytab</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.signature.secret.file</name>
+    <value>/etc/security/hadoop/http-secret</value>
+  </property>
+
+<% end -%>
 </configuration>

@@ -1,5 +1,6 @@
 <% @jtlist = eval(@nodes).select {|node| node[:roles].include? 'jt'};
-   @jobtracker = (@jtlist.size == 0 ? "unknown" : @jtlist[0]) + "." + @domain;
+   @jobtracker = (@jtlist.size == 0 ? "unknown" : @jtlist[0][:hostname]) +
+       "." + @domain;
   -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -253,8 +254,7 @@
 
   <property>
     <name>mapreduce.history.server.embedded</name>
-    <value>false</value>
-    <final>true</final>
+    <value>true</value>
   </property>
 
   <property>
@@ -283,41 +283,41 @@
     <value>1</value>
   </property> 
 
-  <% if @security == "true" -%>
-    <property>
-      <name>mapred.task.tracker.task-controller</name>
-     <value>org.apache.hadoop.mapred.LinuxTaskController</value>
-    </property>
+<% if @security == "true" -%>
+  <property>
+    <name>mapred.task.tracker.task-controller</name>
+    <value>org.apache.hadoop.mapred.LinuxTaskController</value>
+  </property>
 
-    <property>
-      <name>mapreduce.jobtracker.kerberos.principal</name>
-      <value>jt/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>mapreduce.jobtracker.kerberos.principal</name>
+    <value>jt/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>mapreduce.tasktracker.kerberos.principal</name>
-      <value>tt/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>mapreduce.tasktracker.kerberos.principal</name>
+    <value>tt/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>mapreduce.jobhistory.kerberos.principal</name>
-      <value>jt/_HOST@<%= @service_realm %></value>
-    </property>
+  <property>
+    <name>mapreduce.jobhistory.kerberos.principal</name>
+    <value>jt/_HOST@<%= @realm %></value>
+  </property>
 
-    <property>
-      <name>mapreduce.jobtracker.keytab.file</name>
-      <value>/etc/security/hadoop/jt.keytab</value>
-    </property>
+  <property>
+    <name>mapreduce.jobtracker.keytab.file</name>
+    <value>/etc/security/hadoop/jt.keytab</value>
+  </property>
 
-    <property>
-      <name>mapreduce.tasktracker.keytab.file</name>
-      <value>/etc/security/hadoop/tt.keytab</value>
-    </property>
+  <property>
+    <name>mapreduce.tasktracker.keytab.file</name>
+    <value>/etc/security/hadoop/tt.keytab</value>
+  </property>
 
-    <property>
-      <name>mapreduce.jobhistory.keytab.file</name>
-      <value>/etc/security/hadoop/jt.keytab</value>
-    </property>
-  <% end -%>
+  <property>
+    <name>mapreduce.jobhistory.keytab.file</name>
+    <value>/etc/security/hadoop/jt.keytab</value>
+  </property>
+<% end -%>
 
 </configuration>

@@ -14,8 +14,8 @@ class hadoop_namenode {
     }
     ->
     exec { "kinit -k -t /etc/security/hadoop/nn.keytab nn/${hostname}.${domain}":
-      path => "$PATH",
-      user => "hdfs",
+      path => $PATH,
+      user => hdfs,
     }
     ->
     Package['hadoop-namenode']

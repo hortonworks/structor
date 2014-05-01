@@ -12,8 +12,14 @@ if $security == "true" and hasrole($roles, 'kdc') {
 
 if hasrole($roles, 'client') {
   include hadoop_base
-  include pig
-  include hive_client
+
+  if $install_pig == "true" {
+    include pig
+  }
+
+  if $install_hive == "true" {
+    include hive_client
+  }
 }
 
 if hasrole($roles, 'nn') {

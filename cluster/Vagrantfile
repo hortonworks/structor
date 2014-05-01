@@ -20,8 +20,6 @@
 
 VAGRANTFILE_API_VERSION = "2"
 
-domain = "example.com"
-
 # Valid roles are:
 #   client - client machine
 #   nn - HDFS NameNode
@@ -35,18 +33,23 @@ domain = "example.com"
 nodes = [
   { :hostname => 'gw', :ip => "240.0.0.10", :roles => ['client']},
   { :hostname => 'nn', :ip => "240.0.0.11", 
-    :roles => ['kdc', 'nn']},
+    :roles => ['kdc', 'nn', 'jt']},
   { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
   { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
 ]
 
-vm_memory = 2048
+domain = "example.com"
+
+# clients to install
+install_hive = false
+install_pig = false
 
 # security options
 security = true
 realm = "EXAMPLE.COM"
 
 # memory options
+vm_memory = 2048
 hadoop_server_mem = "-Xmx300m"
 hadoop_client_mem = "-Xmx200m"
 
@@ -78,6 +81,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  "domain" => domain,
           "security" => security,
           "realm" => realm,
+	  "install_hive" => install_hive,
+	  "install_pig" => install_pig,
           "hadoop_server_mem" => hadoop_server_mem,
           "hadoop_client_mem" => hadoop_client_mem,
         }

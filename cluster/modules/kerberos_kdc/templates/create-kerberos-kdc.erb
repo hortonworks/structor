@@ -3,8 +3,10 @@ KEYDIR=/vagrant/generated/keytabs
 <% require 'set';
    password = scope.lookupvar('kerberos_kdc::password');
    nodelist = eval(nodes); 
-   users = {'nn' => ['nn', 'HTTP'], 'jt' => ['jt', 'HTTP'], 
-            'slave' => ['tt', 'dn'], 'hive-meta' => ['hive']}; -%>
+   users = {'nn' => ['nn', 'HTTP'],
+            'jt' => ['jt', 'HTTP'],
+            'slave' => ['tt', 'dn', 'HTTP'],
+            'hive-meta' => ['hive']}; -%>
 
 # ensure we don't have old keytabs
 rm -fr $KEYDIR
