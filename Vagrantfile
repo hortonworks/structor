@@ -26,8 +26,6 @@ VAGRANTFILE_API_VERSION = "2"
 #   slave - HDFS DataNode & MapReduce TaskTracker
 #   hive-db - Hive MetaStore backing mysql
 #   hive-meta - Hive MetaStore
-#   hs2 - Hive Server 2
-#   hcat - Web HCatalog
 
 # For each node
 nodes = [
