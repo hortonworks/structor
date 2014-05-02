@@ -1,3 +1,18 @@
+#  Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to You under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 class hadoop_base {
   require repos_setup
   require jdk
@@ -11,26 +26,33 @@ class hadoop_base {
   group { 'hadoop':
     ensure => present,
   }
-
+  ->
   group { 'mapred':
     ensure => present,
-  }
-
+  } 
+  ->
   user { 'hdfs':
     ensure => present,
-    groups => ['hadoop'],
+    gid => hadoop,
   }
-
+  ->
   user { 'mapred':
     ensure => present,
-    groups => ['hadoop', 'mapred'],
-  }
-
+    groups => ['mapred'],
+    gid => hadoop,
+  } 
+  ->
   user { 'hive':
     ensure => present,
-    groups => ['hadoop'],
-    home => '/usr/lib/hive',
+    gid => hadoop,
   }
+  user { 'hcat':
+    ensure => present,
+    gid => hadoop,
+  }
+  ->
+  Package['hadoop']
+
 
   package { 'hadoop':
     ensure => installed,
@@ -148,14 +170,14 @@ class hadoop_base {
   file { "${data_dir}/hdfs":
     ensure => directory,
     owner => 'hdfs',
-    group => 'hdfs',
+    group => 'hadoop',
     mode => '700',
   }
 
   file { "${data_dir}/mapred":
     ensure => directory,
     owner => 'mapred',
-    group => 'mapred',
+    group => 'hadoop',
     mode => '755',
   }
 
@@ -169,14 +191,14 @@ class hadoop_base {
   file { "${pid_dir}/hdfs":
     ensure => directory,
     owner => 'hdfs',
-    group => 'hdfs',
+    group => 'hadoop',
     mode => '700',
   }
 
   file { "${pid_dir}/mapred":
     ensure => directory,
     owner => 'mapred',
-    group => 'mapred',
+    group => 'hadoop',
     mode => '700',
   }
 
@@ -190,14 +212,14 @@ class hadoop_base {
   file { "${log_dir}/hdfs":
     ensure => directory,
     owner => 'hdfs',
-    group => 'hdfs',
+    group => 'hadoop',
     mode => '700',
   }
 
   file { "${log_dir}/mapred":
     ensure => directory,
     owner => 'mapred',
-    group => 'mapred',
+    group => 'hadoop',
     mode => '755',
   }
 

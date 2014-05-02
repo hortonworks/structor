@@ -1,39 +1,39 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-#/**
+#  Licensed to the Apache Software Foundation (ASF) under one or more
+#   contributor license agreements.  See the NOTICE file distributed with
+#   this work for additional information regarding copyright ownership.
+#   The ASF licenses this file to You under the Apache License, Version 2.0
+#   (the "License"); you may not use this file except in compliance with
+#   the License.  You may obtain a copy of the License at
 #
-#* Copyright 2014, Hortonworks Inc.  All rights reserved.
+#       http://www.apache.org/licenses/LICENSE-2.0
 #
-#* Licensed under the Apache License, Version 2.0 (the "License");
-#* you may not use this file except in compliance with the License.
-#* You may obtain a copy of the License at
-#
-#* http://www.apache.org/licenses/LICENSE-2.0
-#
-#* Unless required by applicable law or agreed to in writing, software
-#* distributed under the License is distributed on an "AS IS" BASIS,
-#* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#* See the License for the specific language governing permissions and
-#* limitations under the License.
-#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
 
 VAGRANTFILE_API_VERSION = "2"
 
 # Valid roles are:
 #   client - client machine
+#   kdc - kerberos kdc
 #   nn - HDFS NameNode
 #   jt - MapReduce JobTracker
 #   slave - HDFS DataNode & MapReduce TaskTracker
-#   hive-meta - Hive MetaStore
 #   hive-db - Hive MetaStore backing mysql
-#   kdc - kerberos kdc
+#   hive-meta - Hive MetaStore
+#   hs2 - Hive Server 2
+#   hcat - Web HCatalog
 
 # For each node
 nodes = [
   { :hostname => 'gw', :ip => "240.0.0.10", :roles => ['client']},
   { :hostname => 'nn', :ip => "240.0.0.11", 
-    :roles => ['kdc', 'nn', 'jt']},
+    :roles => ['kdc', 'nn', 'jt', 'hive-meta', 'hive-db']},
   { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
   { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
 ]
@@ -41,7 +41,7 @@ nodes = [
 domain = "example.com"
 
 # clients to install
-install_hive = false
+install_hive = true
 install_pig = false
 
 # security options

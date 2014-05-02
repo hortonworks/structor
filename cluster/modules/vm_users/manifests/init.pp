@@ -13,14 +13,17 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class jdk {
-  $ROOT = "/usr/java"
-  $VERSION = "jdk1.6.0_31"
+# This class ensures that the vagrant user is properly setup and cleans up
+# the veewee user from the base box.
+class vm_users {
 
-  $HOME = "${ROOT}/default"
-
-  file { "${ROOT}/default":
-    ensure => "link",
-    target => "${ROOT}/${VERSION}",
+  user { 'veewee':
+    ensure => absent,
   }
+
+  user { 'vagrant':
+    ensure => present,
+    groups => ['users', 'vagrant'],
+  }
+
 }
