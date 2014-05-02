@@ -35,17 +35,18 @@ nodes = [
   { :hostname => 'nn', :ip => "240.0.0.11", 
     :roles => ['kdc', 'nn', 'jt', 'hive-meta', 'hive-db']},
   { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
-  { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
+#  { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
+#  { :hostname => 'slave3', :ip => "240.0.0.14", :roles => ['slave']},
 ]
 
 domain = "example.com"
 
 # clients to install
 install_hive = true
-install_pig = false
+install_pig = true
 
 # security options
-security = true
+security = false
 realm = "EXAMPLE.COM"
 
 # memory options
