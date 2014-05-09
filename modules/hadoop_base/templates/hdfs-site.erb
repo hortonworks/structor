@@ -16,6 +16,8 @@
 -%>
 <% @namenode = eval(@nodes).select {|node| node[:roles].include? 'nn'
                   }[0][:hostname] + "." + @domain;
+   @numslaves = eval(@nodes).select {|node| node[:roles].include? 'slave'
+                  }.size();
  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -23,43 +25,13 @@
 <configuration>
 
   <property>
-    <name>dfs.name.dir</name>
-    <value><%= @data_dir %>/hdfs/nn</value>
-  </property>
-
-  <property>
-    <name>dfs.support.append</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>dfs.webhdfs.enabled</name>
+    <name>dfs.namenode.avoid.write.stale.datanode</name>
     <value>true</value>
   </property>
 
   <property>
-    <name>dfs.datanode.failed.volumes.tolerated</name>
-    <value>0</value>
-  </property>
-
-  <property>
-    <name>dfs.block.local-path-access.user</name>
-    <value>hbase</value>
-  </property>
-
-  <property>
-    <name>dfs.data.dir</name>
-    <value><%= @data_dir %>/hdfs/dn</value>
-  </property>
-
-  <property>
-    <name>dfs.replication</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>dfs.replication.max</name>
-    <value>1</value>
+    <name>dfs.namenode.checkpoint.txns</name>
+    <value>1000000</value>
   </property>
 
   <property>
@@ -68,124 +40,18 @@
   </property>
 
   <property>
-    <name>dfs.safemode.threshold.pct</name>
-    <value>1.0f</value>
-  </property>
-
-  <property>
-    <name>dfs.safemode.extension</name>
-    <value>0</value>
-  </property>
-
-  <property>
-    <name>dfs.balance.bandwidthPerSec</name>
-    <value>6250000</value>
-  </property>
-
-  <property>
-    <name>dfs.block.size</name>
-    <value>134217728</value>
-    <description>The default block size for new files.</description>
-  </property>
-
-  <property>
-    <name>dfs.http.address</name>
-    <value><%= @namenode %>:50070</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.du.reserved</name>
-    <value>134217728</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.ipc.address</name>
-    <value>0.0.0.0:8010</value>
-  </property>
-
-  <property>
-    <name>dfs.blockreport.initialDelay</name>
-    <value>0</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.du.pct</name>
-    <value>0.85f</value>
-  </property>
-
-  <property>
-    <name>dfs.namenode.handler.count</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.max.xcievers</name>
-    <value>4</value>
-  </property>
-
-  <property>
-    <name>dfs.umaskmode</name>
-    <value>077</value>
-  </property>
-
-  <property>
-    <name>dfs.web.ugi</name>
-    <value>gopher,gopher</value>
-  </property>
-
-  <property>
-    <name>dfs.permissions</name>
-    <value>true</value>
-  </property>
-
-  <property>
-    <name>dfs.permissions.supergroup</name>
-    <value>hadoop</value>
-  </property>
-
-  <property>
-    <name>dfs.namenode.handler.count</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>ipc.server.max.response.size</name>
-    <value>5242880</value>
-  </property>
-
-  <property>
     <name>dfs.block.access.token.enable</name>
     <value>true</value>
   </property>
 
   <property>
-    <name>dfs.secondary.http.address</name>
-    <value><%= @namenode %>:50090</value>
+    <name>dfs.support.append</name>
+    <value>true</value>
   </property>
 
   <property>
-    <name>dfs.secondary.https.port</name>
-    <value>50490</value>
-  </property>
-
-  <property>
-    <name>dfs.https.port</name>
-    <value>50470</value>
-  </property>
-
-  <property>
-    <name>dfs.https.address</name>
-    <value><%= @namenode %>:50470</value>
-  </property>
-
-  <property>
-    <name>dfs.datanode.data.dir.perm</name>
-    <value>750</value>
-  </property>
-
-  <property>
-    <name>dfs.access.time.precision</name>
-    <value>0</value>
+    <name>dfs.datanode.address</name>
+    <value>0.0.0.0:1019</value>
   </property>
 
   <property>
@@ -194,28 +60,218 @@
   </property>
 
   <property>
-    <name>ipc.server.read.threadpool.size</name>
-    <value>1</value>
+    <name>dfs.datanode.balance.bandwidthPerSec</name>
+    <value>6250000</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.safemode.threshold-pct</name>
+    <value>1.0f</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.checkpoint.edits.dir</name>
+    <value>${dfs.namenode.checkpoint.dir}</value>
+  </property>
+
+  <property>
+    <name>dfs.permissions.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.client.read.shortcircuit</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.blockreport.initialDelay</name>
+    <value>0</value>
+  </property>
+
+  <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value><%= @data_dir %>/hdfs/journal</value>
+  </property>
+
+  <property>
+    <name>dfs.blocksize</name>
+    <value>134217728</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.max.transfer.threads</name>
+    <value>4</value>
+  </property>
+
+  <property>
+    <name>dfs.webhdfs.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.handler.count</name>
+    <value>5</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value><%= @data_dir %>/hdfs/namesecondary</value>
+  </property>
+
+  <property>
+    <name>fs.permissions.umask-mode</name>
+    <value>022</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.stale.datanode.interval</name>
+    <value>30000</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.ipc.address</name>
+    <value>0.0.0.0:8010</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value><%= @data_dir %>/hdfs/namenode</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value><%= @data_dir %>/hdfs/data</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.http-address</name>
+    <value><%= @namenode %>:50070</value>
+  </property>
+
+  <property>
+    <name>dfs.replication</name>
+    <value><%= if @numslaves > 4 then 3 else 1 end %></value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.failed.volumes.tolerated</name>
+    <value>0</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.accesstime.precision</name>
+    <value>0</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.write.stale.datanode.ratio</name>
+    <value>1.0f</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value><%= @namenode %>:50090</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.http.address</name>
+    <value>0.0.0.0:1022</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.du.reserved</name>
+    <value>1073741824</value>
+  </property>
+
+  <property>
+    <name>dfs.client.read.shortcircuit.streams.cache.size</name>
+    <value>4096</value>
+  </property>
+
+  <property>
+    <name>dfs.permissions.superusergroup</name>
+    <value>hdfs</value>
+  </property>
+
+  <property>
+    <name>dfs.journalnode.http-address</name>
+    <value>0.0.0.0:8480</value>
+  </property>
+
+  <property>
+    <name>dfs.domain.socket.path</name>
+    <value><%= @data_dir %>/hdfs/dn_socket</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.avoid.read.stale.datanode</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.hosts.exclude</name>
+    <value>/etc/hadoop/conf/dfs.exclude</value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.data.dir.perm</name>
+    <value>750</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.name.dir.restore</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>dfs.replication.max</name>
+    <value><%= [50, @numslaves].min %></value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.checkpoint.period</name>
+    <value>21600</value>
   </property>
 
 <% if @security == "true" -%>
   <property>
+    <name>dfs.datanode.kerberos.principal</name>
+    <value>dn/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.datanode.keytab.file</name>
+    <value><%= @keytab_dir %>/dn.keytab</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.https-address</name>
+    <value><%= @namenode %>:50470</value>
+  </property>
+
+  <property>
+    <name>dfs.https.port</name>
+    <value>50470</value>
+  </property>
+
+  <property>
+    <name>dfs.journalnode.kerberos.principal</name>
+    <value>jn/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.journalnode.keytab.file</name>
+    <value><%= @keytab_dir %>/jn.keytab</value>
+  </property>
+
+  <property>
+    <name>dfs.journalnode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
     <name>dfs.namenode.kerberos.internal.spnego.principal</name>
-    <value>HTTP/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
-    <value>HTTP/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.namenode.kerberos.https.principal</name>
-    <value>HTTP/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.web.authentication.kerberos.principal</name>
     <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
@@ -225,33 +281,53 @@
   </property>
 
   <property>
+    <name>dfs.namenode.keytab.file</name>
+    <value><%= @keytab_dir %>/nn.keytab</value>
+  </property>
+
+  <property>
+    <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
     <name>dfs.secondary.namenode.kerberos.principal</name>
     <value>nn/_HOST@<%= @realm %></value>
   </property>
 
   <property>
-    <name>dfs.datanode.kerberos.principal</name>
-    <value>dn/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>dfs.web.authentication.kerberos.keytab</name>
-    <value>/etc/security/hadoop/http.keytab</value>
-  </property>
-
-  <property>
-    <name>dfs.namenode.keytab.file</name>
-    <value>/etc/security/hadoop/nn.keytab</value>
+    <name>dfs.secondary.namenode.kerberos.internal.spnego.principal</name>
+    <value>${dfs.web.authentication.kerberos.principal}</value>
   </property>
 
   <property>
     <name>dfs.secondary.namenode.keytab.file</name>
-    <value>/etc/security/hadoop/nn.keytab</value>
+    <value><%= @keytab_dir %>/nn.keytab</value>
   </property>
 
   <property>
-    <name>dfs.datanode.keytab.file</name>
-    <value>/etc/security/hadoop/dn.keytab</value>
+    <name>dfs.web.authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.web.authentication.kerberos.keytab</name>
+    <value><%= @keytab_dir %>/http.keytab</value>
+  </property>
+
+  <property>
+    <name>dfs.namenode.kerberos.https.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>dfs.web.authentication.kerberos.keytab</name>
+    <value><%= @keytab_dir %>/http.keytab</value>
+  </property>
+
+  <property>
+    <name>dfs.web.authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
   <property>

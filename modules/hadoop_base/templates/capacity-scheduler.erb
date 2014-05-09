@@ -22,46 +22,70 @@
 <!-- mapred.capacity-scheduler.queue.<queue-name>.property-name. -->
 
 <configuration xmlns:xi="http://www.w3.org/2001/XInclude">
-
-
+    
   <property>
-    <name>mapred.capacity-scheduler.queue.default.capacity</name>
+    <name>yarn.scheduler.capacity.root.default.maximum-capacity</name>
     <value>100</value>
-    <description>Percentage of the number of slots in the cluster that are
-      guaranteed to be available for jobs in this queue.
-    </description>    
   </property>
   
   <property>
-    <name>mapred.capacity-scheduler.queue.default.supports-priority</name>
-    <value>false</value>
-    <description>If true, priorities of jobs will be taken into 
-      account in scheduling decisions.
-    </description>
-  </property>
-
-  <property>
-    <name>mapred.capacity-scheduler.queue.default.minimum-user-limit-percent</name>
+    <name>yarn.scheduler.capacity.root.capacity</name>
     <value>100</value>
-    <description> Each queue enforces a limit on the percentage of resources 
-    allocated to a user at any given time, if there is competition for them. 
-    This user limit can vary between a minimum and maximum value. The former
-    depends on the number of users who have submitted jobs, and the latter is
-    set to this property value. For example, suppose the value of this 
-    property is 25. If two users have submitted jobs to a queue, no single 
-    user can use more than 50% of the queue resources. If a third user submits
-    a job, no single user can use more than 33% of the queue resources. With 4 
-    or more users, no user can use more than 25% of the queue's resources. A 
-    value of 100 implies no user limits are imposed. 
-    </description>
   </property>
-
+  
   <property>
-    <name>mapred.capacity-scheduler.queue.default.maximum-initialized-jobs-per-user</name>
-    <value>25</value>
-    <description>The maximum number of jobs to be pre-initialized for a user
-    of the job queue.
-    </description>
+    <name>yarn.scheduler.capacity.root.default.capacity</name>
+    <value>100</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.queues</name>
+    <value>default</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.maximum-applications</name>
+    <value>10000</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.default.user-limit-factor</name>
+    <value>1</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.unfunded.capacity</name>
+    <value>50</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.default.state</name>
+    <value>RUNNING</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.default.acl_submit_applications</name>
+    <value>*</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.maximum-am-resource-percent</name>
+    <value>0.2</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.acl_administer_queue</name>
+    <value>*</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.node-locality-delay</name>
+    <value>40</value>
+  </property>
+  
+  <property>
+    <name>yarn.scheduler.capacity.root.default.acl_administer_jobs</name>
+    <value>*</value>
   </property>
 
 </configuration>

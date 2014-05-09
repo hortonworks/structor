@@ -22,8 +22,9 @@ VAGRANTFILE_API_VERSION = "2"
 #   client - client machine
 #   kdc - kerberos kdc
 #   nn - HDFS NameNode
-#   jt - MapReduce JobTracker
-#   slave - HDFS DataNode & MapReduce TaskTracker
+#   rm - Yarn Resource Manager
+#   jhs - MapReduce Job History Server
+#   slave - HDFS DataNode & Yarn Node Manager
 #   hive-db - Hive MetaStore backing mysql
 #   hive-meta - Hive MetaStore
 
@@ -49,8 +50,8 @@ realm = "EXAMPLE.COM"
 
 # memory options
 vm_memory = 2048
-hadoop_server_mem = "-Xmx300m"
-hadoop_client_mem = "-Xmx200m"
+server_mem = 300
+client_mem = 200
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -82,8 +83,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           "realm" => realm,
 	  "install_hive" => install_hive,
 	  "install_pig" => install_pig,
-          "hadoop_server_mem" => hadoop_server_mem,
-          "hadoop_client_mem" => hadoop_client_mem,
+          "server_mem" => server_mem,
+          "client_mem" => client_mem,
         }
       end
     end

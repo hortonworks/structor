@@ -21,6 +21,7 @@ class hadoop_base {
   $data_dir="/var/run/hadoop"
   $pid_dir="/var/run/pid"
   $java="/usr/java/default"
+  $keytab_dir="/etc/security/hadoop"
   $path="${java}/bin:/bin:/usr/bin"
 
   group { 'hadoop':
@@ -115,26 +116,6 @@ class hadoop_base {
     require => Package['hadoop-native'],
   }
 
-  file { '/etc/hadoop/default/hadoop-env.sh':
-    ensure => file,
-    content => template('hadoop_base/hadoop-env.erb'),
-  }
-
-  file { '/etc/hadoop/default/core-site.xml':
-    ensure => file,
-    content => template('hadoop_base/core-site.erb'),
-  }
-
-  file { '/etc/hadoop/default/hdfs-site.xml':
-    ensure => file,
-    content => template('hadoop_base/hdfs-site.erb'),
-  }
-
-  file { '/etc/hadoop/default/mapred-site.xml':
-    ensure => file,
-    content => template('hadoop_base/mapred-site.erb'),
-  }
-
   file { '/etc/hadoop/default/capacity-scheduler.xml':
     ensure => file,
     content => template('hadoop_base/capacity-scheduler.erb'),
@@ -145,9 +126,54 @@ class hadoop_base {
     content => template('hadoop_base/commons-logging.erb'),
   }
 
+  file { '/etc/hadoop/default/configuration.xsl':
+    ensure => file,
+    content => template('hadoop_base/configuration.erb'),
+  }
+
+  file { '/etc/hadoop/default/core-site.xml':
+    ensure => file,
+    content => template('hadoop_base/core-site.erb'),
+  }
+
+  file { '/etc/hadoop/default/dfs.exclude':
+    ensure => file,
+    content => "",
+  }
+
+  file { '/etc/hadoop/default/hadoop-env.sh':
+    ensure => file,
+    content => template('hadoop_base/hadoop-env.erb'),
+  }
+
+  file { '/etc/hadoop/default/hadoop-metrics2.properties':
+    ensure => file,
+    content => template('hadoop_base/hadoop-metrics2.erb'),
+  }
+
+  file { '/etc/hadoop/default/hadoop-policy.xml':
+    ensure => file,
+    content => template('hadoop_base/hadoop-policy.erb'),
+  }
+
+  file { '/etc/hadoop/default/hdfs-site.xml':
+    ensure => file,
+    content => template('hadoop_base/hdfs-site.erb'),
+  }
+
   file { '/etc/hadoop/default/log4j.properties':
     ensure => file,
     content => template('hadoop_base/log4j.erb'),
+  }
+
+  file { '/etc/hadoop/default/mapred-env.sh':
+    ensure => file,
+    content => template('hadoop_base/mapred-env.erb'),
+  }
+
+  file { '/etc/hadoop/default/mapred-site.xml':
+    ensure => file,
+    content => template('hadoop_base/mapred-site.erb'),
   }
 
   file { '/etc/hadoop/default/task-log4j.properties':
@@ -155,9 +181,9 @@ class hadoop_base {
     content => template('hadoop_base/task-log4j.erb'),
   }
 
-  file { '/etc/hadoop/default/hadoop-metrics2.properties':
+  file { '/etc/hadoop/default/yarn.exclude':
     ensure => file,
-    content => template('hadoop_base/hadoop-metrics2.erb'),
+    content => "",
   }
 
   file { "${data_dir}":

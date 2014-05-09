@@ -43,9 +43,9 @@ class hadoop_slave {
       ensure => installed,
     }
     ->
-    file { "/etc/hadoop/default/taskcontroller.cfg":
+    file { "/etc/hadoop/default/container-executor.cfg":
       ensure => file,
-      content => template('hadoop_slave/taskcontroller.erb'),
+      content => template('hadoop_slave/container-executor.erb'),
       owner => root,
       group => mapred,
       mode => 400,

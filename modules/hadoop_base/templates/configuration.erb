@@ -14,18 +14,27 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -%>
-[HDP-2.1.2.0]
-name=Hortonworks Data Platform Version - HDP-2.1.2.0
-baseurl=http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.1.2.0
-gpgcheck=1
-gpgkey=http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.1.2.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
-enabled=1
-priority=1
-
-[HDP-UTILS-1.1.0.17]
-name=Hortonworks Data Platform Utils Version - HDP-UTILS-1.1.0.17
-baseurl=http://public-repo-1.hortonworks.com/HDP-UTILS-1.1.0.17/repos/centos6
-gpgcheck=1
-gpgkey=http://public-repo-1.hortonworks.com/HDP/centos6/2.x/updates/2.1.2.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
-enabled=1
-priority=1
+<?xml version="1.0"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:output method="html"/>
+<xsl:template match="configuration">
+<html>
+<body>
+<table border="1">
+<tr>
+ <td>name</td>
+ <td>value</td>
+ <td>description</td>
+</tr>
+<xsl:for-each select="property">
+<tr>
+  <td><a name="{name}"><xsl:value-of select="name"/></a></td>
+  <td><xsl:value-of select="value"/></td>
+  <td><xsl:value-of select="description"/></td>
+</tr>
+</xsl:for-each>
+</table>
+</body>
+</html>
+</xsl:template>
+</xsl:stylesheet>

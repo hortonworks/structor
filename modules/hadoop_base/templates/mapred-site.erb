@@ -14,8 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -%>
-<% @jtlist = eval(@nodes).select {|node| node[:roles].include? 'jt'};
-   @jobtracker = (@jtlist.size == 0 ? "unknown" : @jtlist[0][:hostname]) +
+<% @jhslist = eval(@nodes).select {|node| node[:roles].include? 'jhs'};
+   @jhs = (@jhslist.size == 0 ? "unknown" : @jhslist[0][:hostname]) +
        "." + @domain;
   -%>
 <?xml version="1.0"?>
@@ -23,283 +23,212 @@
 
 <configuration xmlns:xi="http://www.w3.org/2001/XInclude">
 
-<!-- i/o properties -->
-
-  <property>
-    <name>io.sort.mb</name>
-    <value>50m</value>
-  </property>
-
-  <property>
-    <name>io.sort.record.percent</name>
-    <value>.2</value>
-  </property>
-
-  <property>
-    <name>io.sort.spill.percent</name>
-    <value>0.9</value>
-  </property>
-
-  <property>
-    <name>io.sort.factor</name>
-    <value>100</value>
-  </property>
-
-<!-- map/reduce properties -->
-
-  <property>
-    <name>mapred.tasktracker.tasks.sleeptime-before-sigkill</name>
-    <value>250</value>
-  </property>
-
-  <property>
-    <name>mapred.submit.replication</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.handler.count</name>
-    <value>2</value>
-  </property>
-
-  <property>
-    <name>mapred.system.dir</name>
-    <value>/user/mapred/system</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker</name>
-    <value><%= @jobtracker %>:50300</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.http.address</name>
-    <value><%= @jobtracker %>:50030</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapred.local.dir</name>
-    <value><%= @data_dir %>/mapred</value>
-    <final>true</final>
-  </property>
-
-  <property>
-  <name>mapreduce.cluster.administrators</name>
-  <value> mradmin</value>
-  </property>
-
-  <property>
-    <name>mapred.reduce.parallel.copies</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>mapred.tasktracker.map.tasks.maximum</name>
-    <value>2</value>
-  </property>
-
-  <property>
-    <name>mapred.tasktracker.reduce.tasks.maximum</name>
-    <value>2</value>
-  </property>
-
-  <property>
-    <name>tasktracker.http.threads</name>
-    <value>2</value>
-  </property>
-
-  <property>
-    <name>mapred.map.tasks.speculative.execution</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>mapred.reduce.tasks.speculative.execution</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>mapred.reduce.slowstart.completed.maps</name>
-    <value>0.5</value>
-  </property>
-
-  <property>
-    <name>mapred.inmem.merge.threshold</name>
-    <value>10</value>
-  </property>
-
-  <property>
-    <name>mapred.job.shuffle.merge.percent</name>
-    <value>0.66</value>
-  </property>
-
-  <property>
-    <name>mapred.job.shuffle.input.buffer.percent</name>
-    <value>0.7</value>
-  </property>
-
-  <property>
-    <name>mapred.map.output.compression.codec</name>
-    <value>org.apache.hadoop.io.compress.SnappyCodec</value>
-  </property>
-
-  <property>
-    <name>mapred.output.compression.type</name>
-    <value>BLOCK</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.completeuserjobs.maximum</name>
-    <value>0</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.taskScheduler</name>
-    <value>org.apache.hadoop.mapred.CapacityTaskScheduler</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.restart.recover</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>mapred.job.reduce.input.buffer.percent</name>
-    <value>0.2</value>
-  </property>
-
-  <property>
-    <name>mapreduce.reduce.input.limit</name>
-    <value>100000000</value>
-  </property>
-
-  <property>
-    <name>mapred.compress.map.output</name>
-    <value>true</value>
-  </property>
-
-  <property>
-    <name>mapred.task.timeout</name>
-    <value>100000</value>
-  </property>
-
-  <property>
-    <name>jetty.connector</name>
-    <value>org.mortbay.jetty.nio.SelectChannelConnector</value>
-  </property>
-
-  <property>
-    <name>mapred.child.root.logger</name>
-    <value>INFO,TLA</value>
-  </property>
-
-  <property>
-    <name>mapred.child.java.opts</name>
-    <value>-server <%= @hadoop_client_mem %> -Djava.net.preferIPv4Stack=true</value>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.persist.jobstatus.active</name>
-    <value>true</value>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.persist.jobstatus.hours</name>
-    <value>24</value>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.persist.jobstatus.dir</name>
-    <value>file:///<%= @log_dir %>/mapred/jobstatus</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.retirejob.check</name>
-    <value>10000</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.retirejob.interval</name>
-    <value>0</value>
-  </property>
-
-  <property>
-    <name>mapred.job.tracker.history.completed.location</name>
-    <value>/user/mapred/history/done</value>
-  </property>
-
-  <property>
-    <name>mapreduce.fileoutputcommitter.marksuccessfuljobs</name>
-    <value>false</value>
-  </property>
-
-  <property>
-    <name>mapred.userlog.retain.hours</name>
-    <value>24</value>
-  </property>
-
-  <property>
-    <name>mapred.job.reuse.jvm.num.tasks</name>
-    <value>1</value>
-  </property>
-
-  <property>
-    <name>hadoop.job.history.user.location</name>
-    <value>none</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapreduce.jobtracker.staging.root.dir</name>
-    <value>/user</value>
-  </property>
-
-  <property>
-    <name>mapreduce.tasktracker.group</name>
-    <value>mapred</value>
-  </property>
-
-  <property>
-    <name>mapreduce.jobtracker.split.metainfo.maxsize</name>
-    <value>50000000</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapreduce.history.server.embedded</name>
-    <value>true</value>
-  </property>
-
-  <property>
-    <name>mapreduce.history.server.http.address</name>
-    <value><%= @jobtracker %>:51111</value>
-    <final>true</final>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.blacklist.fault-timeout-window</name>
-    <value>180</value>
-  </property>
-
-  <property>
-    <name>mapred.jobtracker.blacklist.fault-bucket-width</name>
-    <value>15</value>
-  </property>
-
-  <property>
-    <name>mapred.queue.names</name>
-    <value>default</value>
-  </property>
-
-  <property>
-    <name>mapred.heartbeats.in.second</name>
-    <value>1</value>
-  </property> 
-
+    <property>
+      <name>mapreduce.jobhistory.address</name>
+      <value><%= @jhs %>:10020</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.input.buffer.percent</name>
+      <value>0.0</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.output.fileoutputformat.compress</name>
+      <value>false</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.framework.name</name>
+      <value>yarn</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.speculative</name>
+      <value>false</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.shuffle.merge.percent</name>
+      <value>0.66</value>
+    </property>
+    
+    <property>
+      <name>yarn.app.mapreduce.am.resource.mb</name>
+      <value><%= @client_mem %></value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.java.opts</name>
+      <value>-Xmx<%= @client_mem %>m</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.cluster.administrators</name>
+      <value> hadoop</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.application.classpath</name>
+      <value>$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*,$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.job.reduce.slowstart.completedmaps</name>
+      <value>0.05</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.output.fileoutputformat.compress.type</name>
+      <value>BLOCK</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.speculative</name>
+      <value>false</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.java.opts</name>
+      <value>-Xmx<%= @client_mem %>m</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.am.max-attempts</name>
+      <value>2</value>
+    </property>
+    
+    <property>
+      <name>yarn.app.mapreduce.am.admin-command-opts</name>
+      <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.log.level</name>
+      <value>INFO</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.sort.spill.percent</name>
+      <value>0.7</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.task.io.sort.mb</name>
+      <value><%= @client_mem / 3 %></value>
+    </property>
+    
+    <property>
+      <name>mapreduce.task.timeout</name>
+      <value>300000</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.memory.mb</name>
+      <value><%= @client_mem %></value>
+    </property>
+    
+    <property>
+      <name>mapreduce.task.io.sort.factor</name>
+      <value>10</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.intermediate-done-dir</name>
+      <value>/user/mapred/history/tmp</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.memory.mb</name>
+      <value><%= @client_mem %></value>
+    </property>
+    
+    <property>
+      <name>yarn.app.mapreduce.am.log.level</name>
+      <value>INFO</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.log.level</name>
+      <value>INFO</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.shuffle.port</name>
+      <value>13562</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.admin.user.env</name>
+      <value>LD_LIBRARY_PATH=/usr/lib/hadoop/lib/native:/usr/lib/hadoop/lib/native/`$JAVA_HOME/bin/java -d32 -version &amp;&gt; /dev/null;if [ $? -eq 0 ]; then echo Linux-i386-32; else echo Linux-amd64-64;fi`</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.map.output.compress</name>
+      <value>false</value>
+    </property>
+    
+    <property>
+      <name>yarn.app.mapreduce.am.staging-dir</name>
+      <value>/user</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.shuffle.parallelcopies</name>
+      <value>2</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.reduce.shuffle.input.buffer.percent</name>
+      <value>0.7</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.webapp.address</name>
+      <value><%= @jhs %>:19888</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.done-dir</name>
+      <value>/user/mapred/history/done</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.admin.reduce.child.java.opts</name>
+      <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+    </property>
+    
+    <property>
+      <name>yarn.app.mapreduce.am.command-opts</name>
+      <value>-Xmx<%= @client_mem / 2 %>m</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.admin.map.child.java.opts</name>
+      <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+    </property>
+    
 <% if @security == "true" -%>
+    <property>
+      <name>mapreduce.jobhistory.webapp.spnego-keytab-file</name>
+      <value>/etc/security/keytabs/spnego.service.keytab</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.principal</name>
+      <value>jhs/_HOST@APACHE.ORG</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.keytab</name>
+      <value>/etc/security/keytabs/jhs.service.keytab</value>
+    </property>
+    
+    <property>
+      <name>mapreduce.jobhistory.webapp.spnego-principal</name>
+      <value>HTTP/_HOST@APACHE.ORG</value>
+    </property>
+    
   <property>
     <name>mapred.task.tracker.task-controller</name>
     <value>org.apache.hadoop.mapred.LinuxTaskController</value>

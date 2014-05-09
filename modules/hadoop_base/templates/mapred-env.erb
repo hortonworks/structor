@@ -14,7 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -%>
-mapreduce.tasktracker.group=mapred
-hadoop.log.dir=/var/log/hadoop/mapred
-min.user.id=500
-banned.users=hdfs,mapred,root
+export HADOOP_JOB_HISTORYSERVER_HEAPSIZE=<%= @server_memory %>
+
+export HADOOP_MAPRED_ROOT_LOGGER=INFO,RFA
