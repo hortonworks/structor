@@ -13,30 +13,57 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class hadoop_jobtracker {
+class yarn_resource_manager {
   require hadoop_base
-
-  $PATH = "/bin:/usr/bin"
 
   if $security == "true" {
     require kerberos_http
 
-    file { "/etc/security/hadoop/jt.keytab":
+    file { "/etc/security/hadoop/rm.keytab":
       ensure => file,
-      source => "/vagrant/generated/keytabs/${hostname}/jt.keytab",
+      source => "/vagrant/generated/keytabs/${hostname}/rm.keytab",
+      owner => 'yarn',
+      group => 'hadoop',
+      mode => '400',
+    }
+    ->
+    Package['hadoop-mapreduce-historyserver']
+
+    file { "/etc/security/hadoop/jhs.keytab":
+      ensure => file,
+      source => "/vagrant/generated/keytabs/${hostname}/jhs.keytab",
       owner => 'mapred',
       group => 'hadoop',
       mode => '400',
     }
     ->
-    Package['hadoop-jobtracker']
+    Package['hadoop-yarn-resourcemanager']
   }
 
-  package { "hadoop-jobtracker" :
+  file { "/etc/init.d/hadoop-mapreduce-historyserver":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-mapreduce-historyserver",
+  }
+  ->
+  package { "hadoop-yarn-resourcemanager" :
     ensure => installed,
   }
   ->
-  service {"hadoop-jobtracker":
+  file { "/etc/init.d/hadoop-yarn-resourcemanager":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-yarn-resourcemanager",
+  }
+  ->
+  service {"hadoop-yarn-resourcemanager":
+    ensure => running,
+    enable => true,
+  }
+
+  package { "hadoop-mapreduce-historyserver" :
+    ensure => installed,
+  }
+  ->
+  service {"hadoop-mapreduce-historyserver":
     ensure => running,
     enable => true,
   }

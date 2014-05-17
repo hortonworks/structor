@@ -33,37 +33,61 @@ class hadoop_namenode {
       user => hdfs,
     }
     ->
-    Package['hadoop-namenode']
+    Package['hadoop-hdfs-namenode']
   }
 
-  package { "hadoop-namenode" :
+  package { "hadoop-hdfs-namenode" :
     ensure => installed,
+  }
+  ->
+  file { "/etc/init.d/hadoop-hdfs-namenode":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-hdfs-namenode",
   }
   ->
   exec {"namenode-format":
     command => "hadoop namenode -format",
     path => "$PATH",
-    creates => "${data_dir}/hdfs/nn",
+    creates => "${data_dir}/hdfs/namenode",
     user => "hdfs",
-    require => Package['hadoop-namenode'],
+    require => Package['hadoop-hdfs-namenode'],
   }
   ->
-  service {"hadoop-namenode":
+  service {"hadoop-hdfs-namenode":
     ensure => running,
     enable => true,
   }
   ->
-  exec {"mapred-home-mkdir":
-    command => "hadoop fs -mkdir /user/mapred",
-    unless => "hadoop fs -test -e /user/mapred",
+  exec {"yarn-home-mkdir":
+    command => "hadoop fs -mkdir -p /user/yarn",
+    unless => "hadoop fs -test -e /user/yarn",
     path => "$PATH",
     user => "hdfs",
   }
   ->
-  exec {"mapred-home-chown":
-    command => "hadoop fs -chown mapred:mapred /user/mapred",
+  exec {"yarn-home-chown":
+    command => "hadoop fs -chown yarn:yarn /user/yarn",
     path => "$PATH",
     user => "hdfs",
+  }
+  ->
+  exec {"yarn-home-chmod":
+    command => "hadoop fs -chmod 755 /user/yarn",
+    path => "$PATH",
+    user => "yarn",
+  }
+  ->
+  exec {"yarn-apps-logs-mkdir":
+    command => "hadoop fs -mkdir /user/yarn/apps-logs",
+    unless => "hadoop fs -test -e /user/yarn/apps-logs",
+    path => "$PATH",
+    user => "yarn",
+  }
+  ->
+  exec {"yarn-apps-logs-chmod":
+    command => "hadoop fs -chmod 1777 /user/yarn/apps-logs",
+    path => "$PATH",
+    user => "yarn",
   }
   ->
   exec {"vagrant-home-mkdir":
@@ -87,7 +111,7 @@ class hadoop_namenode {
   }
   ->
   exec {"hive-warehouse-chmod":
-    command => "hadoop fs -chmod 777 /apps/hive/warehouse",
+    command => "hadoop fs -chmod 1777 /apps/hive/warehouse",
     path => "$PATH",
     user => "hdfs",
   }
@@ -100,7 +124,7 @@ class hadoop_namenode {
   }
   ->
   exec {"hdfs-tmp-chmod":
-    command => "hadoop fs -chmod 777 /tmp",
+    command => "hadoop fs -chmod 1777 /tmp",
     path => "$PATH",
     user => "hdfs",
   }

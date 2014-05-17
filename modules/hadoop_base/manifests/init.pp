@@ -17,6 +17,7 @@ class hadoop_base {
   require repos_setup
   require jdk
 
+  $conf_dir="/etc/hadoop/hdp"
   $log_dir="/var/log/hadoop"
   $data_dir="/var/run/hadoop"
   $pid_dir="/var/run/pid"
@@ -28,7 +29,7 @@ class hadoop_base {
     ensure => present,
   }
   ->
-  group { 'mapred':
+  group { 'yarn':
     ensure => present,
   } 
   ->
@@ -39,7 +40,12 @@ class hadoop_base {
   ->
   user { 'mapred':
     ensure => present,
-    groups => ['mapred'],
+    gid => hadoop,
+  } 
+  ->
+  user { 'yarn':
+    ensure => present,
+    groups => ['yarn'],
     gid => hadoop,
   } 
   ->
@@ -54,22 +60,36 @@ class hadoop_base {
   ->
   Package['hadoop']
 
-
   package { 'hadoop':
     ensure => installed,
   }
 
-  package { 'hadoop-pipes':
-    ensure => installed,
-    require => Package['hadoop'],
-  }
-
-  package { 'hadoop-native':
-    ensure => installed,
-    require => Package['hadoop'],
-  }
-
   package { 'hadoop-libhdfs':
+    ensure => installed,
+    require => Package['hadoop'],
+  }
+
+  package { 'hadoop-yarn':
+    ensure => installed,
+    require => Package['hadoop'],
+  }
+  ->
+  file {'/usr/lib/hadoop-yarn/libexec':
+    ensure => link,
+    target => '/usr/lib/hadoop/libexec',
+  }
+
+  package { 'hadoop-mapreduce':
+    ensure => installed,
+    require => Package['hadoop'],
+  }
+  ->
+  file {'/usr/lib/hadoop-mapreduce/libexec':
+    ensure => link,
+    target => '/usr/lib/hadoop/libexec',
+  }
+
+  package { 'hadoop-client':
     ensure => installed,
     require => Package['hadoop'],
   }
@@ -100,90 +120,100 @@ class hadoop_base {
     ensure => 'directory',
   }
 
-  file { '/etc/hadoop/default':
+  file { "${conf_dir}":
     ensure => 'directory',
   }
 
   file { '/etc/hadoop/conf':
     ensure => 'link',
-    target => '/etc/hadoop/default',
+    target => "${conf_dir}",
     require => Package['hadoop'],
   }
 
   file {'/usr/lib/hadoop/lib/native/Linux-amd64-64/libsnappy.so':
     ensure => 'link',
     target => '/usr/lib64/libsnappy.so.1',
-    require => Package['hadoop-native'],
+    require => Package['hadoop-lzo-native'],
   }
 
-  file { '/etc/hadoop/default/capacity-scheduler.xml':
+  file { "${conf_dir}/capacity-scheduler.xml":
     ensure => file,
     content => template('hadoop_base/capacity-scheduler.erb'),
   }
 
-  file { '/etc/hadoop/default/commons-logging.properties':
+  file { "${conf_dir}/commons-logging.properties":
     ensure => file,
     content => template('hadoop_base/commons-logging.erb'),
   }
 
-  file { '/etc/hadoop/default/configuration.xsl':
+  file { "${conf_dir}/configuration.xsl":
     ensure => file,
     content => template('hadoop_base/configuration.erb'),
   }
 
-  file { '/etc/hadoop/default/core-site.xml':
+  file { "${conf_dir}/core-site.xml":
     ensure => file,
     content => template('hadoop_base/core-site.erb'),
   }
 
-  file { '/etc/hadoop/default/dfs.exclude':
+  file { "${conf_dir}/dfs.exclude":
     ensure => file,
     content => "",
   }
 
-  file { '/etc/hadoop/default/hadoop-env.sh':
+  file { "${conf_dir}/hadoop-env.sh":
     ensure => file,
     content => template('hadoop_base/hadoop-env.erb'),
   }
 
-  file { '/etc/hadoop/default/hadoop-metrics2.properties':
+  file { "${conf_dir}/hadoop-metrics2.properties":
     ensure => file,
     content => template('hadoop_base/hadoop-metrics2.erb'),
   }
 
-  file { '/etc/hadoop/default/hadoop-policy.xml':
+  file { "${conf_dir}/hadoop-policy.xml":
     ensure => file,
     content => template('hadoop_base/hadoop-policy.erb'),
   }
 
-  file { '/etc/hadoop/default/hdfs-site.xml':
+  file { "${conf_dir}/hdfs-site.xml":
     ensure => file,
     content => template('hadoop_base/hdfs-site.erb'),
   }
 
-  file { '/etc/hadoop/default/log4j.properties':
+  file { "${conf_dir}/log4j.properties":
     ensure => file,
     content => template('hadoop_base/log4j.erb'),
   }
 
-  file { '/etc/hadoop/default/mapred-env.sh':
+  file { "${conf_dir}/mapred-env.sh":
     ensure => file,
     content => template('hadoop_base/mapred-env.erb'),
   }
 
-  file { '/etc/hadoop/default/mapred-site.xml':
+  file { "${conf_dir}/mapred-site.xml":
     ensure => file,
     content => template('hadoop_base/mapred-site.erb'),
   }
 
-  file { '/etc/hadoop/default/task-log4j.properties':
+  file { "${conf_dir}/task-log4j.properties":
     ensure => file,
     content => template('hadoop_base/task-log4j.erb'),
   }
 
-  file { '/etc/hadoop/default/yarn.exclude':
+  file { "${conf_dir}/yarn.exclude":
     ensure => file,
     content => "",
+  }
+
+  file { "${conf_dir}/yarn-env.sh":
+    ensure => file,
+    content => template('hadoop_base/yarn-env.erb'),
+  }
+
+  file { "${conf_dir}/yarn-site.xml":
+    ensure => file,
+    content => template('hadoop_base/yarn-site.erb'),
   }
 
   file { "${data_dir}":
@@ -200,9 +230,9 @@ class hadoop_base {
     mode => '700',
   }
 
-  file { "${data_dir}/mapred":
+  file { "${data_dir}/yarn":
     ensure => directory,
-    owner => 'mapred',
+    owner => 'yarn',
     group => 'hadoop',
     mode => '755',
   }
@@ -228,6 +258,13 @@ class hadoop_base {
     mode => '700',
   }
 
+  file { "${pid_dir}/yarn":
+    ensure => directory,
+    owner => 'yarn',
+    group => 'hadoop',
+    mode => '700',
+  }
+
   file { "${log_dir}":
     ensure => directory,
     owner => 'root',
@@ -249,6 +286,13 @@ class hadoop_base {
     mode => '755',
   }
 
+  file { "${log_dir}/yarn":
+    ensure => directory,
+    owner => 'yarn',
+    group => 'hadoop',
+    mode => '755',
+  }
+
   if $security == "true" {
     require kerberos_client
     require ssl_ca
@@ -259,7 +303,7 @@ class hadoop_base {
       path => "$path",
     }
 
-    file {"/etc/hadoop/default/ssl-client.xml":
+    file {"${conf_dir}/ssl-client.xml":
       ensure => file,
       content => template("hadoop_base/ssl-client.erb"),
     }

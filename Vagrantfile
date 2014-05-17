@@ -22,20 +22,19 @@ VAGRANTFILE_API_VERSION = "2"
 #   client - client machine
 #   kdc - kerberos kdc
 #   nn - HDFS NameNode
-#   rm - Yarn Resource Manager
-#   jhs - MapReduce Job History Server
+#   yarn - Yarn Resource Manager and MapReduce Job History Server
 #   slave - HDFS DataNode & Yarn Node Manager
 #   hive-db - Hive MetaStore backing mysql
 #   hive-meta - Hive MetaStore
 
 # For each node
 nodes = [
-  { :hostname => 'gw', :ip => "240.0.0.10", :roles => ['client']},
-  { :hostname => 'nn', :ip => "240.0.0.11", 
-    :roles => ['kdc', 'nn', 'jt', 'hive-meta', 'hive-db']},
-  { :hostname => 'slave1', :ip => "240.0.0.12", :roles => ['slave']},
-#  { :hostname => 'slave2', :ip => "240.0.0.13", :roles => ['slave']},
-#  { :hostname => 'slave3', :ip => "240.0.0.14", :roles => ['slave']},
+  { :hostname => 'gw', :ip => '240.0.0.10', :roles => ['client']},
+  { :hostname => 'nn', :ip => '240.0.0.11', 
+    :roles => ['kdc', 'nn', 'yarn', 'hive-meta', 'hive-db']},
+  { :hostname => 'slave1', :ip => '240.0.0.12', :roles => ['slave']},
+#  { :hostname => 'slave2', :ip => '240.0.0.13', :roles => ['slave']},
+#  { :hostname => 'slave3', :ip => '240.0.0.14', :roles => ['slave']},
 ]
 
 domain = "example.com"
@@ -73,7 +72,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.vm.network :private_network, ip: node[:ip]
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
-        puppet.options = "--libdir /vagrant"
+        puppet.options = ["--libdir", "/vagrant", 
+	   "--fileserverconfig=/vagrant/fileserver.conf", "--debug"]
         puppet.facter = {
   	  "hostname" => node[:hostname],
 	  "roles" => node[:roles],

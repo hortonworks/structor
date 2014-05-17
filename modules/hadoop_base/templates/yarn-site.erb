@@ -1,0 +1,304 @@
+<%#
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-%>
+<% @yarnlist = 
+    eval(@nodes).select {|node| node[:roles].include? 'yarn'}.
+                 map{|node| node[:hostname] + "." + @domain};
+    @yarn = @yarnlist.size > 0 ? @yarnlist[0] : "unknown";
+ -%>
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration xmlns:xi="http://www.w3.org/2001/XInclude">
+    
+  <property>
+    <name>yarn.nodemanager.disk-health-checker.min-healthy-disks</name>
+    <value>0.25</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.resource-tracker.address</name>
+    <value><%= @yarn %>:8025</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir-suffix</name>
+    <value>logs</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.hostname</name>
+    <value><%= @yarn %></value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.health-checker.script.timeout-ms</name>
+    <value>60000</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.scheduler.class</name>
+    <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacityScheduler</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.resource.memory-mb</name>
+    <value>2048</value>
+  </property>
+    
+  <property>
+    <name>yarn.scheduler.minimum-allocation-mb</name>
+    <value>682</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.address</name>
+    <value><%= @yarn %>:8050</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.scheduler.address</name>
+    <value><%= @yarn %>:8030</value>
+  </property>
+    
+  <property>
+    <name>yarn.log-aggregation.retain-seconds</name>
+    <value>2592000</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.ttl-ms</name>
+    <value>2678400000</value>
+  </property>
+    
+  <property>
+    <name>yarn.scheduler.maximum-allocation-mb</name>
+    <value>2048</value>
+  </property>
+    
+  <property>
+    <name>yarn.log-aggregation-enable</name>
+    <value>true</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.address</name>
+    <value>0.0.0.0:45454</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.leveldb-timeline-store.ttl-interval-ms</name>
+    <value>300000</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.container-monitor.interval-ms</name>
+    <value>3000</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.webapp.address</name>
+    <value><%= @yarn %>:8188</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.enabled</name>
+    <value>true</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.local-dirs</name>
+    <value><%= @data_dir %>/yarn/node</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.address</name>
+    <value>0.0.0.0:10200</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.log.retain-second</name>
+    <value>604800</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.delete.debug-delay-sec</name>
+    <value>0</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.log-aggregation.compression-type</name>
+    <value>gz</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.log-dirs</name>
+    <value><%= @log_dir %>/yarn/node</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.ttl-enable</name>
+    <value>true</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.health-checker.interval-ms</name>
+    <value>135000</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.am.max-attempts</name>
+    <value>2</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.admin-env</name>
+    <value>MALLOC_ARENA_MAX=$MALLOC_ARENA_MAX</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.vmem-check-enabled</name>
+    <value>false</value>
+  </property>
+    
+  <property>
+    <name>yarn.acl.enable</name>
+    <value>true</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.store-class</name>
+    <value>org.apache.hadoop.yarn.server.applicationhistoryservice.timeline.LeveldbTimelineStore</value>
+  </property>
+    
+  <property>
+    <name>yarn.admin.acl</name>
+    <value>*</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.webapp.address</name>
+    <value><%= @yarn %>:8088</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.nodes.exclude-path</name>
+    <value>/etc/hadoop/conf/yarn.exclude</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.linux-container-executor.group</name>
+    <value>hadoop</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.leveldb-timeline-store.path</name>
+    <value><%= @yarn_dir %>/yarn/timeline</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.remote-app-log-dir</name>
+    <value>/user/yarn/app-logs</value>
+  </property>
+    
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://<%= @yarn %>:19888/jobhistory/logs</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.vmem-pmem-ratio</name>
+    <value>2.1</value>
+  </property>
+    
+  <property>
+    <name>yarn.application.classpath</name>
+    <value>/etc/hadoop/conf,/usr/lib/hadoop/*,/usr/lib/hadoop/lib/*,/usr/lib/hadoop-hdfs/*,/usr/lib/hadoop-hdfs/lib/*,/usr/lib/hadoop-yarn/*,/usr/lib/hadoop-yarn/lib/*,/usr/lib/hadoop-mapreduce/*,/usr/lib/hadoop-mapreduce/lib/*</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.admin.address</name>
+    <value><%= @yarn %>:8141</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.generic-application-history.store-class</name>
+    <value>org.apache.hadoop.yarn.server.applicationhistoryservice.NullApplicationHistoryStore</value>
+  </property>
+    
+  <property>
+    <name>yarn.timeline-service.webapp.https.address</name>
+    <value><%= @yarn %>:8190</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name>
+    <value>org.apache.hadoop.mapred.ShuffleHandler</value>
+  </property>
+
+<% if @security == "true" -%>
+  <property>
+    <name>yarn.nodemanager.container-executor.class</name>
+    <value>org.apache.hadoop.yarn.server.nodemanager.LinuxContainerExecutor</value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.keytab</name>
+    <value><%= @keytab_dir %>/nm.keytab</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.principal</name>
+    <value>nm/_HOST@<%= @realm %></value>
+  </property>
+    
+  <property>
+    <name>yarn.nodemanager.webapp.spnego-keytab-file</name>
+    <value><%= @keytab_dir %>/http.keytab</value>
+  </property>
+
+  <property>
+    <name>yarn.nodemanager.webapp.spnego-principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.keytab</name>
+    <value><%= @keytab_dir %>/rm.keytab</value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.principal</name>
+    <value>rm/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.webapp.spnego-principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+    
+  <property>
+    <name>yarn.resourcemanager.webapp.spnego-keytab-file</name>
+    <value><%= @keytab_dir %>/http.keytab</value>
+  </property>
+<% end -%>
+    
+</configuration>

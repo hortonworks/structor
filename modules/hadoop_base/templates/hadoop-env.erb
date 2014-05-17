@@ -24,7 +24,7 @@ export HADOOP_HOME_WARN_SUPPRESS=1
 export HADOOP_CONF_DIR=${HADOOP_CONF_DIR:-/etc/hadoop/conf}
 
 # The maximum amount of heap to use, in MB. Default is 1000.
-export HADOOP_HEAPSIZE=<%= @client_memory %>
+export HADOOP_HEAPSIZE=<%= @client_mem %>
 
 # Extra Java runtime options.  Empty by default.
 export HADOOP_OPTS="-Djava.net.preferIPv4Stack=true ${HADOOP_OPTS}"
@@ -41,9 +41,6 @@ export HADOOP_SECONDARYNAMENODE_OPTS="-server -Xmx<%= @server_mem %>m -Dhadoop.s
 # The following applies to multiple commands (fs, dfs, fsck, distcp etc)
 export HADOOP_CLIENT_OPTS="-Xmx<%= @client_mem %>m ${HADOOP_CLIENT_OPTS}"
 
-# On secure datanodes, user to run the datanode as after dropping privileges
-export HADOOP_SECURE_DN_USER=hdfs
-
 # Where log files are stored.  $HADOOP_HOME/logs by default.
 export HADOOP_LOG_DIR=<%= @log_dir %>/$USER
 
@@ -58,7 +55,7 @@ export HADOOP_PID_DIR=<%= @pid_dir %>/$USER
 export HADOOP_SECURE_DN_PID_DIR=<%= @pid_dir %>/$HADOOP_SECURE_DN_USER
 
 # History server pid
-export HADOOP_MAPRED_PID_DIR=/var/run/hadoop-mapreduce/$USER
+export HADOOP_MAPRED_PID_DIR=<%= @pid_dir %>/$USER
 
 YARN_RESOURCEMANAGER_OPTS="-Dyarn.server.resourcemanager.appsummary.logger=INFO,RMSUMMARY"
 
@@ -90,4 +87,7 @@ export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}${JAVA_JDBC_LIBS}:${MAPREDUCE_LIBS}:$
 <% if @security == "true" -%>
 # Path to jsvc required by secure HDP 2.0 datanode
 export JSVC_HOME=/usr/lib/bigtop-utils
+
+# On secure datanodes, user to run the datanode as after dropping privileges
+export HADOOP_SECURE_DN_USER=hdfs
 <% end -%>

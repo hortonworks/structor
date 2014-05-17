@@ -14,8 +14,8 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 -%>
-<% @jhslist = eval(@nodes).select {|node| node[:roles].include? 'jhs'};
-   @jhs = (@jhslist.size == 0 ? "unknown" : @jhslist[0][:hostname]) +
+<% @yarnlist = eval(@nodes).select {|node| node[:roles].include? 'yarn'};
+   @yarn = (@yarnlist.size == 0 ? "unknown" : @yarnlist[0][:hostname]) +
        "." + @domain;
   -%>
 <?xml version="1.0"?>
@@ -25,7 +25,7 @@
 
     <property>
       <name>mapreduce.jobhistory.address</name>
-      <value><%= @jhs %>:10020</value>
+      <value><%= @yarn %>:10020</value>
     </property>
     
     <property>
@@ -115,7 +115,7 @@
     
     <property>
       <name>mapreduce.task.io.sort.mb</name>
-      <value><%= @client_mem / 3 %></value>
+      <value><%= @client_mem.to_i / 3 %></value>
     </property>
     
     <property>
@@ -185,7 +185,7 @@
     
     <property>
       <name>mapreduce.jobhistory.webapp.address</name>
-      <value><%= @jhs %>:19888</value>
+      <value><%= @yarn %>:19888</value>
     </property>
     
     <property>
@@ -200,7 +200,7 @@
     
     <property>
       <name>yarn.app.mapreduce.am.command-opts</name>
-      <value>-Xmx<%= @client_mem / 2 %>m</value>
+      <value>-Xmx<%= @client_mem.to_i / 2 %>m</value>
     </property>
     
     <property>
@@ -209,59 +209,24 @@
     </property>
     
 <% if @security == "true" -%>
-    <property>
-      <name>mapreduce.jobhistory.webapp.spnego-keytab-file</name>
-      <value>/etc/security/keytabs/spnego.service.keytab</value>
-    </property>
-    
-    <property>
-      <name>mapreduce.jobhistory.principal</name>
-      <value>jhs/_HOST@APACHE.ORG</value>
-    </property>
-    
-    <property>
-      <name>mapreduce.jobhistory.keytab</name>
-      <value>/etc/security/keytabs/jhs.service.keytab</value>
-    </property>
-    
-    <property>
-      <name>mapreduce.jobhistory.webapp.spnego-principal</name>
-      <value>HTTP/_HOST@APACHE.ORG</value>
-    </property>
+  <property>
+    <name>mapreduce.jobhistory.principal</name>
+    <value>jhs/_HOST@<%= @realm %></value>
+  </property>
     
   <property>
-    <name>mapred.task.tracker.task-controller</name>
-    <value>org.apache.hadoop.mapred.LinuxTaskController</value>
+    <name>mapreduce.jobhistory.keytab</name>
+    <value><%= @keytab_dir %>/jhs.keytab</value>
+  </property>
+    
+  <property>
+    <name>mapreduce.jobhistory.webapp.spnego-principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
   </property>
 
   <property>
-    <name>mapreduce.jobtracker.kerberos.principal</name>
-    <value>jt/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>mapreduce.tasktracker.kerberos.principal</name>
-    <value>tt/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>mapreduce.jobhistory.kerberos.principal</name>
-    <value>jt/_HOST@<%= @realm %></value>
-  </property>
-
-  <property>
-    <name>mapreduce.jobtracker.keytab.file</name>
-    <value>/etc/security/hadoop/jt.keytab</value>
-  </property>
-
-  <property>
-    <name>mapreduce.tasktracker.keytab.file</name>
-    <value>/etc/security/hadoop/tt.keytab</value>
-  </property>
-
-  <property>
-    <name>mapreduce.jobhistory.keytab.file</name>
-    <value>/etc/security/hadoop/jt.keytab</value>
+    <name>mapreduce.jobhistory.webapp.spnego-keytab-file</name>
+    <value><%= @keytab_dir %>/http.keytab</value>
   </property>
 <% end -%>
 

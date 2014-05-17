@@ -58,16 +58,26 @@ class hadoop_slave {
     ensure => installed,
   }
   ->
+  file { "/etc/init.d/hadoop-hdfs-datanode":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-hdfs-datanode",
+  }
+  ->
   service {"hadoop-datanode":
     ensure => running,
     enable => true,
   }
 
-  package { "hadoop-tasktracker" :
+  package { "hadoop-yarn-nodemanager" :
     ensure => installed,
   }
   ->
-  service {"hadoop-tasktracker":
+  file { "/etc/init.d/hadoop-yarn-nodemanager":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-yarn-nodemanager",
+  }
+  ->
+  service {"hadoop-yarn-nodemanager":
     ensure => running,
     enable => true,
   }

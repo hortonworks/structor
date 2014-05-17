@@ -21,8 +21,8 @@ KEYDIR=/vagrant/generated/keytabs
    nodelist = eval(nodes); 
    # a map from roles to required users
    users = {'nn' => ['nn', 'HTTP'],
-            'jt' => ['jt', 'HTTP'],
-            'slave' => ['tt', 'dn', 'HTTP'],
+            'yarn' => ['rm', 'jhs', 'HTTP'],
+            'slave' => ['nm', 'dn', 'HTTP'],
             'hive-meta' => ['hive']}; -%>
 
 # ensure we don't have old keytabs

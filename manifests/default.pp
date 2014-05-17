@@ -13,6 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+include repos_setup
 include vm_users
 include ip_setup
 include selinux
@@ -46,8 +47,8 @@ if hasrole($roles, 'slave') {
   include hadoop_slave
 }
 
-if hasrole($roles, 'jt') {
-  include hadoop_jobtracker
+if hasrole($roles, 'yarn') {
+  include yarn_resource_manager
 }
 
 if hasrole($roles, 'hive-meta') {
@@ -75,8 +76,8 @@ if hasrole($roles, 'nn') {
     Class['hadoop_namenode'] -> Class['hadoop_slave']
   }
 
-  if hasrole($roles, 'jt') {
-    Class['hadoop_namenode'] -> Class['hadoop_jobtracker']
+  if hasrole($roles, 'yarn') {
+    Class['hadoop_namenode'] -> Class['yarn_resource_manager']
   }
 
   if hasrole($roles, 'hive-meta') {
