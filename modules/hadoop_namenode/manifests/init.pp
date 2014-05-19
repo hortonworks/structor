@@ -77,15 +77,47 @@ class hadoop_namenode {
     user => "yarn",
   }
   ->
+  exec {"yarn-history-intermediate-mkdir":
+    command => "hadoop fs -mkdir -p /user/yarn/history/done_intermediate",
+    unless => "hadoop fs -test -e /user/yarn/history/done_intermediate",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"yarn-history-intermediate-chmod":
+    command => "hadoop fs -chmod 1777 /user/yarn/history/done_intermediate",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"yarn-history-done-mkdir":
+    command => "hadoop fs -mkdir -p /user/yarn/history/done",
+    unless => "hadoop fs -test -e /user/yarn/history/done",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"yarn-history-done-chmod":
+    command => "hadoop fs -chmod 1777 /user/yarn/history/done",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"yarn-history-chown":
+    command => "hadoop fs -chown mapred:mapred /user/yarn/history",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
   exec {"yarn-apps-logs-mkdir":
-    command => "hadoop fs -mkdir /user/yarn/apps-logs",
-    unless => "hadoop fs -test -e /user/yarn/apps-logs",
+    command => "hadoop fs -mkdir /user/yarn/app-logs",
+    unless => "hadoop fs -test -e /user/yarn/app-logs",
     path => "$PATH",
     user => "yarn",
   }
   ->
   exec {"yarn-apps-logs-chmod":
-    command => "hadoop fs -chmod 1777 /user/yarn/apps-logs",
+    command => "hadoop fs -chmod 1777 /user/yarn/app-logs",
     path => "$PATH",
     user => "yarn",
   }
@@ -104,7 +136,7 @@ class hadoop_namenode {
   }
   ->
   exec {"hive-warehouse":
-    command => "hadoop fs -mkdir /apps/hive/warehouse",
+    command => "hadoop fs -mkdir -p /apps/hive/warehouse",
     unless => "hadoop fs -test -e /apps/hive/warehouse",
     path => "$PATH",
     user => "hdfs",

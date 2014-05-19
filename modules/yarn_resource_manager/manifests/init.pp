@@ -40,11 +40,6 @@ class yarn_resource_manager {
     Package['hadoop-yarn-resourcemanager']
   }
 
-  file { "/etc/init.d/hadoop-mapreduce-historyserver":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-mapreduce-historyserver",
-  }
-  ->
   package { "hadoop-yarn-resourcemanager" :
     ensure => installed,
   }
@@ -61,6 +56,11 @@ class yarn_resource_manager {
 
   package { "hadoop-mapreduce-historyserver" :
     ensure => installed,
+  }
+  ->
+  file { "/etc/init.d/hadoop-mapreduce-historyserver":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-mapreduce-historyserver",
   }
   ->
   service {"hadoop-mapreduce-historyserver":

@@ -17,7 +17,7 @@
 <% @namenode = eval(@nodes).select {|node| node[:roles].include? 'nn'
                   }[0][:hostname] + "." + @domain;
    @numslaves = eval(@nodes).select {|node| node[:roles].include? 'slave'
-                  }.size();
+                  }.size;
  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>

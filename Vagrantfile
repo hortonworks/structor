@@ -73,7 +73,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
         puppet.options = ["--libdir", "/vagrant", 
-	   "--fileserverconfig=/vagrant/fileserver.conf", "--debug"]
+	   "--fileserverconfig=/vagrant/fileserver.conf"]
         puppet.facter = {
   	  "hostname" => node[:hostname],
 	  "roles" => node[:roles],

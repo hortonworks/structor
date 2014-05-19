@@ -29,6 +29,10 @@ class hadoop_base {
     ensure => present,
   }
   ->
+  group { 'mapred':
+    ensure => present,
+  }
+  ->
   group { 'yarn':
     ensure => present,
   } 
@@ -40,6 +44,7 @@ class hadoop_base {
   ->
   user { 'mapred':
     ensure => present,
+    groups => ['mapred'],
     gid => hadoop,
   } 
   ->
@@ -51,15 +56,10 @@ class hadoop_base {
   ->
   user { 'hive':
     ensure => present,
-    gid => hadoop,
-  }
-  user { 'hcat':
-    ensure => present,
+    groups => ['mapred'],
     gid => hadoop,
   }
   ->
-  Package['hadoop']
-
   package { 'hadoop':
     ensure => installed,
   }

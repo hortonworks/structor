@@ -31,10 +31,10 @@ class hadoop_slave {
     ->
     Package['hadoop-datanode']
 
-    file { "/etc/security/hadoop/tt.keytab":
+    file { "/etc/security/hadoop/nm.keytab":
       ensure => file,
-      source => "/vagrant/generated/keytabs/${hostname}/tt.keytab",
-      owner => mapred,
+      source => "/vagrant/generated/keytabs/${hostname}/nm.keytab",
+      owner => yarn,
       group => hadoop,
       mode => '400',
     }
@@ -43,7 +43,7 @@ class hadoop_slave {
       ensure => installed,
     }
     ->
-    file { "/etc/hadoop/default/container-executor.cfg":
+    file { "/etc/hadoop/hdp/container-executor.cfg":
       ensure => file,
       content => template('hadoop_slave/container-executor.erb'),
       owner => root,
@@ -54,7 +54,7 @@ class hadoop_slave {
     Package['hadoop-tasktracker']
   }
 
-  package { "hadoop-datanode" :
+  package { "hadoop-hdfs-datanode" :
     ensure => installed,
   }
   ->
@@ -63,7 +63,7 @@ class hadoop_slave {
     source => "puppet:///files/init.d/hadoop-hdfs-datanode",
   }
   ->
-  service {"hadoop-datanode":
+  service {"hadoop-hdfs-datanode":
     ensure => running,
     enable => true,
   }

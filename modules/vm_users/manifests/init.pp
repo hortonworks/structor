@@ -23,7 +23,9 @@ class vm_users {
 
   user { 'vagrant':
     ensure => present,
-    groups => ['users', 'vagrant'],
+    gid => vagrant,
+    groups => ['users'],
+    membership => inclusive,
   }
 
 }
