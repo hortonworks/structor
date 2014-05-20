@@ -50,13 +50,12 @@ class hadoop_base {
   ->
   user { 'yarn':
     ensure => present,
-    groups => ['yarn'],
+    groups => ['yarn', 'mapred'],
     gid => hadoop,
   } 
   ->
   user { 'hive':
     ensure => present,
-    groups => ['mapred'],
     gid => hadoop,
   }
   ->
