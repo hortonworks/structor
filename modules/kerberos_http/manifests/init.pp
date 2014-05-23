@@ -63,7 +63,7 @@ class kerberos_http {
     provider => shell,
   }
   
-  file { '/etc/hadoop/default/ssl-server.xml':
+  file { '/etc/hadoop/hdp/ssl-server.xml':
     ensure => file,
     owner => 'root',
     group => 'hadoop',

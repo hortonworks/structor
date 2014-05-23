@@ -24,27 +24,27 @@ class hive_client {
     ensure => 'directory',
   }
 
-  file { '/etc/hive/default':
+  file { '/etc/hive/hdp':
     ensure => 'directory',
   }
 
   file { '/etc/hive/conf':
     ensure => 'link',
-    target => '/etc/hive/default',
+    target => '/etc/hive/hdp',
     require => Package['hive'],
   }
 
-  file { '/etc/hive/default/hive-env.sh':
+  file { '/etc/hive/hdp/hive-env.sh':
     ensure => file,
     content => template('hive_client/hive-env.erb'),
   }
 
-  file { '/etc/hive/default/hive-site.xml':
+  file { '/etc/hive/hdp/hive-site.xml':
     ensure => file,
     content => template('hive_client/hive-site.erb'),
   }
 
-  file { '/etc/hive/default/hive-log4j.properties':
+  file { '/etc/hive/hdp/hive-log4j.properties':
     ensure => file,
     content => template('hive_client/hive-log4j.erb'),
   }

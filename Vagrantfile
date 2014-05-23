@@ -44,7 +44,7 @@ install_hive = true
 install_pig = true
 
 # security options
-security = false
+security = true
 realm = "EXAMPLE.COM"
 
 # memory options
