@@ -89,9 +89,9 @@
 <% if @security == "true" -%>
   <property>
     <name>hadoop.security.auth_to_local</name>
-    <value>RULE:[2:$1@$0]([rn]m@.*APACHE.ORG)s/.*/yarn/
-RULE:[2:$1@$0]([nd]n@.*APACHE.ORG)s/.*/hdfs/
-RULE:[2:$1@$0](jhs@.*APACHE.ORG)s/.*/mapred/
+    <value>RULE:[2:$1@$0]([rn]m@<%= @realm %>)s/.*/yarn/
+RULE:[2:$1@$0]([nd]n@<%= @realm %>)s/.*/hdfs/
+RULE:[2:$1@$0](jhs@<%= @realm %>)s/.*/mapred/
 DEFAULT</value>
   </property>
     
@@ -123,6 +123,36 @@ DEFAULT</value>
   <property>
     <name>hadoop.proxyuser.hcat.hosts</name>
     <value><%= @hcat_servers %></value>
+  </property>
+
+  <property>
+    <name>hadoop.http.filter.initializers</name>
+    <value>org.apache.hadoop.security.AuthenticationFilterInitializer</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.type</name>
+    <value>kerberos</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.cookie.domain</name>
+    <value><%= @domain %></value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.kerberos.principal</name>
+    <value>HTTP/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.kerberos.keytab</name>
+    <value>/etc/security/hadoop/http.keytab</value>
+  </property>
+
+  <property>
+    <name>hadoop.http.authentication.signature.secret.file</name>
+    <value>/etc/security/hadoop/http-secret</value>
   </property>
 <% end -%>
 </configuration>

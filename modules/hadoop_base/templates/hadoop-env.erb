@@ -60,7 +60,7 @@ export HADOOP_MAPRED_PID_DIR=<%= @pid_dir %>/$USER
 YARN_RESOURCEMANAGER_OPTS="-Dyarn.server.resourcemanager.appsummary.logger=INFO,RMSUMMARY"
 
 # A string representing this instance of hadoop.
-export HADOOP_IDENT_STRING="HDP"
+export HADOOP_IDENT_STRING="$USER"
 
 # Setting path to hdfs command line
 export HADOOP_LIBEXEC_DIR=/usr/lib/hadoop/libexec

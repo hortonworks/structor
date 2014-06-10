@@ -43,6 +43,8 @@ class hadoop_namenode {
   file { "/etc/init.d/hadoop-hdfs-namenode":
     ensure => file,
     source => "puppet:///files/init.d/hadoop-hdfs-namenode",
+    owner => root,
+    group => root,
   }
   ->
   exec {"namenode-format":
@@ -74,7 +76,7 @@ class hadoop_namenode {
   exec {"yarn-home-chmod":
     command => "hadoop fs -chmod 755 /user/yarn",
     path => "$PATH",
-    user => "yarn",
+    user => "hdfs",
   }
   ->
   exec {"yarn-history-mkdir":
@@ -100,19 +102,19 @@ class hadoop_namenode {
     command => "hadoop fs -mkdir /user/yarn/app-logs",
     unless => "hadoop fs -test -e /user/yarn/app-logs",
     path => "$PATH",
-    user => "yarn",
+    user => "hdfs",
   }
   ->
   exec {"yarn-app-logs-chmod":
     command => "hadoop fs -chmod 1777 /user/yarn/app-logs",
     path => "$PATH",
-    user => "yarn",
+    user => "hdfs",
   }
   ->
   exec {"yarn-app-logs-chown":
     command => "hadoop fs -chown yarn:mapred /user/yarn/app-logs",
     path => "$PATH",
-    user => "yarn",
+    user => "hdfs",
   }
   ->
   exec {"vagrant-home-mkdir":

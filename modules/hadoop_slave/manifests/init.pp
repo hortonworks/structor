@@ -27,9 +27,7 @@ class hadoop_slave {
       mode => '400',
     }
     ->
-    Package['hadoop-sbin']
-    ->
-    Package['hadoop-datanode']
+    Package['hadoop-hdfs-datanode']
 
     file { "/etc/security/hadoop/nm.keytab":
       ensure => file,
@@ -37,10 +35,6 @@ class hadoop_slave {
       owner => yarn,
       group => hadoop,
       mode => '400',
-    }
-    ->
-    package { "hadoop-sbin":
-      ensure => installed,
     }
     ->
     file { "/etc/hadoop/hdp/container-executor.cfg":
@@ -51,7 +45,7 @@ class hadoop_slave {
       mode => 400,
     }
     ->
-    Package['hadoop-tasktracker']
+    Package['hadoop-yarn-nodemanager']
   }
 
   package { "hadoop-hdfs-datanode" :
@@ -61,6 +55,8 @@ class hadoop_slave {
   file { "/etc/init.d/hadoop-hdfs-datanode":
     ensure => file,
     source => "puppet:///files/init.d/hadoop-hdfs-datanode",
+    owner => root,
+    group => root,
   }
   ->
   service {"hadoop-hdfs-datanode":
@@ -75,6 +71,8 @@ class hadoop_slave {
   file { "/etc/init.d/hadoop-yarn-nodemanager":
     ensure => file,
     source => "puppet:///files/init.d/hadoop-yarn-nodemanager",
+    owner => root,
+    group => root,
   }
   ->
   service {"hadoop-yarn-nodemanager":

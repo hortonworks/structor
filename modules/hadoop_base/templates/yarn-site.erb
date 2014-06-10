@@ -206,7 +206,7 @@
     
   <property>
     <name>yarn.nodemanager.linux-container-executor.group</name>
-    <value>hadoop</value>
+    <value>yarn</value>
   </property>
     
   <property>
@@ -299,6 +299,11 @@
     <name>yarn.resourcemanager.webapp.spnego-keytab-file</name>
     <value><%= @keytab_dir %>/http.keytab</value>
   </property>
+
+  <property>
+    <name>yarn.http.policy</name>
+    <value>https_only</value>
+  </property>
 <% end -%>
-    
+
 </configuration>
