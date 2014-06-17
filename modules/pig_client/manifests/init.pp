@@ -13,8 +13,10 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class pig {
-  require hadoop_base
+class pig_client {
+  require yarn_client
+
+  $conf_dir="/etc/pig/hdp"
 
   package { 'pig':
     ensure => present,
@@ -24,28 +26,28 @@ class pig {
     ensure => 'directory',
   }
 
-  file { '/etc/pig/default':
+  file { "${conf_dir}":
     ensure => 'directory',
   }
 
   file { '/etc/pig/conf':
     ensure => 'link',
-    target => '/etc/pig/default',
+    target => "${conf_dir}",
     require => Package['pig'],
   }
 
-  file { '/etc/pig/default/pig-env.sh':
+  file { "${conf_dir}/pig-env.sh":
     ensure => file,
-    content => template('pig/pig-env.erb'),
+    content => template('pig_client/pig-env.erb'),
   }
 
-  file { '/etc/pig/default/log4j.properties':
+  file { "${conf_dir}/log4j.properties":
     ensure => file,
-    content => template('pig/log4j.erb'),
+    content => template('pig_client/log4j.erb'),
   }
 
-  file { '/etc/pig/default/pig.properties':
+  file { "${conf_dir}/pig.properties":
     ensure => file,
-    content => template('pig/pig.erb'),
+    content => template('pig_client/pig.erb'),
   }
 }

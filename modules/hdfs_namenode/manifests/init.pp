@@ -13,14 +13,15 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class hadoop_namenode {
-  require hadoop_base
+class hdfs_namenode {
+  require hdfs_client
+  require hadoop_server
 
   $PATH="/bin:/usr/bin"
 
   if $security == "true" {
     require kerberos_http
-    file { "/etc/security/hadoop/nn.keytab":
+    file { "${hdfs_client::keytab_dir}/nn.keytab":
       ensure => file,
       source => "/vagrant/generated/keytabs/${hostname}/nn.keytab",
       owner => hdfs,
@@ -28,7 +29,7 @@ class hadoop_namenode {
       mode => '400',
     }
     ->
-    exec { "kinit -k -t /etc/security/hadoop/nn.keytab nn/${hostname}.${domain}":
+    exec { "kinit -k -t ${hdfs_client::keytab_dir}/nn.keytab nn/${hostname}.${domain}":
       path => $PATH,
       user => hdfs,
     }
@@ -50,7 +51,7 @@ class hadoop_namenode {
   exec {"namenode-format":
     command => "hadoop namenode -format",
     path => "$PATH",
-    creates => "${data_dir}/hdfs/namenode",
+    creates => "${hdfs_client::data_dir}/hdfs/namenode",
     user => "hdfs",
     require => Package['hadoop-hdfs-namenode'],
   }

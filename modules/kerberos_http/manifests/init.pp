@@ -14,8 +14,7 @@
 #   limitations under the License.
 
 class kerberos_http {
-
-  require hadoop_base
+  require hadoop_server
   require kerberos_client
   require ssl_ca
 
@@ -23,17 +22,16 @@ class kerberos_http {
     Class['kerberos_kdc'] -> Class['kerberos_http']
   }
 
-  $java = "/usr/java/default"
-  $path = "${java}/bin:/bin:/usr/bin"
+  $path = "${jdk::HOME}/bin:/bin:/usr/bin"
 
-  file { "/etc/security/hadoop":
+  file { "${hdfs_client::keytab_dir}":
     ensure => directory,
     owner => 'root',
     group => 'hadoop',
     mode => '750',
   }
   ->
-  file { "/etc/security/hadoop/http-secret":
+  file { "${hdfs_client::keytab_dir}/http-secret":
     ensure => file,
     # this needs to be a cluster wide secret
     content => vagrant,
@@ -42,7 +40,7 @@ class kerberos_http {
     mode => 440,
   }
   ->
-  file { "/etc/security/hadoop/http.keytab":
+  file { "${hdfs_client::keytab_dir}/http.keytab":
     ensure => file,
     source => "/vagrant/generated/keytabs/${hostname}/HTTP.keytab",
     owner => 'root',
@@ -57,13 +55,13 @@ class kerberos_http {
   }
   ->
   exec { '/tmp/create-cert':
-    creates => '/etc/security/hadoop/server.crt',
-    cwd => '/etc/security/hadoop',
+    creates => "${hdfs_client::keytab_dir}/server.crt",
+    cwd => "${hdfs_client::keytab_dir}",
     path => '$path',
     provider => shell,
   }
   
-  file { '/etc/hadoop/hdp/ssl-server.xml':
+  file { "${hdfs_client::conf_dir}/ssl-server.xml":
     ensure => file,
     owner => 'root',
     group => 'hadoop',

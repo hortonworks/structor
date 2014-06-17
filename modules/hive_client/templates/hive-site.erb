@@ -89,7 +89,7 @@
 <% if @security == "true" -%>
   <property>
     <name>hive.metastore.kerberos.keytab.file</name>
-    <value>/etc/security/hadoop/hive.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/hive.keytab</value>
     <description>The path to the Kerberos Keytab file containing the 
       metastore thrift server's service principal.</description>
   </property>

@@ -13,23 +13,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class hadoop_slave {
-  require hadoop_base
+class yarn_node_manager {
+  require yarn_client
+  require hadoop_server
 
   if $security == "true" {
     require kerberos_http
 
-    file { "/etc/security/hadoop/dn.keytab":
-      ensure => file,
-      source => "/vagrant/generated/keytabs/${hostname}/dn.keytab",
-      owner => hdfs,
-      group => hadoop,
-      mode => '400',
-    }
-    ->
-    Package['hadoop-hdfs-datanode']
-
-    file { "/etc/security/hadoop/nm.keytab":
+    file { "${hdfs_client::keytab_dir}/nm.keytab":
       ensure => file,
       source => "/vagrant/generated/keytabs/${hostname}/nm.keytab",
       owner => yarn,
@@ -37,31 +28,15 @@ class hadoop_slave {
       mode => '400',
     }
     ->
-    file { "/etc/hadoop/hdp/container-executor.cfg":
+    file { "${hdfs_client::conf_dir}/container-executor.cfg":
       ensure => file,
-      content => template('hadoop_slave/container-executor.erb'),
+      content => template('yarn_node_manager/container-executor.erb'),
       owner => root,
       group => mapred,
       mode => 400,
     }
     ->
     Package['hadoop-yarn-nodemanager']
-  }
-
-  package { "hadoop-hdfs-datanode" :
-    ensure => installed,
-  }
-  ->
-  file { "/etc/init.d/hadoop-hdfs-datanode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-datanode",
-    owner => root,
-    group => root,
-  }
-  ->
-  service {"hadoop-hdfs-datanode":
-    ensure => running,
-    enable => true,
   }
 
   package { "hadoop-yarn-nodemanager" :

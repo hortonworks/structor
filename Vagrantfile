@@ -1,6 +1,3 @@
-# -*- mode: ruby -*-
-# vi: set ft=ruby :
-
 #  Licensed to the Apache Software Foundation (ASF) under one or more
 #   contributor license agreements.  See the NOTICE file distributed with
 #   this work for additional information regarding copyright ownership.
@@ -40,11 +37,10 @@ nodes = [
 domain = "example.com"
 
 # clients to install
-install_hive = true
-install_pig = true
+clients = ['hdfs', 'yarn', 'pig', 'hive']
 
 # security options
-security = false
+security = true
 realm = "EXAMPLE.COM"
 
 # memory options
@@ -81,8 +77,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	  "domain" => domain,
           "security" => security,
           "realm" => realm,
-	  "install_hive" => install_hive,
-	  "install_pig" => install_pig,
+          "clients" => clients,
           "server_mem" => server_mem,
           "client_mem" => client_mem,
         }

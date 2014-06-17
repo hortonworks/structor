@@ -22,8 +22,7 @@
 <property>
   <name>ssl.server.truststore.location</name>
   <value>/usr/java/default/jre/lib/security/cacerts</value>
-  <description>Truststore to be used by NN and DN. Must be specified.
-  </description>
+  <description>Truststore to be used by NN and DN. </description>
 </property>
 
 <property>
@@ -33,23 +32,18 @@
 
 <property>
   <name>ssl.server.keystore.location</name>
-  <value>/etc/security/hadoop/server.jks</value>
-  <description>Keystore to be used by NN and DN. Must be specified.
-  </description>
+  <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/server.jks</value>
+  <description>Keystore to be used by NN and DN.</description>
 </property>
 
 <property>
   <name>ssl.server.keystore.password</name>
   <value>changeit</value>
-  <description>Must be specified.
-  </description>
 </property>
 
 <property>
   <name>ssl.server.keystore.keypassword</name>
   <value>changeit</value>
-  <description>Must be specified.
-  </description>
 </property>
 
 </configuration>

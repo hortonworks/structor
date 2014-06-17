@@ -14,12 +14,13 @@
 #   limitations under the License.
 
 class yarn_resource_manager {
-  require hadoop_base
+  require yarn_client
+  require hadoop_server
 
   if $security == "true" {
     require kerberos_http
 
-    file { "/etc/security/hadoop/rm.keytab":
+    file { "${hdfs_client::keytab_dir}/rm.keytab":
       ensure => file,
       source => "/vagrant/generated/keytabs/${hostname}/rm.keytab",
       owner => 'yarn',
@@ -29,7 +30,7 @@ class yarn_resource_manager {
     ->
     Package['hadoop-mapreduce-historyserver']
 
-    file { "/etc/security/hadoop/jhs.keytab":
+    file { "${hdfs_client::keytab_dir}/jhs.keytab":
       ensure => file,
       source => "/vagrant/generated/keytabs/${hostname}/jhs.keytab",
       owner => 'mapred',

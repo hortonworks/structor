@@ -13,11 +13,37 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class jdk {
-  $HOME = "${ROOT}/default"
+class hdfs_datanode {
+  require hdfs_client
+  require hadoop_server
 
-  file { "${HOME}":
-    ensure => "link",
-    target => "/usr/java/jdk1.6.0_31",
+  if $security == "true" {
+    require kerberos_http
+
+    file { "${hdfs_client::keytab_dir}/dn.keytab":
+      ensure => file,
+      source => "/vagrant/generated/keytabs/${hostname}/dn.keytab",
+      owner => hdfs,
+      group => hadoop,
+      mode => '400',
+    }
+    ->
+    Package['hadoop-hdfs-datanode']
+  }
+
+  package { "hadoop-hdfs-datanode" :
+    ensure => installed,
+  }
+  ->
+  file { "/etc/init.d/hadoop-hdfs-datanode":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-hdfs-datanode",
+    owner => root,
+    group => root,
+  }
+  ->
+  service {"hadoop-hdfs-datanode":
+    ensure => running,
+    enable => true,
   }
 }

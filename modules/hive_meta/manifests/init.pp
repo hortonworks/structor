@@ -18,7 +18,7 @@ class hive_meta {
   require hive_db
 
   if $security == "true" {
-    file { "/etc/security/hadoop/hive.keytab":
+    file { "${hdfs_client::keytab_dir}/hive.keytab":
       ensure => file,
       source => "/vagrant/generated/keytabs/${hostname}/hive.keytab",
       owner => hive,

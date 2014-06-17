@@ -227,7 +227,7 @@
     
   <property>
     <name>mapreduce.jobhistory.keytab</name>
-    <value><%= @keytab_dir %>/jhs.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/jhs.keytab</value>
   </property>
     
   <property>
@@ -237,7 +237,12 @@
 
   <property>
     <name>mapreduce.jobhistory.webapp.spnego-keytab-file</name>
-    <value><%= @keytab_dir %>/http.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/http.keytab</value>
+  </property>
+
+  <property>
+    <name>mapreduce.jobhistory.http.policy</name>
+    <value>https_only</value>
   </property>
 <% end -%>
 

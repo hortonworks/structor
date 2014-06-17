@@ -147,12 +147,12 @@ DEFAULT</value>
 
   <property>
     <name>hadoop.http.authentication.kerberos.keytab</name>
-    <value>/etc/security/hadoop/http.keytab</value>
+    <value><%= @keytab_dir %>/http.keytab</value>
   </property>
 
   <property>
     <name>hadoop.http.authentication.signature.secret.file</name>
-    <value>/etc/security/hadoop/http-secret</value>
+    <value><%= @keytab_dir %>/http-secret</value>
   </property>
 <% end -%>
 </configuration>

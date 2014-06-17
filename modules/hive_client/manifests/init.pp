@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 class hive_client {
-  require hadoop_base
+  require yarn_client
 
   package { 'hive':
     ensure => installed,

@@ -28,23 +28,27 @@ if $security == "true" and hasrole($roles, 'kdc') {
 }
 
 if hasrole($roles, 'client') {
-  include hadoop_base
-
-  if $install_pig == "true" {
-    include pig
+  if hasrole($clients, 'hdfs') {
+    include hdfs_client
   }
-
-  if $install_hive == "true" {
+  if hasrole($clients, 'yarn') {
+    include yarn_client
+  }
+  if hasrole($clients, 'hive') {
     include hive_client
+  }
+  if hasrole($clients, 'pig') {
+    include pig_client
   }
 }
 
 if hasrole($roles, 'nn') {
-  include hadoop_namenode
+  include hdfs_namenode
 }
 
 if hasrole($roles, 'slave') {
-  include hadoop_slave
+  include hdfs_datanode
+  include yarn_node_manager
 }
 
 if hasrole($roles, 'yarn') {
@@ -62,7 +66,7 @@ if hasrole($roles, 'hive-db') {
 # Ensure the kdc is brought up before the namenode and hive metastore
 if $security == "true" and hasrole($roles, 'kdc') {
   if hasrole($roles, 'nn') {
-    Class['kerberos_kdc'] -> Class['hadoop_namenode']
+    Class['kerberos_kdc'] -> Class['hdfs_namenode']
   }
 
   if hasrole($roles, 'hive-meta') {
@@ -73,14 +77,14 @@ if $security == "true" and hasrole($roles, 'kdc') {
 # Ensure the namenode is brought up before the slaves, jobtracker or metastore
 if hasrole($roles, 'nn') {
   if hasrole($roles, 'slave') {
-    Class['hadoop_namenode'] -> Class['hadoop_slave']
+    Class['hdfs_namenode'] -> Class['hdfs_datanode']
   }
 
   if hasrole($roles, 'yarn') {
-    Class['hadoop_namenode'] -> Class['yarn_resource_manager']
+    Class['hdfs_namenode'] -> Class['yarn_resource_manager']
   }
 
   if hasrole($roles, 'hive-meta') {
-    Class['hadoop_namenode'] -> Class['hive_meta']
+    Class['hdfs_namenode'] -> Class['hive_meta']
   }
 }

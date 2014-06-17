@@ -121,7 +121,7 @@
     
   <property>
     <name>yarn.nodemanager.local-dirs</name>
-    <value><%= @data_dir %>/yarn/node</value>
+    <value><%= scope.lookupvar('hdfs_client::data_dir') %>/yarn/node</value>
   </property>
     
   <property>
@@ -146,7 +146,7 @@
     
   <property>
     <name>yarn.nodemanager.log-dirs</name>
-    <value><%= @log_dir %>/yarn/node</value>
+    <value><%= scope.lookupvar('hdfs_client::log_dir') %>/yarn/node</value>
   </property>
     
   <property>
@@ -181,7 +181,7 @@
     
   <property>
     <name>yarn.acl.enable</name>
-    <value>true</value>
+    <value><%= @security %></value>
   </property>
     
   <property>
@@ -191,7 +191,7 @@
     
   <property>
     <name>yarn.admin.acl</name>
-    <value>*</value>
+    <value></value>
   </property>
     
   <property>
@@ -211,17 +211,12 @@
     
   <property>
     <name>yarn.timeline-service.leveldb-timeline-store.path</name>
-    <value><%= @yarn_dir %>/yarn/timeline</value>
+    <value><%= @user_logs %>/timeline</value>
   </property>
     
   <property>
     <name>yarn.nodemanager.remote-app-log-dir</name>
-    <value>/user/yarn/app-logs</value>
-  </property>
-    
-  <property>
-    <name>yarn.log.server.url</name>
-    <value>http://<%= @yarn %>:19888/jobhistory/logs</value>
+    <value><%= @user_logs %>/app-logs</value>
   </property>
     
   <property>
@@ -262,7 +257,7 @@
     
   <property>
     <name>yarn.nodemanager.keytab</name>
-    <value><%= @keytab_dir %>/nm.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/nm.keytab</value>
   </property>
 
   <property>
@@ -272,7 +267,7 @@
     
   <property>
     <name>yarn.nodemanager.webapp.spnego-keytab-file</name>
-    <value><%= @keytab_dir %>/http.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/http.keytab</value>
   </property>
 
   <property>
@@ -282,7 +277,7 @@
     
   <property>
     <name>yarn.resourcemanager.keytab</name>
-    <value><%= @keytab_dir %>/rm.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/rm.keytab</value>
   </property>
     
   <property>
@@ -297,12 +292,22 @@
     
   <property>
     <name>yarn.resourcemanager.webapp.spnego-keytab-file</name>
-    <value><%= @keytab_dir %>/http.keytab</value>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/http.keytab</value>
   </property>
 
   <property>
     <name>yarn.http.policy</name>
     <value>https_only</value>
+  </property>
+
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>https://<%= @yarn %>:19890/jobhistory/logs</value>
+  </property>
+<% else -%>    
+  <property>
+    <name>yarn.log.server.url</name>
+    <value>http://<%= @yarn %>:19888/jobhistory/logs</value>
   </property>
 <% end -%>
 
