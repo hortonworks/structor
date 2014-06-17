@@ -40,7 +40,7 @@ domain = "example.com"
 clients = ['hdfs', 'yarn', 'pig', 'hive']
 
 # security options
-security = true
+security = false
 realm = "EXAMPLE.COM"
 
 # memory options
