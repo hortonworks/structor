@@ -46,6 +46,14 @@ in /etc/hosts:
 240.0.0.14 slave3.example.com
 ```
 
+### Finding the Web UIs
+
+| Server      | Non-Secure                   | Secure                        |
+|:-----------:|:----------------------------:|:-----------------------------:|
+| NameNode    | http://nn.example.com:50070/ | https://nn.example.com:50470/ |
+| ResourceMgr | http://nn.example.com:8088/  | https://nn.example.com:8090/  |
+| JobHistory  | http://nn.example.com:19888/ | https://nn.example.com:19890/ |
+
 ### Install MacPorts Kerberos
 
 Use MacPorts to install kerberos5. I find it works more reliably than Apple's 
