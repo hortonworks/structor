@@ -54,11 +54,6 @@ in /etc/hosts:
 | ResourceMgr | http://nn.example.com:8088/  | https://nn.example.com:8090/  |
 | JobHistory  | http://nn.example.com:19888/ | https://nn.example.com:19890/ |
 
-### Install MacPorts Kerberos
-
-Use MacPorts to install kerberos5. I find it works more reliably than Apple's 
-built in kerberos. 
-
 ### Set up Kerberos (for security)
 
 in /etc/krb5.conf:
@@ -97,7 +92,8 @@ password: vagrant):
 
 ### Set up browser (for security)
 
-Do a kinit in a terminal.
+Do a "/usr/bin/kinit vagrant" in a terminal. I've found that the browsers
+won't use the credentials from MacPorts' kinit. 
 
 Safari should just work.
 
