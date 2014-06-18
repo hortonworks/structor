@@ -40,6 +40,9 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'pig') {
     include pig_client
   }
+  if hasrole($clients, 'zk') {
+    include zookeeper_client
+  }
 }
 
 if hasrole($roles, 'nn') {
@@ -61,6 +64,10 @@ if hasrole($roles, 'hive-meta') {
 
 if hasrole($roles, 'hive-db') {
   include hive_db
+}
+
+if hasrole($roles, 'zk') {
+  include zookeeper_server
 }
 
 # Ensure the kdc is brought up before the namenode and hive metastore

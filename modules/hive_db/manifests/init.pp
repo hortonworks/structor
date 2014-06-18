@@ -35,5 +35,6 @@ class hive_db {
     command => "mysql -u root --password=vagrant < files/setup-hive.txt",
     path => "${PATH}",
     cwd => "/vagrant/modules/hive_db",
+    creates => "/var/lib/mysql/hive",
   }
 }

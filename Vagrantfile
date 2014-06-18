@@ -23,12 +23,13 @@ VAGRANTFILE_API_VERSION = "2"
 #   slave - HDFS DataNode & Yarn Node Manager
 #   hive-db - Hive MetaStore backing mysql
 #   hive-meta - Hive MetaStore
+#   zk - Zookeeper
 
 # For each node
 nodes = [
   { :hostname => 'gw', :ip => '240.0.0.10', :roles => ['client']},
   { :hostname => 'nn', :ip => '240.0.0.11', 
-    :roles => ['kdc', 'nn', 'yarn', 'hive-meta', 'hive-db']},
+    :roles => ['kdc', 'nn', 'yarn', 'hive-meta', 'hive-db', 'zk']},
   { :hostname => 'slave1', :ip => '240.0.0.12', :roles => ['slave']},
 #  { :hostname => 'slave2', :ip => '240.0.0.13', :roles => ['slave']},
 #  { :hostname => 'slave3', :ip => '240.0.0.14', :roles => ['slave']},
@@ -36,11 +37,11 @@ nodes = [
 
 domain = "example.com"
 
-# clients to install
-clients = ['hdfs', 'yarn', 'pig', 'hive']
+# clients to install to the client machines
+clients = ['hdfs', 'yarn', 'pig', 'hive', 'zk']
 
 # security options
-security = false
+security = true
 realm = "EXAMPLE.COM"
 
 # memory options

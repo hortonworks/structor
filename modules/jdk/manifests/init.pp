@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 class jdk {
-  $HOME = "${ROOT}/default"
+  $HOME = "/usr/java/default"
 
   file { "${HOME}":
     ensure => "link",

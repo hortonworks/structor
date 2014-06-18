@@ -23,7 +23,8 @@ KEYDIR=/vagrant/generated/keytabs
    users = {'nn' => ['nn', 'HTTP'],
             'yarn' => ['rm', 'jhs', 'HTTP'],
             'slave' => ['nm', 'dn', 'HTTP'],
-            'hive-meta' => ['hive']}; -%>
+            'hive-meta' => ['hive'],
+            'zk' => ['zookeeper']}; -%>
 
 # ensure we don't have old keytabs
 rm -fr $KEYDIR
