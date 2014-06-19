@@ -23,7 +23,7 @@ VAGRANTFILE_API_VERSION = "2"
 #   slave - HDFS DataNode & Yarn Node Manager
 #   hive-db - Hive MetaStore backing mysql
 #   hive-meta - Hive MetaStore
-#   zk - Zookeeper
+#   zk - Zookeeper Server
 
 # For each node
 nodes = [
@@ -37,11 +37,11 @@ nodes = [
 
 domain = "example.com"
 
-# clients to install to the client machines
+# clients to install on the client machines
 clients = ['hdfs', 'yarn', 'pig', 'hive', 'zk']
 
 # security options
-security = true
+security = false
 realm = "EXAMPLE.COM"
 
 # memory options
