@@ -1,7 +1,23 @@
 # Structor
 =======
 
-Vagrant files for standing up clusters on various OSs.
+Vagrant files for creating virtual multi-node Hadoop clusters on various OSes,
+both with and without security.
+
+The currently supported OSes and the providers:
+* centos 6 (virtualbox and vmware_fusion)
+
+We'd like to get Ubuntu and SUSE support as well.
+
+The currently supported projects:
+* HDFS
+* Yarn
+* MapReduce
+* Hive
+* Pig
+* Zookeeper
+
+We'd live to support Tez, HBase, Storm, etc. as well.
 
 ## Modify the cluster
 
@@ -11,8 +27,7 @@ control knobs are in this file. In particular,
 * nodes - a list of virtual machines to create
 * security - a boolean for whether kerberos is enabled
 * vm_memory - the amount of memory for each vm
-* install_hive - a boolean controlling whether the hive client is installed
-* install_pig - a boolean controlling whether pig is installed
+* clients - a list of packages to install on client machines
 
 For each host in nodes, you define the name, ip address, and the roles for 
 that node. The available roles are:
@@ -20,15 +35,16 @@ that node. The available roles are:
 * client - client machine
 * kdc - kerberos kdc
 * nn - HDFS NameNode
-* jt - MapReduce JobTracker
-* slave - HDFS DataNode & MapReduce TaskTracker
+* yarn - Yarn Resource Manager and MapReduce Job History Server
+* slave - HDFS DataNode & Yarn NodeManager
 * hive-db - Hive MetaStore backing mysql
 * hive-meta - Hive MetaStore
+* zk - Zookeeper Server
 
 ## Bring up the cluster
 
-Use "vagrant up" to bring up the cluster. This will take 20 to 30 minutes for 
-a 4 node cluster.
+Use "vagrant up" to bring up the cluster. This will take 30 to 40 minutes for 
+a 3 node cluster depending on your hardware and network connection.
 
 Use "vagrant ssh gw" to login to the gateway machine. If you configured 
 security, you'll need to kinit before you run any hadoop commands.
