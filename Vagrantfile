@@ -13,6 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+require 'json'
+
 VAGRANTFILE_API_VERSION = "2"
 
 # Valid roles are:
@@ -25,29 +27,30 @@ VAGRANTFILE_API_VERSION = "2"
 #   hive-meta - Hive MetaStore
 #   zk - Zookeeper Server
 
-# For each node
-nodes = [
-  { :hostname => 'gw', :ip => '240.0.0.10', :roles => ['client']},
-  { :hostname => 'nn', :ip => '240.0.0.11', 
-    :roles => ['kdc', 'nn', 'yarn', 'hive-meta', 'hive-db', 'zk']},
-  { :hostname => 'slave1', :ip => '240.0.0.12', :roles => ['slave']},
-#  { :hostname => 'slave2', :ip => '240.0.0.13', :roles => ['slave']},
-#  { :hostname => 'slave3', :ip => '240.0.0.14', :roles => ['slave']},
-]
+###############################################################################
+# Loads a profile, which is a JSON object describing a specific configuation.
+# First looks for a file in the current directory named current-profile.json
+# Then looks for profiles/current-profile.json
+# Finally looks for profiles/default-profile.json
+# The suggesion is to create a symlink named current-profile.json the desired
+# profile in the profiles directory.  The current-profile.json will be added
+# to .gitignore to avoid it accidentially being pushed to the origin repo.
+###############################################################################
+def loadProfile()
+  profiles = 'profiles'
+  file = 'current-profile.json'
+  if !File.file?( file )
+    file = File.join( profiles, 'current-profile.json' )
+    if !File.file?( file )
+      file = File.join( profiles, 'default-profile.json' )
+    end
+  end
+  puts "Loading profile %s\n" % [File.realpath(file)]
+  return JSON.parse( IO.read( file ), opts = { symbolize_names: true } )
+end
 
-domain = "example.com"
-
-# clients to install on the client machines
-clients = ['hdfs', 'yarn', 'pig', 'hive', 'zk']
-
-# security options
-security = false
-realm = "EXAMPLE.COM"
-
-# memory options
-vm_memory = 2048
-server_mem = 300
-client_mem = 200
+profile = loadProfile()
+#puts JSON.pretty_generate( profile )
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
@@ -56,31 +59,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "omalley/centos6_x64"
 
   config.vm.provider :virtualbox do |vb|
-    vb.customize ["modifyvm", :id, "--memory", vm_memory]
+    vb.customize ["modifyvm", :id, "--memory", profile[:vm_mem] ]
   end
 
   config.vm.provider :vmware_fusion do |vm|
-    vm.vmx["memsize"] = vm_memory
+    vm.vmx["memsize"] = profile[:vm_mem]
   end
 
-  nodes.each do |node|
+  profile[:nodes].each do |node|
     config.vm.define node[:hostname] do |node_config|
-      node_config.vm.hostname = node[:hostname] + "." + domain
+      node_config.vm.hostname = node[:hostname] + "." + profile[:domain]
       node_config.vm.network :private_network, ip: node[:ip]
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
         puppet.options = ["--libdir", "/vagrant", 
-	   "--fileserverconfig=/vagrant/fileserver.conf"]
+            "--fileserverconfig=/vagrant/fileserver.conf"]
         puppet.facter = {
-  	  "hostname" => node[:hostname],
-	  "roles" => node[:roles],
-          "nodes" => nodes,
-	  "domain" => domain,
-          "security" => security,
-          "realm" => realm,
-          "clients" => clients,
-          "server_mem" => server_mem,
-          "client_mem" => client_mem,
+          "hostname" => node[:hostname],
+          "roles" => node[:roles],
+          "nodes" => profile[:nodes],
+          "domain" => profile[:domain],
+          "security" => profile[:security],
+          "realm" => profile[:realm],
+          "clients" => profile[:clients],
+          "server_mem" => profile[:server_mem],
+          "client_mem" => profile[:client_mem],
+          "profile" => profile
         }
       end
     end

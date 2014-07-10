@@ -17,12 +17,19 @@ The currently supported projects:
 * Pig
 * Zookeeper
 
-We'd live to support Tez, HBase, Storm, etc. as well.
+We'd love to support Tez, HBase, Storm, etc. as well.
 
 ## Modify the cluster
 
-In VagrantFile, change the list of machines to match what you need. The common
-control knobs are in this file. In particular,
+A JSON format profile is used to define the configuration of the cluster.
+There are various profiles stored in the profiles directory including a default-profile.json.
+This profile will be used unless a different profile is specified.
+Alternatite profiles are specified by creating a current-profile.json file in either the root directory
+(i.e. the directory with the Vagrant file) or in the profiles directory.
+The recommendation is to create a sympolic link named current-profile.json to your preferred profile.
+
+You are encouraged to contribute new working profiles that can be shared by others.
+The types of control knob in the profile JSON file are:
 
 * nodes - a list of virtual machines to create
 * security - a boolean for whether kerberos is enabled
@@ -40,6 +47,24 @@ that node. The available roles are:
 * hive-db - Hive MetaStore backing mysql
 * hive-meta - Hive MetaStore
 * zk - Zookeeper Server
+
+This is an example of the current default-profile.json
+```
+{
+  "domain": "example.com",
+  "realm": "EXAMPLE.COM",
+  "security": false,
+  "vm_mem": 2048,
+  "server_mem": 300,
+  "client_mem": 200,
+  "clients" : [ "hdfs", "yarn", "pig", "hive", "zk" ],
+  "nodes": [
+    { "hostname": "gw", "ip": "240.0.0.10", "roles": [ "client" ] },
+    { "hostname": "nn", "ip": "240.0.0.11", "roles": [ "kdc", "nn", "yarn", "hive-meta", "hive-db", "zk" ] },
+    { "hostname": "slave1", "ip": "240.0.0.12", "roles": [ "slave" ] }
+  ]
+}
+```
 
 ## Bring up the cluster
 
