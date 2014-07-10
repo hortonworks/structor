@@ -24,9 +24,9 @@ We'd love to support Tez, HBase, Storm, etc. as well.
 A JSON format profile is used to define the configuration of the cluster.
 There are various profiles stored in the profiles directory including a default-profile.json.
 This profile will be used unless a different profile is specified.
-Alternatite profiles are specified by creating a current-profile.json file in either the root directory
+Alternatite profiles are specified by creating a custom-profile.json file in either the root directory
 (i.e. the directory with the Vagrant file) or in the profiles directory.
-The recommendation is to create a sympolic link named current-profile.json to your preferred profile.
+The recommendation is to create a sympolic link named custom-profile.json to your preferred profile.
 
 You are encouraged to contribute new working profiles that can be shared by others.
 The types of control knob in the profile JSON file are:
@@ -68,10 +68,10 @@ This is an example of the current default-profile.json
 
 ## Bring up the cluster
 
-Use "vagrant up" to bring up the cluster. This will take 30 to 40 minutes for 
+Use `vagrant up` to bring up the cluster. This will take 30 to 40 minutes for 
 a 3 node cluster depending on your hardware and network connection.
 
-Use "vagrant ssh gw" to login to the gateway machine. If you configured 
+Use `vagrant ssh gw`` to login to the gateway machine. If you configured 
 security, you'll need to kinit before you run any hadoop commands.
 
 ## Set up on Mac
@@ -133,7 +133,7 @@ password: vagrant):
 
 ### Set up browser (for security)
 
-Do a "/usr/bin/kinit vagrant" in a terminal. I've found that the browsers
+Do a `/usr/bin/kinit vagrant` in a terminal. I've found that the browsers
 won't use the credentials from MacPorts' kinit. 
 
 Safari should just work.

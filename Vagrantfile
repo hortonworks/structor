@@ -29,18 +29,18 @@ VAGRANTFILE_API_VERSION = "2"
 
 ###############################################################################
 # Loads a profile, which is a JSON object describing a specific configuation.
-# First looks for a file in the current directory named current-profile.json
-# Then looks for profiles/current-profile.json
+# First looks for a file in the current directory named custom-profile.json
+# Then looks for profiles/custom-profile.json
 # Finally looks for profiles/default-profile.json
-# The suggesion is to create a symlink named current-profile.json the desired
-# profile in the profiles directory.  The current-profile.json will be added
+# The suggesion is to create a symlink named custom-profile.json the desired
+# profile in the profiles directory.  The custom-profile.json will be added
 # to .gitignore to avoid it accidentially being pushed to the origin repo.
 ###############################################################################
 def loadProfile()
   profiles = 'profiles'
-  file = 'current-profile.json'
+  file = 'custom-profile.json'
   if !File.file?( file )
-    file = File.join( profiles, 'current-profile.json' )
+    file = File.join( profiles, 'custom-profile.json' )
     if !File.file?( file )
       file = File.join( profiles, 'default-profile.json' )
     end
