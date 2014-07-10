@@ -22,11 +22,11 @@ We'd love to support Tez, HBase, Storm, etc. as well.
 ## Modify the cluster
 
 A JSON format profile is used to define the configuration of the cluster.
-There are various profiles stored in the profiles directory including a default-profile.json.
+There are various profiles stored in the profiles directory including a default.json.
 This profile will be used unless a different profile is specified.
-Alternatite profiles are specified by creating a custom-profile.json file in either the root directory
-(i.e. the directory with the Vagrant file) or in the profiles directory.
-The recommendation is to create a sympolic link named custom-profile.json to your preferred profile.
+Alternate profiles are specified by creating a profile.json file in either the root directory
+(i.e. the directory with the Vagrant file) or a custom.json in the profiles directory.
+The recommendation is to create a symbolic link named profile.json in the root pointing to your preferred profile.
 
 You are encouraged to contribute new working profiles that can be shared by others.
 The types of control knob in the profile JSON file are:
