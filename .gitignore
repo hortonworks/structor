@@ -1,5 +1,4 @@
 .vagrant
-profile.json
-custom.json
+current.profile
 generated/
 *~

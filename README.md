@@ -21,16 +21,22 @@ We'd love to support Tez, HBase, Storm, etc. as well.
 
 ## Modify the cluster
 
-A JSON format profile is used to define the configuration of the cluster.
-There are various profiles stored in the profiles directory including a default.json.
-This profile will be used unless a different profile is specified.
-Alternate profiles are specified by creating a profile.json file in either the root directory
-(i.e. the directory with the Vagrant file) or a custom.json in the profiles directory.
-The recommendation is to create a symbolic link named profile.json in the root pointing to your preferred profile.
+Structor supports profiles that control the configuration of the
+virtual cluster.  There are various profiles stored in the profiles
+directory including a default.profile. To pick a different profile,
+create a link in the top level directory named current.profile that
+links to the desired profile.
 
-You are encouraged to contribute new working profiles that can be shared by others.
-The types of control knob in the profile JSON file are:
+Current profiles:
+* 1node-nonsecure - a single node non-secure Hadoop cluster
+* 3node-secure - a three node secure Hadoop cluster
+* 5node-nonsecure - a five node secure Hadoop cluster
+* default - a three node non-secure Hadoop cluster
 
+You are encouraged to contribute new working profiles that can be
+shared by others.
+
+The types of control knob in the profile file are:
 * nodes - a list of virtual machines to create
 * security - a boolean for whether kerberos is enabled
 * vm_memory - the amount of memory for each vm
@@ -48,7 +54,7 @@ that node. The available roles are:
 * hive-meta - Hive MetaStore
 * zk - Zookeeper Server
 
-This is an example of the current default-profile.json
+This is an example of the current default.profile
 ```
 {
   "domain": "example.com",

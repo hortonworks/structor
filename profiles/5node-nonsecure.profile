@@ -8,7 +8,8 @@
   "clients" : [ "hdfs", "yarn", "pig", "hive", "zk" ],
   "nodes": [ 
     { "hostname": "gw", "ip": "240.0.0.10", "roles": [ "client" ] },
-    { "hostname": "nn", "ip": "240.0.0.11", "roles": [ "kdc", "nn", "yarn", "hive-meta", "hive-db", "zk" ] },
+    { "hostname": "nn", "ip": "240.0.0.11", 
+      "roles": [ "kdc", "nn", "yarn", "hive-meta", "hive-db", "zk" ] },
     { "hostname": "slave1", "ip": "240.0.0.12", "roles": [ "slave" ] },
     { "hostname": "slave2", "ip": "240.0.0.13", "roles": [ "slave" ] },
     { "hostname": "slave3", "ip": "240.0.0.14", "roles": [ "slave" ] }

@@ -17,40 +17,25 @@ require 'json'
 
 VAGRANTFILE_API_VERSION = "2"
 
-# Valid roles are:
-#   client - client machine
-#   kdc - kerberos kdc
-#   nn - HDFS NameNode
-#   yarn - Yarn Resource Manager and MapReduce Job History Server
-#   slave - HDFS DataNode & Yarn Node Manager
-#   hive-db - Hive MetaStore backing mysql
-#   hive-meta - Hive MetaStore
-#   zk - Zookeeper Server
+# Profile search path:
+$profile_path = ["current.profile",
+                 "profiles/default.profile"]
 
 ###############################################################################
-# Loads a profile, which is a JSON object describing a specific configuation.
-# First looks for a file in the current directory named profile.json
-# Then looks for profiles/custom.json and then for profiles/default.json
-# The suggesion is to create a symlink named profile.json in the root linked 
-# to the to desired profile in the profiles directory.  The profile.json and 
-# custom.json names have been added to .gitignore to avoid either 
-# accidentially being pushed to the origin repo.
-###############################################################################
+# Loads a profile, which is a JSON file describing a specific configuation.
+#
+# The user should create a symlink from current.profile to the desired
+# profile.
 def loadProfile()
-  profiles = 'profiles'
-  file = 'profile.json'
-  if !File.file?( file )
-    file = File.join( profiles, 'custom.json' )
-    if !File.file?( file )
-      file = File.join( profiles, 'default.json' )
+  $profile_path.each { |file| 
+    if file and File.file?(file)
+      puts "Loading profile %s\n" % [File.realpath(file)]
+      return JSON.parse( IO.read( file ), opts = { symbolize_names: true } )
     end
-  end
-  puts "Loading profile %s\n" % [File.realpath(file)]
-  return JSON.parse( IO.read( file ), opts = { symbolize_names: true } )
+  }
 end
 
 profile = loadProfile()
-#puts JSON.pretty_generate( profile )
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
