@@ -18,6 +18,7 @@ include vm_users
 include ip_setup
 include selinux
 include weak_random
+include ntp
 
 if $security == "true" {
   include kerberos_client
@@ -71,7 +72,11 @@ if hasrole($roles, 'zk') {
 }
 
 if hasrole($roles, 'knox') {
-    include knox_gateway
+  include knox_gateway
+}
+
+if hasrole($roles, 'ambari') {
+  include ambari
 }
 
 # Ensure the kdc is brought up before the namenode and hive metastore

@@ -13,13 +13,20 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class repos_setup {
-  file { '/etc/yum.repos.d/hdp.repo':
-    ensure => file,
-    source => 'puppet:///files/repos/hdp.repo',
+class ambari {
+
+  require repos_setup
+
+  package { "ambari-server":
+    ensure => installed
   }
-  file { '/etc/yum.repos.d/ambari.repo':
-    ensure => file,
-    source => 'puppet:///files/repos/ambari.repo',
+  ->
+  exec { "ambari-setup":
+    command => "/usr/sbin/ambari-server setup --silent"
   }
+  ->
+  exec { "ambari-start":
+    command => "/usr/sbin/ambari-server start --silent"
+  }
+
 }
