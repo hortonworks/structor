@@ -70,6 +70,10 @@ if hasrole($roles, 'zk') {
   include zookeeper_server
 }
 
+if hasrole($roles, 'knox') {
+    include knox_gateway
+}
+
 # Ensure the kdc is brought up before the namenode and hive metastore
 if $security == "true" and hasrole($roles, 'kdc') {
   if hasrole($roles, 'nn') {

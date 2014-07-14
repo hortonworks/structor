@@ -1,0 +1,191 @@
+#!/bin/sh
+
+#
+#  Licensed to the Apache Software Foundation (ASF) under one or more
+#  contributor license agreements.  See the NOTICE file distributed with
+#  this work for additional information regarding copyright ownership.
+#  The ASF licenses this file to You under the Apache License, Version 2.0
+#  (the "License"); you may not use this file except in compliance with
+#  the License.  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+# Starts a Knox Gateway
+#
+# chkconfig: 345 85 15
+# description: Knox Gateway
+#
+### BEGIN INIT INFO
+# Provides:          knox-gateway
+# Short-Description: Knox Gateway
+# Default-Start:     3 4 5
+# Default-Stop:      0 1 2 6
+# Required-Start:    $syslog $remote_fs
+# Required-Stop:     $syslog $remote_fs
+# Should-Start:
+# Should-Stop:
+### END INIT INFO
+
+#Knox PID
+PID=0
+
+# Start, stop, status, clean or setup
+KNOX_LAUNCH_COMMAND=$1
+
+# User Name for setup parameter
+KNOX_LAUNCH_USER=$2
+
+#App names
+KNOX_NAME=knox
+GATEWAY_NAME=gateway
+
+# start/stop script location
+KNOX_SCRIPT_DIR="/usr/lib/$KNOX_NAME/bin"
+
+#Name of PID file
+PID_DIR="/var/run/$KNOX_NAME"
+PID_FILE="$PID_DIR/$GATEWAY_NAME.pid"
+
+#Name of LOG/OUT/ERR file
+LOG_DIR="/var/log/$KNOX_NAME"
+OUT_FILE="$LOG_DIR/$$GATEWAY_NAME.out"
+ERR_FILE="$LOG_DIR/$$GATEWAY_NAME.err"
+
+#The max time to wait
+MAX_WAIT_TIME=10
+
+function main {
+   case "$1" in
+      start)
+         knoxStart
+         ;;
+      stop)   
+         knoxStop
+         ;;
+      status) 
+         knoxStatus
+         ;;
+      *)
+         printf "Usage: $0 {start|stop|status}\n"
+         ;;
+   esac
+}
+
+function knoxStart {
+   getPID
+   if [ $? -eq 0 ]; then
+     printf "Knox is already running with PID=$PID.\n"
+     exit 0
+   fi
+  
+   printf "Starting Knox "
+   
+   rm -f $PID_FILE
+
+   su -l knox -c "$KNOX_SCRIPT_DIR/gateway.sh start"
+   
+   getPID
+   knoxIsRunning $PID
+   if [ $? -ne 1 ]; then
+      printf "failed.\n"
+      exit 1
+   fi
+
+   printf "succeeded with PID=$PID.\n"
+   return 0
+}
+
+function knoxStop {
+   getPID
+   knoxIsRunning $PID
+   if [ $? -eq 0 ]; then
+     printf "Knox is not running.\n"
+     return 0
+   fi
+  
+   printf "Stopping Knox [$PID] "
+   knoxKill $PID >>$OUT_FILE 2>>$ERR_FILE 
+
+   if [ $? -ne 0 ]; then 
+     printf "failed. \n"
+     exit 1
+   else
+     rm -f $PID_FILE
+     printf "succeeded.\n"
+     return 0
+   fi
+}
+
+function knoxStatus {
+   printf "Knox "
+   getPID
+   if [ $? -eq 1 ]; then
+     printf "is not running. No pid file found.\n"
+     return 1
+   fi
+
+   knoxIsRunning $PID
+   if [ $? -eq 1 ]; then
+     printf "is running with PID=$PID.\n"
+     exit 0
+   else
+     printf "is not running.\n"
+     return 1
+   fi
+}
+
+
+# Returns 0 if the Knox is running and sets the $PID variable.
+function getPID {
+   if [ ! -d $PID_DIR ]; then
+      printf "Can't find pid dir.  Run sudo $0 setup.\n"
+      exit 1
+   fi
+   if [ ! -f $PID_FILE ]; then
+     PID=0
+     return 1
+   fi
+   
+   PID="$(<$PID_FILE)"
+   return 0
+}
+
+function knoxIsRunning {
+   if [ $1 -eq 0 ]; then return 0; fi
+
+   ps -p $1 > /dev/null
+
+   if [ $? -eq 1 ]; then
+     return 0
+   else
+     return 1
+   fi
+}
+
+function knoxKill {
+   local localPID=$1
+   kill $localPID || return 1
+   for ((i=0; i<MAX_WAIT_TIME*10; i++)); do
+      knoxIsRunning $localPID
+      if [ $? -eq 0 ]; then return 0; fi
+      sleep 0.1
+   done   
+
+   kill -s KILL $localPID || return 1
+   for ((i=0; i<MAX_WAIT_TIME*10; i++)); do
+      knoxIsRunning $localPID
+      if [ $? -eq 0 ]; then return 0; fi
+      sleep 0.1
+   done
+
+   return 1
+}
+
+#Starting main
+main $KNOX_LAUNCH_COMMAND
