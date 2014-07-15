@@ -41,7 +41,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # All Vagrant configuration is done here. The most common configuration
   # Every Vagrant virtual environment requires a box to build off of.
-  # config.vm.box = "nrel/CentOS-6.5-x86_64" # This is a more current and much smaller base box that may work.
   config.vm.box = "omalley/centos6_x64"
 
   config.vm.provider :virtualbox do |vb|
