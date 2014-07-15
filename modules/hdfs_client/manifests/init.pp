@@ -24,28 +24,52 @@ class hdfs_client {
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 
-  package { 'hadoop':
+  package { 'hadoop_2_9_9_9':
     ensure => installed,
   }
 
-  package { 'hadoop-libhdfs':
+  package { 'hadoop_2_9_9_9-libhdfs':
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package['hadoop_2_9_9_9'],
   }
 
-  package { 'hadoop-client':
+  package { 'hadoop_2_9_9_9-client':
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package['hadoop_2_9_9_9'],
   }
 
-  package { 'hadoop-lzo':
+  package { 'hadoop_2_9_9_9-lzo':
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package['hadoop_2_9_9_9'],
   }
 
-  package { 'hadoop-lzo-native':
+  package { 'hadoop_2_9_9_9-lzo-native':
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package['hadoop_2_9_9_9'],
+  }
+
+  package { 'hadoop_2_10_9_9':
+    ensure => installed,
+  }
+
+  package { 'hadoop_2_10_9_9-libhdfs':
+    ensure => installed,
+    require => Package['hadoop_2_10_9_9'],
+  }
+
+  package { 'hadoop_2_10_9_9-client':
+    ensure => installed,
+    require => Package['hadoop_2_10_9_9'],
+  }
+
+  package { 'hadoop_2_10_9_9-lzo':
+    ensure => installed,
+    require => Package['hadoop_2_10_9_9'],
+  }
+
+  package { 'hadoop_2_10_9_9-lzo-native':
+    ensure => installed,
+    require => Package['hadoop_2_10_9_9'],
   }
 
   package { 'openssl':
@@ -71,13 +95,13 @@ class hdfs_client {
   file { '/etc/hadoop/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package['hadoop'],
+    require => Package['hadoop_2_9_9_9'],
   }
 
   file {'/usr/lib/hadoop/lib/native/Linux-amd64-64/libsnappy.so':
     ensure => 'link',
     target => '/usr/lib64/libsnappy.so.1',
-    require => Package['hadoop-lzo-native'],
+    require => Package['hadoop_2_9_9_9-lzo-native'],
   }
 
   file { "${conf_dir}/commons-logging.properties":

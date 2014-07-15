@@ -34,18 +34,15 @@ class hdfs_namenode {
       user => hdfs,
     }
     ->
-    Package['hadoop-hdfs-namenode']
+    Package['hadoop_2_9_9_9-hdfs-namenode']
   }
 
-  package { "hadoop-hdfs-namenode" :
+  package { "hadoop_2_9_9_9-hdfs-namenode" :
     ensure => installed,
   }
   ->
-  file { "/etc/init.d/hadoop-hdfs-namenode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-namenode",
-    owner => root,
-    group => root,
+  package { "hadoop_2_10_9_9-hdfs-namenode" :
+    ensure => installed,
   }
   ->
   exec {"namenode-format":
@@ -53,7 +50,7 @@ class hdfs_namenode {
     path => "$PATH",
     creates => "${hdfs_client::data_dir}/hdfs/namenode",
     user => "hdfs",
-    require => Package['hadoop-hdfs-namenode'],
+    require => Package['hadoop_2_9_9_9-hdfs-namenode'],
   }
   ->
   service {"hadoop-hdfs-namenode":
