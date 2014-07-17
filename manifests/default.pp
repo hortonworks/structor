@@ -75,8 +75,11 @@ if hasrole($roles, 'knox') {
   include knox_gateway
 }
 
-if hasrole($roles, 'ambari') {
-  include ambari
+if hasrole($roles, 'ambari-server') {
+  include ambari_server
+}
+if hasrole($roles, 'ambari-agent') {
+  include ambari_agent
 }
 
 # Ensure the kdc is brought up before the namenode and hive metastore
