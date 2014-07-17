@@ -55,6 +55,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.vm.define node[:hostname] do |node_config|
       node_config.vm.hostname = node[:hostname] + "." + profile[:domain]
       node_config.vm.network :private_network, ip: node[:ip]
+      node_config.ssh.forward_agent = true
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
         puppet.options = ["--libdir", "/vagrant", 

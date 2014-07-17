@@ -82,6 +82,10 @@ if hasrole($roles, 'ambari-agent') {
   include ambari_agent
 }
 
+if hasrole($roles, 'cert') {
+   include certification
+}
+
 # Ensure the kdc is brought up before the namenode and hive metastore
 if $security == "true" and hasrole($roles, 'kdc') {
   if hasrole($roles, 'nn') {
