@@ -31,15 +31,12 @@ class hdfs_datanode {
     Package['hadoop-hdfs-datanode']
   }
 
-  package { "hadoop-hdfs-datanode" :
+  package { "hadoop_2_9_9_9-hdfs-datanode" :
     ensure => installed,
   }
   ->
-  file { "/etc/init.d/hadoop-hdfs-datanode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-datanode",
-    owner => root,
-    group => root,
+  package { "hadoop_2_10_9_9-hdfs-datanode" :
+    ensure => installed,
   }
   ->
   service {"hadoop-hdfs-datanode":
