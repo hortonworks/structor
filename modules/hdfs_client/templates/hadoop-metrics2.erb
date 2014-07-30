@@ -20,7 +20,7 @@
 *.period=60
 
 *.sink.ganglia.class=org.apache.hadoop.metrics2.sink.ganglia.GangliaSink31
-*.sink.ganglia.period=10
+*.sink.ganglia.period=180
 
 # default for supportsparse is false
 *.sink.ganglia.supportsparse=true
@@ -29,9 +29,9 @@
 .sink.ganglia.dmax=jvm.metrics.threadsBlocked=70,jvm.metrics.memHeapUsedM=40
 
 # Hook up to the server
-namenode.sink.ganglia.servers=dev.hortonworks.com:8661
-datanode.sink.ganglia.servers=dev.hortonworks.com:8660
-jobtracker.sink.ganglia.servers=dev.hortonworks.com:8662
-tasktracker.sink.ganglia.servers=dev.hortonworks.com:8660
-maptask.sink.ganglia.servers=dev.hortonworks.com:8660
-reducetask.sink.ganglia.servers=dev.hortonworks.com:8660
+namenode.sink.ganglia.servers=0.0.0.0:8660
+datanode.sink.ganglia.servers=0.0.0.0:8660
+jobtracker.sink.ganglia.servers=0.0.0.0:8660
+tasktracker.sink.ganglia.servers=0.0.0.0:8660
+maptask.sink.ganglia.servers=0.0.0.0:8660
+reducetask.sink.ganglia.servers=0.0.0.0:8660
