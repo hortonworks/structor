@@ -28,7 +28,7 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package['hadoop_2_9_9_9-mapreduce-historyserver']
+    Package['hadoop-mapreduce-historyserver']
 
     file { "${hdfs_client::keytab_dir}/jhs.keytab":
       ensure => file,
@@ -38,15 +38,18 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package['hadoop_2_9_9_9-yarn-resourcemanager']
+    Package['hadoop-yarn-resourcemanager']
   }
 
-  package { "hadoop_2_9_9_9-yarn-resourcemanager" :
+  package { "hadoop-yarn-resourcemanager" :
     ensure => installed,
   }
   ->
-  package { "hadoop_2_10_9_9-yarn-resourcemanager" :
-    ensure => installed,
+  file { "/etc/init.d/hadoop-yarn-resourcemanager":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-yarn-resourcemanager",
+    owner => root,
+    group => root,
   }
   ->
   service {"hadoop-yarn-resourcemanager":
@@ -54,12 +57,15 @@ class yarn_resource_manager {
     enable => true,
   }
 
-  package { "hadoop_2_9_9_9-mapreduce-historyserver" :
+  package { "hadoop-mapreduce-historyserver" :
     ensure => installed,
   }
   ->
-  package { "hadoop_2_10_9_9-mapreduce-historyserver" :
-    ensure => installed,
+  file { "/etc/init.d/hadoop-mapreduce-historyserver":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-mapreduce-historyserver",
+    owner => root,
+    group => root,
   }
   ->
   service {"hadoop-mapreduce-historyserver":

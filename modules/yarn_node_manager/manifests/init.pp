@@ -39,12 +39,15 @@ class yarn_node_manager {
     Package['hadoop-yarn-nodemanager']
   }
 
-  package { "hadoop_2_9_9_9-yarn-nodemanager" :
+  package { "hadoop-yarn-nodemanager" :
     ensure => installed,
   }
   ->
-  package { "hadoop_2_10_9_9-yarn-nodemanager" :
-    ensure => installed,
+  file { "/etc/init.d/hadoop-yarn-nodemanager":
+    ensure => file,
+    source => "puppet:///files/init.d/hadoop-yarn-nodemanager",
+    owner => root,
+    group => root,
   }
   ->
   service {"hadoop-yarn-nodemanager":
