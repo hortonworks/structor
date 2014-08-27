@@ -20,4 +20,9 @@ class jdk {
     ensure => "link",
     target => "/usr/java/jdk1.6.0_31",
   }
+
+  file { "/etc/profile.d/java.sh":
+    ensure => "file",
+    content => template('jdk/java.erb'),
+  }
 }
