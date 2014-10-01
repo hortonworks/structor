@@ -28,7 +28,7 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package['hadoop-mapreduce-historyserver']
+    Package["hadoop_${rpm_version}-mapreduce-historyserver"]
 
     file { "${hdfs_client::keytab_dir}/jhs.keytab":
       ensure => file,
@@ -38,10 +38,10 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package['hadoop-yarn-resourcemanager']
+    Package["hadoop_${rpm_version}-yarn-resourcemanager"]
   }
 
-  package { "hadoop-yarn-resourcemanager" :
+  package { "hadoop_${rpm_version}-yarn-resourcemanager" :
     ensure => installed,
   }
   ->
@@ -57,7 +57,7 @@ class yarn_resource_manager {
     enable => true,
   }
 
-  package { "hadoop-mapreduce-historyserver" :
+  package { "hadoop_${rpm_version}-mapreduce-historyserver" :
     ensure => installed,
   }
   ->

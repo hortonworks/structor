@@ -1,0 +1,307 @@
+#!/bin/env python
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+# 
+#     http://www.apache.org/licenses/LICENSE-2.0
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+import argparse
+import copy
+import os
+import sys
+
+# The global prefix and current directory
+root = "/usr/hdp"
+current = root + "/current"
+
+# The packages and where in the release they should point to
+leaves = {
+           "accumulo-client": "accumulo",
+           "accumulo-gc": "accumulo",
+           "accumulo-master": "accumulo",
+           "accumulo-monitor": "accumulo",
+           "accumulo-tablet": "accumulo",
+           "accumulo-tracer": "accumulo",
+           "falcon-server": "falcon",
+           "hadoop-hdfs-client": "hadoop-hdfs",
+           "hadoop-hdfs-datanode": "hadoop-hdfs",
+           "hadoop-hdfs-journalnode": "hadoop-hdfs",
+           "hadoop-hdfs-nfs3": "hadoop-hdfs",
+           "hadoop-hdfs-namenode": "hadoop-hdfs",
+           "hadoop-hdfs-secondarynamenode": "hadoop-hdfs",
+           "hadoop-mapreduce-historyserver": "hadoop-mapreduce",
+           "hadoop-yarn-client": "hadoop-yarn",
+           "hadoop-yarn-resourcemanager": "hadoop-yarn",
+           "hadoop-yarn-nodemanager": "hadoop-yarn",
+           "hadoop-yarn-timelineserver": "hadoop-yarn",
+	   "hbase-client": "hbase",
+           "hbase-master": "hbase",
+           "hbase-regionserver": "hbase",
+           "hive-client": "hive",
+           "hive-metastore": "hive",
+           "hive-server2": "hive",
+           "hive-webhcat": "hive",
+           "knox-server": "knox",
+           "mahout-client": "mahout",
+           "oozie-client": "oozie",
+           "oozie-server": "oozie",
+           "phoenix-client": "phoenix",
+           "pig-client": "pig",
+           "sqoop-client": "sqoop",
+           "sqoop-server": "sqoop",
+           "storm-client": "storm",
+           "storm-nimbus": "storm",
+           "storm-supervisor": "storm",
+           "zookeeper-client": "zookeeper",
+           "zookeeper-server": "zookeeper"
+}
+
+# Define the aliases and the list of leaves they correspond to
+aliases = {
+  "accumulo-server": ["accumulo-gc",
+                      "accumulo-master",
+                      "accumulo-monitor",
+                      "accumulo-tablet",
+                      "accumulo-tracer"],
+  "all": leaves.keys(),
+  "client" : ["accumulo-client",
+              "hadoop-hdfs-client",
+              "hadoop-yarn-client",
+              "hbase-client",
+              "hive-client",
+              "mahout-client",
+              "oozie-client",
+              "phoenix-client",
+              "pig-client",
+              "sqoop-client",
+              "storm-client",
+              "zookeeper-client"],
+  "hadoop-hdfs-server": ["hadoop-hdfs-datanode",
+                         "hadoop-hdfs-journalnode",
+                         "hadoop-hdfs-nfs3",
+                         "hadoop-hdfs-namenode",
+                         "hadoop-hdfs-secondarynamenode"],
+  "hadoop-mapreduce-server": ["hadoop-mapreduce-historyserver"],
+  "hadoop-yarn-server": ["hadoop-yarn-resourcemanager",
+                         "hadoop-yarn-nodemanager",
+                         "hadoop-yarn-timelineserver"],
+  "hive-server": ["hive-metastore",
+                  "hive-server2",
+                  "hive-webhcat"],
+}
+
+locked_contexts = {
+  "hadoop-hdfs-client": [("hadoop-client", "hadoop")],
+  "hadoop-yarn-client": [("hadoop-mapreduce-client", "hadoop-mapreduce")],
+}
+
+command_symlinks = {
+  "falcon" : "falcon-server/bin/falcon",
+  "hadoop" : "hadoop-client/bin/hadoop",
+  "hbase" : "hbase-client/bin/hbase",
+  "hcat" : "hive-client/../hive-hcatalog/bin/hcat",
+  "hdfs" : "hadoop-hdfs-client/bin/hdfs",
+  "hive" : "hive-client/bin/hive",
+  "hiveserver2" : "hive-server2/bin/hiveserver2",
+  "mapred" : "hadoop-mapreduce-client/bin/mapred",
+  "oozie" : "oozie-client/bin/oozie",
+  "pig" : "pig-client/bin/pig",
+  "sqoop" : "sqoop-client/bin/sqoop",
+  "sqoop-codegen" : "sqoop-client/bin/sqoop-codegen",
+  "sqoop-create-hive-table" : "sqoop-client/bin/sqoop-create-hive-table",
+  "sqoop-eval" : "sqoop-client/bin/sqoop-eval",
+  "sqoop-export" : "sqoop-client/bin/sqoop-export",
+  "sqoop-help" : "sqoop-client/bin/sqoop-help",
+  "sqoop-import" : "sqoop-client/bin/sqoop-import",
+  "sqoop-import-all-tables" : "sqoop-client/bin/sqoop-import-all-tables",
+  "sqoop-job" : "sqoop-client/bin/sqoop-job",
+  "sqoop-list-databases" : "sqoop-client/bin/sqoop-list-databases",
+  "sqoop-list-tables" : "sqoop-client/bin/sqoop-list-tables",
+  "sqoop-merge" : "sqoop-client/bin/sqoop-merge",
+  "sqoop-metastore" : "sqoop-server/bin/sqoop-metastore",
+  "sqoop-version" : "sqoop-client/bin/sqoop-version",
+  "storm" : "storm-client/bin/storm",
+  "yarn" : "hadoop-yarn-client/bin/yarn",
+  "zookeeper-client" : "zookeeper-client/bin/zkCli.sh",
+  "zookeeper-server" : "zookeeper-server/bin/zkServer.sh",
+  "zookeeper-server-cleanup" : "zookeeper-server/bin/zkCleanup.sh",
+  "zookeeper-server-initialize": "zookeeper-server/bin/zkServer-initialize.sh"
+}
+
+bin_directory = "/usr/bin"
+
+# Given a package or alias name, get the full list of packages
+def getPackages( name ):
+  if name == None:
+    return leaves.keys()
+  if name in aliases:
+    return aliases[name]
+  if name in leaves:
+    return [ name ]
+
+  print "ERROR: Invalid package - " + name
+  print
+  printPackages()
+  sys.exit(1)
+
+# Print the status of each of the given packages
+def listPackages( packages ):
+  if packages == None:
+    packages = leaves 
+
+  packages.sort()
+  for pkg in packages:
+    linkname = current + "/" + pkg
+    if os.path.isdir(linkname):
+      print (pkg + " - " + 
+             os.path.basename(os.path.dirname(os.readlink(linkname))))
+    else:
+      print pkg + " - None"
+
+# Print the avaialable package names
+def printPackages():
+  packages = leaves.keys()
+  packages.sort()
+  print "Packages:"
+  for pkg in packages:
+     print " ", pkg
+  groups = aliases.keys()
+  groups.sort()
+  print "Aliases:"
+  for pkg in groups:
+    print " ", pkg
+
+# Print the installed packages
+def printVersions():
+  result = []
+  for f in os.listdir(root):
+    if f not in [".", "..", "current"]:
+      result.append(f)
+  result.sort()
+  for ver in result:
+     print ver
+
+# Set the list of packages to the given version
+def setPackages(packages, version):
+  if packages == None or version == None:
+    print "ERROR: 'set' command must give both package and version"
+    print
+    parser.print_help()
+    sys.exit(1)
+
+  target = root + "/" + version
+  if not os.path.isdir(target):
+    print "ERROR: Invalid version " + version
+    print
+    print "Valid choices:"
+    printVersions()
+    sys.exit(1)
+
+  if not os.path.isdir(current):
+    os.mkdir(current, 0755)
+
+  packages.sort() 
+  for pkg in packages:
+    linkname = current + "/" + pkg
+    if os.path.islink(linkname):
+      os.remove(linkname)
+    os.symlink(target + "/" + leaves[pkg], linkname)
+    if pkg in locked_contexts:
+      for (kid, dir) in locked_contexts[pkg]:
+        linkname = current + "/" + kid
+        if os.path.islink(linkname):
+          os.remove(linkname)
+        os.symlink(target + "/" + dir, linkname)
+
+# Create command symlinks
+def createCommandSymlinks(packages):
+  work_packages = copy.copy(packages)
+  for pkg in packages:
+    if pkg in locked_contexts:
+      for (child, dir) in locked_contexts[pkg]:
+        work_packages.append(child)
+  for symlink in command_symlinks:
+    pkg = command_symlinks[symlink].split('/')[0]
+    filename = bin_directory + "/" + symlink
+    target = current + "/" + command_symlinks[symlink]
+    if pkg in work_packages:
+      if not os.path.lexists(filename):
+        os.symlink(target, filename)
+      elif os.path.islink(filename):
+        old_value = os.readlink(filename)
+        if old_value != target:
+          print "WARNING: Replacing link", filename, "from", old_value
+          os.remove(filename)
+          os.symlink(target, filename)
+      else:
+        print "ERROR:", filename, "is a regular file instead of symlink."
+	print
+        print "Please ensure that the HDP 2.1 (and earlier) packages are"
+ 	print "removed."
+  
+# Do a sanity check on the tables
+def sanityCheckTables():
+  for alias in aliases:
+    for child in aliases[alias]:
+      if not child in leaves:
+        print "ERROR: Alias", alias, "has bad child", child
+        sys.exit(1)
+  locked = set()
+  for parent in locked_contexts:
+    for (kid, dir) in locked_contexts[parent]:
+      locked.add(kid)
+  for symlink in command_symlinks:
+    parts = command_symlinks[symlink].split('/')
+    if not parts[0] in leaves and not parts[0] in locked:
+      print "ERROR: command symlink", symlink, "points to an invalid package",\
+            parts[0]
+      sys.exit(1)
+
+############################
+#
+# Start of main
+
+sanityCheckTables()
+
+parser = argparse.ArgumentParser(
+   formatter_class=argparse.RawDescriptionHelpFormatter,
+   description='Set the selected version of HDP.',
+   epilog=('Commands:\n' +
+           '  set      : set the package to a specified version\n' +
+           '  status   : show the version of the package\n' +
+           '  versions : show the currently installed versions\n' +
+           '  packages : show the individual package names'))
+parser.add_argument('command', metavar='<command>', default='status',
+                    nargs='?', 
+                    help='One of set, status, versions, or packages')
+parser.add_argument('package', metavar='<package>', nargs='?', 
+                    default='all', help='the package name to set')
+parser.add_argument('version', metavar='<version>', nargs='?',
+                    help='the HDP version to set')
+
+args = parser.parse_args()
+
+if args.command == "set":
+  pkgs = getPackages(args.package)
+  setPackages(pkgs, args.version)
+  createCommandSymlinks(pkgs)
+elif args.command == "status":
+  listPackages(getPackages(args.package))
+elif args.command == "versions":
+  printVersions()
+elif args.command == "packages":
+  printPackages()
+else:
+  parser.print_help()
+

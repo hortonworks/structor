@@ -20,22 +20,22 @@ class yarn_client {
 
   $user_logs = "/user/yarn/"
 
-  package { 'hadoop-yarn':
+  package { "hadoop_${rpm_version}-yarn":
     ensure => installed,
   }
   ->
-  file {'/usr/lib/hadoop-yarn/libexec':
+  file { "/usr/hdp/${hdp_version}/hadoop-yarn/libexec":
     ensure => link,
-    target => '/usr/lib/hadoop/libexec',
+    target => "/usr/hdp/${hdp_version}/hadoop/libexec",
   }
 
-  package { 'hadoop-mapreduce':
+  package { "hadoop_${rpm_version}-mapreduce":
     ensure => installed,
   }
   ->
-  file {'/usr/lib/hadoop-mapreduce/libexec':
+  file { "/usr/hdp/${hdp_version}/hadoop-mapreduce/libexec":
     ensure => link,
-    target => '/usr/lib/hadoop/libexec',
+    target => "/usr/hdp/${hdp_version}/hadoop/libexec",
   }
 
   file { "${hdfs_client::conf_dir}/capacity-scheduler.xml":

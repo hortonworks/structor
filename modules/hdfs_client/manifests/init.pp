@@ -24,28 +24,44 @@ class hdfs_client {
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 
-  package { 'hadoop':
+  file { "/usr/bin/hdp-select":
+    ensure => file,
+    source => "puppet:///files/utils/hdp-select",
+    owner => root,
+    group => root,
+  }
+  ->
+  package { "hadoop_${rpm_version}":
     ensure => installed,
   }
-
-  package { 'hadoop-libhdfs':
+  ->
+  package { "python-argparse":
     ensure => installed,
-    require => Package['hadoop'],
+  }
+  ->
+  exec { "hdp-select set all ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
 
-  package { 'hadoop-client':
+  package { "hadoop_${rpm_version}-libhdfs":
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package["hadoop_${rpm_version}"],
   }
 
-  package { 'hadoop-lzo':
+  package { "hadoop_${rpm_version}-client":
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package["hadoop_${rpm_version}"],
   }
 
-  package { 'hadoop-lzo-native':
+  package { "hadoop-lzo":
     ensure => installed,
-    require => Package['hadoop'],
+    require => Package["hadoop_${rpm_version}"],
+  }
+
+  package { "hadoop-lzo-native":
+    ensure => installed,
+    require => Package["hadoop_${rpm_version}"],
   }
 
   package { 'openssl':
@@ -71,13 +87,7 @@ class hdfs_client {
   file { '/etc/hadoop/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package['hadoop'],
-  }
-
-  file {'/usr/lib/hadoop/lib/native/Linux-amd64-64/libsnappy.so':
-    ensure => 'link',
-    target => '/usr/lib64/libsnappy.so.1',
-    require => Package['hadoop-lzo-native'],
+    require => Package["hadoop_${rpm_version}"],
   }
 
   file { "${conf_dir}/commons-logging.properties":

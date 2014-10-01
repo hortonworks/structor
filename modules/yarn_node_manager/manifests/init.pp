@@ -36,10 +36,10 @@ class yarn_node_manager {
       mode => 400,
     }
     ->
-    Package['hadoop-yarn-nodemanager']
+    Package["hadoop_${rpm_version}-yarn-nodemanager"]
   }
 
-  package { "hadoop-yarn-nodemanager" :
+  package { "hadoop_${rpm_version}-yarn-nodemanager" :
     ensure => installed,
   }
   ->

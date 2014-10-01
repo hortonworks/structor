@@ -28,10 +28,10 @@ class hdfs_datanode {
       mode => '400',
     }
     ->
-    Package['hadoop-hdfs-datanode']
+    Package["hadoop_${rpm_version}-hdfs-datanode"]
   }
 
-  package { "hadoop-hdfs-datanode" :
+  package { "hadoop_${rpm_version}-hdfs-datanode" :
     ensure => installed,
   }
   ->

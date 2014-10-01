@@ -52,7 +52,7 @@ PROC_NAME="java"
 
 DAEMON="hadoop-hdfs-datanode"
 DESC="Hadoop datanode"
-EXEC_PATH="/usr/lib/hadoop/sbin/hadoop-daemon.sh"
+EXEC_PATH="/usr/hdp/current/hadoop-hdfs-datanode/../hadoop/sbin/hadoop-daemon.sh"
 DAEMON_FLAGS="datanode"
 CONF_DIR="/etc/hadoop/conf"
 LOCKDIR="/var/lock/subsys"

@@ -1,0 +1,2 @@
+#!/bin/bash
+wget http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/updates/2.2.0.0/hdpbn.repo -O files/repos/hdp.repo

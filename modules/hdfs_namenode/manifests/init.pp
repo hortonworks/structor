@@ -34,10 +34,10 @@ class hdfs_namenode {
       user => hdfs,
     }
     ->
-    Package['hadoop-hdfs-namenode']
+    Package["hadoop_${rpm_version}-hdfs-namenode"]
   }
 
-  package { "hadoop-hdfs-namenode" :
+  package { "hadoop_${rpm_version}-hdfs-namenode" :
     ensure => installed,
   }
   ->
@@ -53,7 +53,7 @@ class hdfs_namenode {
     path => "$PATH",
     creates => "${hdfs_client::data_dir}/hdfs/namenode",
     user => "hdfs",
-    require => Package['hadoop-hdfs-namenode'],
+    require => Package["hadoop_${rpm_version}-hdfs-namenode"],
   }
   ->
   service {"hadoop-hdfs-namenode":
