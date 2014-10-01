@@ -15,10 +15,8 @@
    limitations under the License.
 -%>
 
-export HADOOP_YARN_HOME=/usr/lib/hadoop-yarn
 export YARN_LOG_DIR=<%= scope.lookupvar('hdfs_client::log_dir') %>/$USER
 export YARN_PID_DIR=<%= scope.lookupvar('hdfs_client::pid_dir') %>/$USER
-export HADOOP_LIBEXEC_DIR=/usr/lib/hadoop/libexec
 export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
 export YARN_IDENT_STRING="$HADOOP_IDENT_STRING"
 

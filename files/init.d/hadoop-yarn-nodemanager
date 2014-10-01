@@ -52,7 +52,7 @@ PROC_NAME="java"
 
 DAEMON="hadoop-yarn-nodemanager"
 DESC="Hadoop nodemanager"
-EXEC_PATH="/usr/lib/hadoop-yarn/sbin/yarn-daemon.sh"
+EXEC_PATH="/usr/hdp/current/hadoop-yarn-nodemanager/sbin/yarn-daemon.sh"
 SVC_USER="yarn"
 DAEMON_FLAGS="nodemanager"
 CONF_DIR="/etc/hadoop/conf"
