@@ -35,10 +35,6 @@ class hdfs_client {
     ensure => installed,
   }
   ->
-  package { "python-argparse":
-    ensure => installed,
-  }
-  ->
   exec { "hdp-select set all ${hdp_version}":
     cwd => "/",
     path => "$path",
@@ -58,10 +54,19 @@ class hdfs_client {
     ensure => installed,
     require => Package["hadoop_${rpm_version}"],
   }
-
+  ->
   package { "hadoop-lzo-native":
     ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+  }
+  ->
+  exec { 'mv /usr/hdp/current/share/lzo/0.6.0/lib/hadoop-lzo-0.6.0.jar /usr/hdp/current/hadoop-client/lib':
+    creates => '/usr/hdp/current/hadoop-client/lib/hadoop-lzo-0.6.0.jar',
+    path => "$path",
+  }
+  ->
+  exec { 'mv /usr/hdp/current/share/lzo/0.6.0/lib/native/Linux-amd64-64/* /usr/hdp/current/hadoop-client/lib/native':
+    creates => '/usr/hdp/current/hadoop-client/lib/native/libgplcompression.so',
+    path => "$path",
   }
 
   package { 'openssl':
