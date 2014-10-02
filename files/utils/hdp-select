@@ -16,7 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-import argparse
+import optparse
 import copy
 import os
 import sys
@@ -197,7 +197,7 @@ def setPackages(packages, version):
   if packages == None or version == None:
     print "ERROR: 'set' command must give both package and version"
     print
-    parser.print_help()
+    printHelp()
     sys.exit(1)
 
   target = root + "/" + version
@@ -268,40 +268,62 @@ def sanityCheckTables():
             parts[0]
       sys.exit(1)
 
-############################
-#
-# Start of main
+def printHelp():
+  print """
+usage: hdp-select [-h] [<command>] [<package>] [<version>]
+
+Set the selected version of HDP.
+
+positional arguments:
+  <command>   One of set, status, versions, or packages
+  <package>   the package name to set
+  <version>   the HDP version to set
+
+optional arguments:
+  -h, --help  show this help message and exit
+
+Commands:
+  set      : set the package to a specified version
+  status   : show the version of the package
+  versions : show the currently installed versions
+  packages : show the individual package names
+"""
+
+def checkCommandParameters(cmd, realLen, rightLen):
+  if realLen != rightLen:
+    print "ERROR:", cmd, "command takes", rightLen - 1,\
+          "parameters, instead of", realLen - 1
+    printHelp()
+    sys.exit(1)
+
+ ############################
+ #
+ # Start of main
 
 sanityCheckTables()
 
-parser = argparse.ArgumentParser(
-   formatter_class=argparse.RawDescriptionHelpFormatter,
-   description='Set the selected version of HDP.',
-   epilog=('Commands:\n' +
-           '  set      : set the package to a specified version\n' +
-           '  status   : show the version of the package\n' +
-           '  versions : show the currently installed versions\n' +
-           '  packages : show the individual package names'))
-parser.add_argument('command', metavar='<command>', default='status',
-                    nargs='?', 
-                    help='One of set, status, versions, or packages')
-parser.add_argument('package', metavar='<package>', nargs='?', 
-                    default='all', help='the package name to set')
-parser.add_argument('version', metavar='<version>', nargs='?',
-                    help='the HDP version to set')
+parser = optparse.OptionParser(add_help_option=False)
+parser.add_option("-h", "--help", action="store_true", dest="help",
+                  help="print help")
+(options, args) = parser.parse_args()
 
-args = parser.parse_args()
-
-if args.command == "set":
-  pkgs = getPackages(args.package)
-  setPackages(pkgs, args.version)
-  createCommandSymlinks(pkgs)
-elif args.command == "status":
-  listPackages(getPackages(args.package))
-elif args.command == "versions":
-  printVersions()
-elif args.command == "packages":
-  printPackages()
+if options.help:
+  printHelp()
 else:
-  parser.print_help()
-
+  if len(args) == 0 or args[0] == 'status':
+    listPackages(getPackages(args[1] if len(args) > 1 else None))
+  elif args[0] == "set":
+    checkCommandParameters('set', len(args), 3)
+    pkgs = getPackages(args[1])
+    setPackages(pkgs, args[2])
+    createCommandSymlinks(pkgs)
+  elif args[0] == "versions":
+    checkCommandParameters('versions', len(args), 1)
+    printVersions()
+  elif args[0] == "packages":
+    checkCommandParameters('packages', len(args), 1)
+    printPackages()
+  else:
+    print "ERROR: Unknown command -", args[0]
+    printHelp()
+    sys.exit(1)
