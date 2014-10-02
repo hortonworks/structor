@@ -22,19 +22,40 @@ class zookeeper_client {
   $data_dir="/var/run/zookeeper"
   $pid_dir="/var/run/pid/zookeeper"
 
-  package { 'zookeeper':
+  package { "zookeeper_${rpm_version}":
     ensure => installed,
   }
-
-  file { '/etc/zookeeper/conf':
-    ensure => 'link',
-    target => "${conf_dir}",
-    require => Package['zookeeper'],
+  ->
+  file { '/usr/hdp/current/zookeeper-client/bin/zkCli.sh':
+    ensure => file,
+    source => "puppet:///files/zk-2053/zkCli.sh",
+    owner => root,
+    group => root,
+    mode => 755,
+  }
+  ->
+  file { '/usr/hdp/current/zookeeper-client/bin/zkEnv.sh':
+    ensure => file,
+    source => "puppet:///files/zk-2053/zkEnv.sh",
+    owner => root,
+    group => root,
+    mode => 755,
+  }
+  
+  file { '/etc/zookeeper':
+    ensure => 'directory',
   }
 
   file { "${conf_dir}":
     ensure => 'directory',
   }
+
+  file { '/etc/zookeeper/conf':
+    ensure => 'link',
+    target => "${conf_dir}",
+    require => Package["zookeeper_${rpm_version}"],
+  }
+
 
   file { "${conf_dir}/log4j.properties":
     ensure => file,
