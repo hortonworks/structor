@@ -16,7 +16,7 @@
 class hive_client {
   require yarn_client
 
-  package { 'hive':
+  package { "hive_${rpm_version}":
     ensure => installed,
   }
 
@@ -31,7 +31,7 @@ class hive_client {
   file { '/etc/hive/conf':
     ensure => 'link',
     target => '/etc/hive/hdp',
-    require => Package['hive'],
+    require => Package["hive_${rpm_version}"],
   }
 
   file { '/etc/hive/hdp/hive-env.sh':
@@ -53,9 +53,9 @@ class hive_client {
     ensure => installed,
   }
 
-  file { '/usr/lib/hive/lib/mysql-connector-java.jar':
+  file { '/usr/hdp/current/hive-client/lib/mysql-connector-java.jar':
     ensure => 'link',
     target => '/usr/share/java/mysql-connector-java.jar',
-    require => Package['hive'],
+    require => Package["hive_${rpm_version}"],
   }
 }

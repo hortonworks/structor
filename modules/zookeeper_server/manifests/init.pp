@@ -21,7 +21,7 @@ class zookeeper_server {
       ensure => file,
       content => template('zookeeper_server/zookeeper-server.erb'),
     }
-    -> Package['zookeeper-server']
+    -> Package["zookeeper_${rpm_version}-server"]
 
     file { "${hdfs_client::keytab_dir}/zookeeper.keytab":
       ensure => file,
@@ -31,22 +31,16 @@ class zookeeper_server {
       mode => '400',
     }
     ->
-    Package['zookeeper-server']
+    Package["zookeeper_${rpm_version}-server"]
   }
 
-  package { 'zookeeper-server':
+  package { "zookeeper_${rpm_version}-server":
     ensure => installed,
   }
   ->
   file { "${zookeeper_client::conf_dir}/configuration.xsl":
     ensure => file,
     content => template('zookeeper_server/configuration.erb'),
-  }
-  ->
-  file { "/usr/bin/zookeeper-server":
-    ensure => file,
-    content => template('zookeeper_server/zookeeper-server'),
-    mode => 755,
   }
   ->
   file { "/etc/init.d/zookeeper-server":
@@ -81,6 +75,22 @@ class zookeeper_server {
     owner => zookeeper,
     group => hadoop,
     mode => '755',
+  }
+  ->
+  file { '/usr/hdp/current/zookeeper-server/bin/zkServer.sh':
+    ensure => file,
+    source => "puppet:///files/zk-2053/zkServer.sh",
+    owner => root,
+    group => root,
+    mode => 755,
+  }
+  ->
+  file { '/usr/hdp/current/zookeeper-server/bin/zkCleanup.sh':
+    ensure => file,
+    source => "puppet:///files/zk-2053/zkCleanup.sh",
+    owner => root,
+    group => root,
+    mode => 755,
   }
   ->
   service { "zookeeper-server":

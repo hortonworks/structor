@@ -133,10 +133,9 @@ command_symlinks = {
   "sqoop-version" : "sqoop-client/bin/sqoop-version",
   "storm" : "storm-client/bin/storm",
   "yarn" : "hadoop-yarn-client/bin/yarn",
-  "zookeeper-client" : "zookeeper-client/bin/zkCli.sh",
-  "zookeeper-server" : "zookeeper-server/bin/zkServer.sh",
-  "zookeeper-server-cleanup" : "zookeeper-server/bin/zkCleanup.sh",
-  "zookeeper-server-initialize": "zookeeper-server/bin/zkServer-initialize.sh"
+  "zookeeper-client" : "zookeeper-client/bin/zookeeper-client",
+  "zookeeper-server" : "zookeeper-server/bin/zookeeper-server",
+  "zookeeper-server-cleanup" : "zookeeper-server/bin/zookeeper-server-cleanup",
 }
 
 bin_directory = "/usr/bin"
