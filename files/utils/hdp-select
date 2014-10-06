@@ -33,7 +33,10 @@ leaves = {
            "accumulo-monitor": "accumulo",
            "accumulo-tablet": "accumulo",
            "accumulo-tracer": "accumulo",
+           "falcon-client": "falcon",
            "falcon-server": "falcon",
+           "flume-client": "flume",
+           "flume-server": "flume",
            "hadoop-hdfs-client": "hadoop-hdfs",
            "hadoop-hdfs-datanode": "hadoop-hdfs",
            "hadoop-hdfs-journalnode": "hadoop-hdfs",
@@ -45,7 +48,7 @@ leaves = {
            "hadoop-yarn-resourcemanager": "hadoop-yarn",
            "hadoop-yarn-nodemanager": "hadoop-yarn",
            "hadoop-yarn-timelineserver": "hadoop-yarn",
-	   "hbase-client": "hbase",
+           "hbase-client": "hbase",
            "hbase-master": "hbase",
            "hbase-regionserver": "hbase",
            "hive-client": "hive",
@@ -58,13 +61,15 @@ leaves = {
            "oozie-server": "oozie",
            "phoenix-client": "phoenix",
            "pig-client": "pig",
+           "slider-client": "slider",
            "sqoop-client": "sqoop",
            "sqoop-server": "sqoop",
            "storm-client": "storm",
            "storm-nimbus": "storm",
            "storm-supervisor": "storm",
+           "tez-client": "tez",
            "zookeeper-client": "zookeeper",
-           "zookeeper-server": "zookeeper"
+           "zookeeper-server": "zookeeper",
 }
 
 # Define the aliases and the list of leaves they correspond to
@@ -76,6 +81,8 @@ aliases = {
                       "accumulo-tracer"],
   "all": leaves.keys(),
   "client" : ["accumulo-client",
+              "falcon-client",
+              "flume-client",
               "hadoop-hdfs-client",
               "hadoop-yarn-client",
               "hbase-client",
@@ -84,8 +91,10 @@ aliases = {
               "oozie-client",
               "phoenix-client",
               "pig-client",
+              "slider-client",
               "sqoop-client",
               "storm-client",
+              "tez-client",
               "zookeeper-client"],
   "hadoop-hdfs-server": ["hadoop-hdfs-datanode",
                          "hadoop-hdfs-journalnode",
@@ -107,7 +116,9 @@ locked_contexts = {
 }
 
 command_symlinks = {
-  "falcon" : "falcon-server/bin/falcon",
+  "accumulo" : "accumulo-client/bin/accumulo",
+  "falcon" : "falcon-client/bin/falcon",
+  "flume-ng"  : "flume-client/bin/flume-ng",
   "hadoop" : "hadoop-client/bin/hadoop",
   "hbase" : "hbase-client/bin/hbase",
   "hcat" : "hive-client/../hive-hcatalog/bin/hcat",
@@ -245,9 +256,9 @@ def createCommandSymlinks(packages):
           os.symlink(target, filename)
       else:
         print "ERROR:", filename, "is a regular file instead of symlink."
-	print
+        print
         print "Please ensure that the HDP 2.1 (and earlier) packages are"
- 	print "removed."
+        print "removed."
   
 # Do a sanity check on the tables
 def sanityCheckTables():
