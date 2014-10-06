@@ -42,7 +42,7 @@ else
     ZOOMAIN="org.apache.zookeeper.server.quorum.QuorumPeerMain"
 fi
 
-if [ -n "${ZOOKEEPER_HOME}" ]; then
+if [ -z "${ZOOKEEPER_HOME}" ]; then
   # use POSIX interface, symlink is followed automatically
   ZOOBIN="${BASH_SOURCE-$0}"
   ZOOBIN=`dirname ${ZOOBIN}`
