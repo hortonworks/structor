@@ -23,7 +23,7 @@
 # or the conf directory that is
 # a sibling of this script's directory
 
-if [ -n "${ZOOKEEPER_HOME}" ]; then
+if [ -z "${ZOOKEEPER_HOME}" ]; then
   ZOOBINDIR=${ZOOBINDIR:-/usr/bin}
   ZOOKEEPER_PREFIX=${ZOOBINDIR}/..
 else
