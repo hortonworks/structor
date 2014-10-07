@@ -54,7 +54,7 @@ leaves = {
            "hive-client": "hive",
            "hive-metastore": "hive",
            "hive-server2": "hive",
-           "hive-webhcat": "hive",
+           "hive-webhcat": "hive-hcatalog",
            "knox-server": "knox",
            "mahout-client": "mahout",
            "oozie-client": "oozie",
@@ -117,6 +117,7 @@ locked_contexts = {
 
 command_symlinks = {
   "accumulo" : "accumulo-client/bin/accumulo",
+  "beeline" : "hive-client/bin/beeline",
   "falcon" : "falcon-client/bin/falcon",
   "flume-ng"  : "flume-client/bin/flume-ng",
   "hadoop" : "hadoop-client/bin/hadoop",
