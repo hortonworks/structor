@@ -322,7 +322,10 @@ if options.help:
   printHelp()
 else:
   if len(args) == 0 or args[0] == 'status':
-    listPackages(getPackages(args[1] if len(args) > 1 else None))
+    if len(args) > 1:
+      listPackages(getPackages(args[1]))
+    else:
+      listPackages(getPackages("all"))
   elif args[0] == "set":
     checkCommandParameters('set', len(args), 3)
     pkgs = getPackages(args[1])
