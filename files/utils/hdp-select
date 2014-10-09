@@ -42,6 +42,7 @@ leaves = {
            "hadoop-hdfs-journalnode": "hadoop-hdfs",
            "hadoop-hdfs-nfs3": "hadoop-hdfs",
            "hadoop-hdfs-namenode": "hadoop-hdfs",
+           "hadoop-hdfs-portmap": "hadoop-hdfs",
            "hadoop-hdfs-secondarynamenode": "hadoop-hdfs",
            "hadoop-mapreduce-historyserver": "hadoop-mapreduce",
            "hadoop-yarn-client": "hadoop-yarn",
