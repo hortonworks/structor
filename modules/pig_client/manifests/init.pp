@@ -17,10 +17,17 @@ class pig_client {
   require yarn_client
 
   $conf_dir="/etc/pig/hdp"
+  $path="/usr/bin"
 
   package { "pig_${rpm_version}":
     ensure => present,
   }
+  ->
+  exec { "hdp-select set pig-client ${hdp_version}":
+    cwd => "/",
+    path => "$path",
+  }
+
 
   file { '/etc/pig':
     ensure => 'directory',

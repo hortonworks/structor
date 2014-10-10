@@ -16,6 +16,8 @@
 class zookeeper_server {
   require zookeeper_client
 
+  $path="/usr/bin"
+
   if $security == "true" {
     file { "${zookeeper_client::conf_dir}/zookeeper-server.jaas":
       ensure => file,
@@ -36,6 +38,11 @@ class zookeeper_server {
 
   package { "zookeeper_${rpm_version}-server":
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set zookeeper-server ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { "${zookeeper_client::conf_dir}/configuration.xsl":

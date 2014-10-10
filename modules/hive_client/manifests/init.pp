@@ -19,6 +19,11 @@ class hive_client {
   package { "hive_${rpm_version}":
     ensure => installed,
   }
+  ->
+  exec { "hdp-select set hive-client ${hdp_version}":
+    cwd => "/",
+    path => "$path",
+  }
 
   file { '/etc/hive':
     ensure => 'directory',
@@ -53,7 +58,7 @@ class hive_client {
     ensure => installed,
   }
 
-  file { '/usr/hdp/current/hive-client/lib/mysql-connector-java.jar':
+  file { "/usr/hdp/${hdp_version}/hive/lib/mysql-connector-java.jar":
     ensure => 'link',
     target => '/usr/share/java/mysql-connector-java.jar',
     require => Package["hive_${rpm_version}"],
