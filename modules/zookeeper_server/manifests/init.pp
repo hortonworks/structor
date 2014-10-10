@@ -84,22 +84,6 @@ class zookeeper_server {
     mode => '755',
   }
   ->
-  file { '/usr/hdp/current/zookeeper-server/bin/zkServer.sh':
-    ensure => file,
-    source => "puppet:///files/zk-2053/zkServer.sh",
-    owner => root,
-    group => root,
-    mode => 755,
-  }
-  ->
-  file { '/usr/hdp/current/zookeeper-server/bin/zkCleanup.sh':
-    ensure => file,
-    source => "puppet:///files/zk-2053/zkCleanup.sh",
-    owner => root,
-    group => root,
-    mode => 755,
-  }
-  ->
   service { "zookeeper-server":
     ensure => running,
     enable => true,

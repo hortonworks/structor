@@ -32,22 +32,6 @@ class zookeeper_client {
     cwd => "/",
     path => "$path",
   }
-  ->
-  file { '/usr/hdp/current/zookeeper-client/bin/zkCli.sh':
-    ensure => file,
-    source => "puppet:///files/zk-2053/zkCli.sh",
-    owner => root,
-    group => root,
-    mode => 755,
-  }
-  ->
-  file { '/usr/hdp/current/zookeeper-client/bin/zkEnv.sh':
-    ensure => file,
-    source => "puppet:///files/zk-2053/zkEnv.sh",
-    owner => root,
-    group => root,
-    mode => 755,
-  }
   
   file { '/etc/zookeeper':
     ensure => 'directory',
