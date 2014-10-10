@@ -41,6 +41,11 @@ class hdfs_namenode {
     ensure => installed,
   }
   ->
+  exec { "hdp-select set hadoop-hdfs-namenode ${hdp_version}":
+    cwd => "/",
+    path => "$path",
+  }
+  ->
   file { "/etc/init.d/hadoop-hdfs-namenode":
     ensure => file,
     source => "puppet:///files/init.d/hadoop-hdfs-namenode",

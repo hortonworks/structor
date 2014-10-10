@@ -17,6 +17,8 @@ class hdfs_datanode {
   require hdfs_client
   require hadoop_server
 
+  $path="/usr/bin"
+
   if $security == "true" {
     require kerberos_http
 
@@ -33,6 +35,11 @@ class hdfs_datanode {
 
   package { "hadoop_${rpm_version}-hdfs-datanode" :
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set hadoop-hdfs-datanode ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { "/etc/init.d/hadoop-hdfs-datanode":

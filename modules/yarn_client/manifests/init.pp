@@ -19,9 +19,15 @@ class yarn_client {
   require hdfs_client
 
   $user_logs = "/user/yarn/"
+  $path="/usr/bin"
 
   package { "hadoop_${rpm_version}-yarn":
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set hadoop-yarn-client ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { "/usr/hdp/${hdp_version}/hadoop-yarn/libexec":

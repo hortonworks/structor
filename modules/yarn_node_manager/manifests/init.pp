@@ -17,6 +17,8 @@ class yarn_node_manager {
   require yarn_client
   require hadoop_server
 
+  $path="/usr/bin"
+
   if $security == "true" {
     require kerberos_http
 
@@ -41,6 +43,11 @@ class yarn_node_manager {
 
   package { "hadoop_${rpm_version}-yarn-nodemanager" :
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set hadoop-yarn-nodemanager ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { "/etc/init.d/hadoop-yarn-nodemanager":

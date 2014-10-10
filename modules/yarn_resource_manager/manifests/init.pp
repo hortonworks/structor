@@ -17,6 +17,8 @@ class yarn_resource_manager {
   require yarn_client
   require hadoop_server
 
+  $path="/usr/bin"
+
   if $security == "true" {
     require kerberos_http
 
@@ -45,6 +47,11 @@ class yarn_resource_manager {
     ensure => installed,
   }
   ->
+  exec { "hdp-select set hadoop-yarn-resourcemanager ${hdp_version}":
+    cwd => "/",
+    path => "$path",
+  }
+  ->
   file { "/etc/init.d/hadoop-yarn-resourcemanager":
     ensure => file,
     source => "puppet:///files/init.d/hadoop-yarn-resourcemanager",
@@ -59,6 +66,11 @@ class yarn_resource_manager {
 
   package { "hadoop_${rpm_version}-mapreduce-historyserver" :
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set hadoop-mapreduce-historyserver ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { "/etc/init.d/hadoop-mapreduce-historyserver":

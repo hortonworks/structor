@@ -15,16 +15,22 @@
 
 class zookeeper_client {
   require repos_setup
+  require hdp_select
   require jdk
-  require hdfs_client
 
   $conf_dir="/etc/zookeeper/hdp"
   $log_dir="/var/log/zookeeper"
   $data_dir="/var/run/zookeeper"
   $pid_dir="/var/run/pid/zookeeper"
+  $path="/usr/bin"
 
   package { "zookeeper_${rpm_version}":
     ensure => installed,
+  }
+  ->
+  exec { "hdp-select set zookeeper-client ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
   ->
   file { '/usr/hdp/current/zookeeper-client/bin/zkCli.sh':

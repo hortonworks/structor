@@ -15,6 +15,7 @@
 
 class hdfs_client {
   require repos_setup
+  require hdp_select
   require jdk
 
   $conf_dir="/etc/hadoop/hdp"
@@ -24,18 +25,11 @@ class hdfs_client {
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 
-  file { "/usr/bin/hdp-select":
-    ensure => file,
-    source => "puppet:///files/utils/hdp-select",
-    owner => root,
-    group => root,
-  }
-  ->
   package { "hadoop_${rpm_version}":
     ensure => installed,
   }
   ->
-  exec { "hdp-select set all ${hdp_version}":
+  exec { "hdp-select set hadoop-hdfs-client ${hdp_version}":
     cwd => "/",
     path => "$path",
   }
