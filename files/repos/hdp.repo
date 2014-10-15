@@ -1,4 +1,4 @@
-#VERSION_NUMBER=2.2.0.0-874
+#VERSION_NUMBER=2.2.0.0-913
 
 [HDP-UTILS-1.1.0.20]
 name=Hortonworks Data Platform Utils Version - HDP-UTILS-1.1.0.20
@@ -8,10 +8,10 @@ gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/HDP-UTILS-1.1.0.20/repos/cent
 enabled=1
 priority=1
 
-[HDP-2.2.0.0-874]
-name=Hortonworks Data Platform Version - HDP-2.2.0.0-874
-baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-874
+[HDP-2.2.0.0-913]
+name=Hortonworks Data Platform Version - HDP-2.2.0.0-913
+baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-913
 gpgcheck=1
-gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-874/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-913/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 enabled=1
 priority=1
