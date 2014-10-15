@@ -17,6 +17,7 @@
 # This should *ONLY* be used in virtual machines that don't have enough
 # entropy and where the generated keys won't be used in real environments.
 class weak_random {
+  require repos_setup
   $path = "/bin:/usr/bin"
   
   exec { '/dev/random' :

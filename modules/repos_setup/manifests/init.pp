@@ -22,4 +22,7 @@ class repos_setup {
     ensure => file,
     source => 'puppet:///files/repos/ambari.repo',
   }
+  package { 'epel-release-6-8':
+    ensure => absent,
+  }
 }
