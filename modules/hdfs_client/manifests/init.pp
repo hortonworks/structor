@@ -29,7 +29,7 @@ class hdfs_client {
     ensure => installed,
   }
   ->
-  exec { "hdp-select set hadoop-hdfs-client ${hdp_version}":
+  exec { "hdp-select set hadoop-client ${hdp_version}":
     cwd => "/",
     path => "$path",
   }

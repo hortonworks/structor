@@ -22,12 +22,6 @@ class pig_client {
   package { "pig_${rpm_version}":
     ensure => present,
   }
-  ->
-  exec { "hdp-select set pig-client ${hdp_version}":
-    cwd => "/",
-    path => "$path",
-  }
-
 
   file { '/etc/pig':
     ensure => 'directory',

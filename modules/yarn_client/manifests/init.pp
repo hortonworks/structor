@@ -25,11 +25,6 @@ class yarn_client {
     ensure => installed,
   }
   ->
-  exec { "hdp-select set hadoop-yarn-client ${hdp_version}":
-    cwd => "/",
-    path => "$path",
-  }
-  ->
   file { "/usr/hdp/${hdp_version}/hadoop-yarn/libexec":
     ensure => link,
     target => "/usr/hdp/${hdp_version}/hadoop/libexec",
