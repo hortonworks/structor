@@ -19,11 +19,6 @@ class hive_client {
   package { "hive_${rpm_version}":
     ensure => installed,
   }
-  ->
-  exec { "hdp-select set hive-client ${hdp_version}":
-    cwd => "/",
-    path => "$path",
-  }
 
   file { '/etc/hive':
     ensure => 'directory',
