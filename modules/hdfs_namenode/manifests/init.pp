@@ -167,4 +167,38 @@ class hdfs_namenode {
     path => "$PATH",
     user => "hdfs",
   }
+  ->
+  exec {"mr-tarball-dir":
+    command => "hadoop fs -mkdir -p /hdp/apps/${hdp_version}/mapreduce",
+    unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/mapreduce",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"tez-tarball-dir":
+    command => "hadoop fs -mkdir -p /hdp/apps/${hdp_version}/tez",
+    unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/tez",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"pig-tarball-dir":
+    command => "hadoop fs -mkdir -p /hdp/apps/${hdp_version}/pig",
+    unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/pig",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hive-tarball-dir":
+    command => "hadoop fs -mkdir -p /hdp/apps/${hdp_version}/hive",
+    unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/hive",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"tarball-chmod":
+    command => "hadoop fs -chmod -R +rX /hdp",
+    path => "$PATH",
+    user => "hdfs",
+  }
 }
