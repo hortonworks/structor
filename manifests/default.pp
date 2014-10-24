@@ -86,6 +86,10 @@ if hasrole($roles, 'cert') {
    include certification
 }
 
+if islastslave($nodes, $hostname) {
+  include install_hdfs_tarballs
+}
+
 # Ensure the kdc is brought up before the namenode and hive metastore
 if $security == "true" and hasrole($roles, 'kdc') {
   if hasrole($roles, 'nn') {

@@ -25,6 +25,16 @@
 <configuration xmlns:xi="http://www.w3.org/2001/XInclude">
 
   <property>
+    <name>mapreduce.application.framework.path</name>
+    <value>hdfs:/hdp/apps/${hdp.version}/mapreduce/mapreduce.tar.gz#mapreduce</value>
+  </property>
+
+  <property>
+    <name>mapreduce.application.classpath</name>
+    <value>mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/mapreduce/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/mapreduce/lib/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/common/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/common/lib/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/yarn/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/yarn/lib/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/hdfs/*:mapreduce/hadoop-2.6.0.2.2.0.0-1048/share/hadoop/hdfs/lib/*</value>
+  </property>
+
+  <property>
     <name>mapreduce.jobhistory.address</name>
     <value><%= @yarn %>:10020</value>
   </property>
@@ -67,11 +77,6 @@
   <property>
     <name>mapreduce.cluster.administrators</name>
     <value> admin</value>
-  </property>
-    
-  <property>
-    <name>mapreduce.application.classpath</name>
-    <value>$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/*,$HADOOP_MAPRED_HOME/share/hadoop/mapreduce/lib/*</value>
   </property>
     
   <property>
@@ -157,11 +162,6 @@
   <property>
     <name>mapreduce.shuffle.port</name>
     <value>13562</value>
-  </property>
-    
-  <property>
-    <name>mapreduce.admin.user.env</name>
-    <value>LD_LIBRARY_PATH=/usr/lib/hadoop/lib/native:/usr/lib/hadoop/lib/native/Linux-amd64-64</value>
   </property>
     
   <property>

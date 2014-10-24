@@ -33,4 +33,29 @@ Would return: false
 
     return array.include?(item)
   end
+
+  newfunction(:islastslave, :type => :rvalue, :doc => <<-EOS
+This function determines if a node is the last slave. The first parameter
+is the node map and the second is the hostname.
+    EOS
+  ) do |arguments|
+
+    raise(Puppet::ParseError, "islastslave(): Wrong number of arguments " +
+      "given (#{arguments.size} for 2)") if arguments.size < 2
+
+    nodes = eval(arguments[0])
+
+    unless nodes.is_a?(Array)
+      raise(Puppet::ParseError, 'islastslave(): Requires array to work with')
+    end
+
+    host = arguments[1]
+
+    raise(Puppet::ParseError, 'islastslave(): You must provide item ' +
+      'to search for within array given') if host.empty?
+
+    slaves = nodes.select {|node| node[:roles].include? 'slave'}.
+      map{|node| node[:hostname]}
+    return slaves.last == host
+  end
 end
