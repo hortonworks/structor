@@ -13,33 +13,35 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class install_hdfs_tarballs {
-  require hdfs_datanode
+class tez_client {
+  require yarn_client
 
-  $PATH="/bin:/usr/bin"
+  $conf_dir="/etc/tez/hdp"
 
-  if hasrole($clients, 'yarn') {
-    require yarn_client
-
-    exec {"install-mr-tarball":
-      command => "hadoop fs -put /usr/hdp/${hdp_version}/hadoop/mr-*.tar.gz /hdp/apps/${hdp_version}/mapreduce/mapreduce.tar.gz",
-      unless =>
-        "hadoop fs -test -e /hdp/apps/${hdp_version}/mapreduce/mapreduce.tar.gz",
-      path => "$PATH",
-      user => "hdfs",
-    }
+  package { "tez_${rpm_version}":
+    ensure => installed,
+  }
+  ->
+  file { "/etc/tez":
+    ensure => directory,
+  }
+  ->
+  file { "${conf_dir}":
+    ensure => 'directory',
+  }
+  ->
+  file { '/etc/tez/conf':
+    ensure => 'link',
+    target => "${conf_dir}",
   }
 
-  if hasrole($clients, 'tez') {
-    require tez_client
-
-    exec {"install-tez-tarball":
-      command => "hadoop fs -put /usr/hdp/${hdp_version}/tez/lib/tez-*.tar.gz /hdp/apps/${hdp_version}/tez/tez.tar.gz",
-      unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/tez/tez.tar.gz",
-      path => "$PATH",
-      user => "hdfs",
-    }
+  file { "${conf_dir}/tez-env.sh":
+    ensure => file,
+    content => template('tez_client/tez-env.erb'),
   }
 
-
+  file { "${conf_dir}/tez-site.xml":
+    ensure => file,
+    content => template('tez_client/tez-site.erb'),
+  }
 }
