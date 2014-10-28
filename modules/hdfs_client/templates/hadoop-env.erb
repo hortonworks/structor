@@ -72,7 +72,8 @@ do
   JAVA_JDBC_LIBS=${JAVA_JDBC_LIBS}:$jarFile
 done
 #Add libraries required by nodemanager
-export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}${JAVA_JDBC_LIBS}
+TEZ_LIBS=/etc/tez/conf:/usr/hdp/${HDP_VERSION}/tez/*:/usr/hdp/${HDP_VERSION}/tez/lib/*
+export HADOOP_CLASSPATH=${HADOOP_CLASSPATH}${JAVA_JDBC_LIBS}:${TEZ_LIBS}
 
 <% if @security == "true" -%>
 # Path to jsvc required by secure HDP 2.0 datanode

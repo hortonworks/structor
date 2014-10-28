@@ -41,6 +41,9 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'pig') {
     include pig_client
   }
+  if hasrole($clients, 'tez') {
+    include tez_client
+  }
   if hasrole($clients, 'zk') {
     include zookeeper_client
   }
