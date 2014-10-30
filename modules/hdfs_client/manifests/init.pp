@@ -44,23 +44,13 @@ class hdfs_client {
     require => Package["hadoop_${rpm_version}"],
   }
 
-  package { "hadoop-lzo":
+  package { "hadooplzo_${rpm_version}":
     ensure => installed,
     require => Package["hadoop_${rpm_version}"],
   }
   ->
-  package { "hadoop-lzo-native":
+  package { "hadooplzo_${rpm_version}-native":
     ensure => installed,
-  }
-  ->
-  exec { 'cp /usr/hdp/current/share/lzo/0.6.0/lib/hadoop-lzo-0.6.0.jar /usr/hdp/current/hadoop-client/lib':
-    creates => '/usr/hdp/current/hadoop-client/lib/hadoop-lzo-0.6.0.jar',
-    path => "$path",
-  }
-  ->
-  exec { 'cp /usr/hdp/current/share/lzo/0.6.0/lib/native/Linux-amd64-64/* /usr/hdp/current/hadoop-client/lib/native':
-    creates => '/usr/hdp/current/hadoop-client/lib/native/libgplcompression.so',
-    path => "$path",
   }
 
   package { 'openssl':
