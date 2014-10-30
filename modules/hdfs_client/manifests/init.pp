@@ -53,12 +53,12 @@ class hdfs_client {
     ensure => installed,
   }
   ->
-  exec { 'mv /usr/hdp/current/share/lzo/0.6.0/lib/hadoop-lzo-0.6.0.jar /usr/hdp/current/hadoop-client/lib':
+  exec { 'cp /usr/hdp/current/share/lzo/0.6.0/lib/hadoop-lzo-0.6.0.jar /usr/hdp/current/hadoop-client/lib':
     creates => '/usr/hdp/current/hadoop-client/lib/hadoop-lzo-0.6.0.jar',
     path => "$path",
   }
   ->
-  exec { 'mv /usr/hdp/current/share/lzo/0.6.0/lib/native/Linux-amd64-64/* /usr/hdp/current/hadoop-client/lib/native':
+  exec { 'cp /usr/hdp/current/share/lzo/0.6.0/lib/native/Linux-amd64-64/* /usr/hdp/current/hadoop-client/lib/native':
     creates => '/usr/hdp/current/hadoop-client/lib/native/libgplcompression.so',
     path => "$path",
   }
