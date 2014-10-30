@@ -22,7 +22,7 @@ class install_hdfs_tarballs {
     require yarn_client
 
     exec {"install-mr-tarball":
-      command => "hadoop fs -put /usr/hdp/${hdp_version}/hadoop/mr-*.tar.gz /hdp/apps/${hdp_version}/mapreduce/mapreduce.tar.gz",
+      command => "hadoop fs -put /usr/hdp/${hdp_version}/hadoop/mapreduce.tar.gz /hdp/apps/${hdp_version}/mapreduce/",
       unless =>
         "hadoop fs -test -e /hdp/apps/${hdp_version}/mapreduce/mapreduce.tar.gz",
       path => "$PATH",
@@ -34,7 +34,7 @@ class install_hdfs_tarballs {
     require tez_client
 
     exec {"install-tez-tarball":
-      command => "hadoop fs -put /usr/hdp/${hdp_version}/tez/lib/tez-*.tar.gz /hdp/apps/${hdp_version}/tez/tez.tar.gz",
+      command => "hadoop fs -put /usr/hdp/${hdp_version}/tez/lib/tez.tar.gz /hdp/apps/${hdp_version}/tez/",
       unless => "hadoop fs -test -e /hdp/apps/${hdp_version}/tez/tez.tar.gz",
       path => "$PATH",
       user => "hdfs",
