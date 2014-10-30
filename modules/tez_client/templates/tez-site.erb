@@ -27,6 +27,11 @@
   </property>
 
   <property>
+    <name>tez.cluster.additional.classpath.prefix</name>
+    <value>/usr/hdp/${hdp.version}/hadoop/lib/hadoop-lzo-0.6.0.${hdp.version}.jar:/etc/hadoop/conf</value>
+  </property>
+
+  <property>
     <name>tez.am.log.level</name>
     <value>INFO</value>
     <description>Root Logging level passed to the Tez app master</description>
@@ -53,8 +58,14 @@
   </property>
 
   <property>
+    <name>tez.am.launch.cluster-default.cmd-opts</name>
+    <value>-server -Djava.net.preferIPv4Stack=true -Dhdp.version=${hdp.version}</value>
+    <description>Cluster default Java options for the Tez AppMaster process. These will be prepended to the properties specified via tez.am.launch.cmd-opts</description>
+  </property>
+
+  <property>
     <name>tez.am.launch.cmd-opts</name>
-    <value>-server -Djava.net.preferIPv4Stack=true -XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC</value>
+    <value>-Djava.net.preferIPv4Stack=true -XX:+PrintGCDetails -verbose:gc -XX:+PrintGCTimeStamps -XX:+UseNUMA -XX:+UseParallelGC</value>
     <description>Java options for the Tez AppMaster process. The Xmx value is derived based on tez.am.resource.memory.mb and is 80% of the value by default.
       Used only if the value is not specified explicitly by the DAG definition.
     </description>
@@ -75,6 +86,14 @@
     <value><%= client_mem %></value>
     <description>The amount of memory to be used by launched tasks.
       Used only if the value is not specified explicitly by the DAG definition.
+    </description>
+  </property>
+
+  <property>
+    <name>tez.task.launch.cluster-default.cmd-opts</name>
+    <value>-server -Djava.net.preferIPv4Stack=true -Dhdp.version=${hdp.version}</value>
+    <description>Cluster default Java options for tasks. These will be 
+        prepended to the properties specified via tez.task.launch.cmd-opts
     </description>
   </property>
 
