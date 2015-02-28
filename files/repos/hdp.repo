@@ -1,9 +1,9 @@
-#VERSION_NUMBER=2.2.0.0-1740
-[HDP-2.2.0.0-1740]
-name=Hortonworks Data Platform Version - HDP-2.2.0.0-1740
-baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-1740
-gpgcheck=0
-gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/BUILDS/2.2.0.0-1740/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
+#VERSION_NUMBER=2.2.0.0-2041
+[HDP-2.2.0.0]
+name=Hortonworks Data Platform Version - HDP-2.2.0.0
+baseurl=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/updates/2.2.0.0
+gpgcheck=1
+gpgkey=http://s3.amazonaws.com/dev.hortonworks.com/HDP/centos6/2.x/updates/2.2.0.0/RPM-GPG-KEY/RPM-GPG-KEY-Jenkins
 enabled=1
 priority=1
 

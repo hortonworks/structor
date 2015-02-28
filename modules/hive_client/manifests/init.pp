@@ -32,6 +32,7 @@ class hive_client {
     ensure => 'link',
     target => '/etc/hive/hdp',
     require => Package["hive_${rpm_version}"],
+    force => true
   }
 
   file { '/etc/hive/hdp/hive-env.sh':
