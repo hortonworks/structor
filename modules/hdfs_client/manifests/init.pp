@@ -77,6 +77,7 @@ class hdfs_client {
     ensure => 'link',
     target => "${conf_dir}",
     require => Package["hadoop_${rpm_version}"],
+    force => true
   }
 
   file { "${conf_dir}/commons-logging.properties":
