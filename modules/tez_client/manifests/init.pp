@@ -33,6 +33,7 @@ class tez_client {
   file { '/etc/tez/conf':
     ensure => 'link',
     target => "${conf_dir}",
+    force => true
   }
 
   file { "${conf_dir}/tez-env.sh":

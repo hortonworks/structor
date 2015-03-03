@@ -35,6 +35,7 @@ class pig_client {
     ensure => 'link',
     target => "${conf_dir}",
     require => Package["pig_${rpm_version}"],
+    force => true
   }
 
   file { "${conf_dir}/pig-env.sh":

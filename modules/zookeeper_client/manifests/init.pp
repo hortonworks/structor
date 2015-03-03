@@ -45,6 +45,7 @@ class zookeeper_client {
     ensure => 'link',
     target => "${conf_dir}",
     require => Package["zookeeper_${rpm_version}"],
+    force => true
   }
 
 
