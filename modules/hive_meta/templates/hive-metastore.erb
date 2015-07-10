@@ -67,7 +67,7 @@ LOCKDIR="/var/lock/subsys"
 LOCKFILE="$LOCKDIR/hive-metastore"
 WORKING_DIR="/var/lib/hive"
 
-install -d -m 0755 -o hive -g hive /var/run/hive 1>/dev/null 2>&1 || :
+install -d -m 0755 -o hive -g hive /var/lib/hive 1>/dev/null 2>&1 || :
 [ -d "$LOCKDIR" ] || install -d -m 0755 $LOCKDIR 1>/dev/null 2>&1 || :
 start() {
     [ -x $EXE_FILE ] || exit $ERROR_PROGRAM_NOT_INSTALLED

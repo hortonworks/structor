@@ -21,7 +21,7 @@ class hdfs_client {
   $conf_dir="/etc/hadoop/hdp"
   $path="${jdk::HOME}/bin:/bin:/usr/bin"
   $log_dir="/var/log/hadoop"
-  $data_dir="/var/run/hadoop"
+  $data_dir="/var/lib/hadoop"
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 

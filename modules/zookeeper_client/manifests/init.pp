@@ -20,7 +20,7 @@ class zookeeper_client {
 
   $conf_dir="/etc/zookeeper/hdp"
   $log_dir="/var/log/zookeeper"
-  $data_dir="/var/run/zookeeper"
+  $data_dir="/var/lib/zookeeper"
   $pid_dir="/var/run/pid/zookeeper"
   $path="/usr/bin"
 

@@ -65,7 +65,7 @@ USER=$SVC_USER
 . $CONF_DIR/yarn-env.sh
 PIDFILE="$HADOOP_PID_DIR/yarn-$YARN_IDENT_STRING-resourcemanager.pid"
 
-install -d -m 0755 -o yarn -g yarn /var/run/hadoop-yarn 1>/dev/null 2>&1 || :
+install -d -m 0755 -o yarn -g yarn /var/lib/hadoop-yarn 1>/dev/null 2>&1 || :
 [ -d "$LOCKDIR" ] || install -d -m 0755 $LOCKDIR 1>/dev/null 2>&1 || :
 
 start() {

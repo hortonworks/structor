@@ -65,7 +65,7 @@ USER=$SVC_USER
 . $CONF_DIR/mapred-env.sh
 PIDFILE="$HADOOP_PID_DIR/mapred-$HADOOP_MAPRED_IDENT_STRING-historyserver.pid"
 
-install -d -m 0755 -o mapred -g mapred /var/run/hadoop-mapreduce 1>/dev/null 2>&1 || :
+install -d -m 0755 -o mapred -g mapred /var/lib/hadoop-mapreduce 1>/dev/null 2>&1 || :
 [ -d "$LOCKDIR" ] || install -d -m 0755 $LOCKDIR 1>/dev/null 2>&1 || :
 
 start() {
