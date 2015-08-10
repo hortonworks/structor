@@ -52,6 +52,9 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'oozie') {
     include oozie_client
   }
+  if hasrole($clients, 'phoenix') {
+    include phoenix_client
+  }
   if hasrole($clients, 'pig') {
     include pig_client
   }
@@ -64,6 +67,14 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'zk') {
     include zookeeper_client
   }
+}
+
+if hasrole($roles, 'hbase-master') {
+  include hbase_master
+}
+
+if hasrole($roles, 'hbase-regionserver') {
+  include hbase_regionserver
 }
 
 if hasrole($roles, 'hive-db') {

@@ -92,6 +92,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
           "clients" => profile[:clients],
           "server_mem" => profile[:server_mem],
           "client_mem" => profile[:client_mem],
+          "hbase_master_mem" => profile[:hbase_master_mem],
+          "hbase_regionserver_mem" => profile[:hbase_regionserver_mem],
           "profile" => profile
         }
       end
