@@ -1,0 +1,46 @@
+<% @namenode = eval(@nodes).
+     select {|node| node[:roles].include? 'nn'}[0][:hostname] + "." + @domain;
+   @zookeeper_servers = eval(@nodes).
+      select {|node| node[:roles].include? 'zk'}.
+      map{|node| node[:hostname] + "." + @domain + ":2181"}.join(",");
+ -%>
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://<%= @namenode %>/apps/hbase</value>
+  </property>
+
+  <property>
+    <name>phoenix.functions.allowUserDefinedFunctions</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>phoenix.query.timeoutMs</name>
+    <value>60000</value>
+  </property>
+  <property>
+    <name>phoenix.sequence.saltBuckets</name>
+    <value>8</value>
+  </property>
+  <property>
+    <name>hbase.regionserver.wal.codec</name>
+    <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
+  </property>
+
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.quorum</name>
+    <value><%= @zookeeper_servers %></value>
+  </property>
+  <property>
+    <name>zookeeper.znode.parent</name>
+    <value>/hbase</value>
+  </property>
+
+</configuration>
