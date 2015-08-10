@@ -51,10 +51,8 @@ class yarn_node_manager {
   }
   ->
   file { "/etc/init.d/hadoop-yarn-nodemanager":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-yarn-nodemanager",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-yarn-nodemanager/../etc/rc.d/init.d/hadoop-yarn-nodemanager",
   }
   ->
   service {"hadoop-yarn-nodemanager":

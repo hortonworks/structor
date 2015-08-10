@@ -47,10 +47,8 @@ class hdfs_namenode {
   }
   ->
   file { "/etc/init.d/hadoop-hdfs-namenode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-namenode",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-hdfs-namenode/../etc/rc.d/init.d/hadoop-hdfs-namenode",
   }
   ->
   exec {"namenode-format":

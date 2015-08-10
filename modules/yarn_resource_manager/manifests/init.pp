@@ -53,10 +53,8 @@ class yarn_resource_manager {
   }
   ->
   file { "/etc/init.d/hadoop-yarn-resourcemanager":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-yarn-resourcemanager",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-yarn-resourcemanager/../etc/rc.d/init.d/hadoop-yarn-resourcemanager",
   }
   ->
   service {"hadoop-yarn-resourcemanager":
@@ -74,10 +72,8 @@ class yarn_resource_manager {
   }
   ->
   file { "/etc/init.d/hadoop-mapreduce-historyserver":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-mapreduce-historyserver",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-mapreduce-historyserver/../etc/rc.d/init.d/hadoop-mapreduce-historyserver",
   }
   ->
   service {"hadoop-mapreduce-historyserver":

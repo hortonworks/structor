@@ -51,11 +51,8 @@ class zookeeper_server {
   }
   ->
   file { "/etc/init.d/zookeeper-server":
-    ensure => file,
-    source => "puppet:///files/init.d/zookeeper-server",
-    owner => root,
-    group => root,
-    mode => 755,
+    ensure => 'link',
+    target => "/usr/hdp/current/zookeeper-server/../etc/rc.d/init.d/zookeeper-server",
   }
   ->
   file { "${zookeeper_client::data_dir}":
