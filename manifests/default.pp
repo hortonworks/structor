@@ -41,6 +41,9 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'pig') {
     include pig_client
   }
+  if hasrole($clients, 'phoenix') {
+    include phoenix_client
+  }
   if hasrole($clients, 'tez') {
     include tez_client
   }
@@ -76,6 +79,13 @@ if hasrole($roles, 'zk') {
 
 if hasrole($roles, 'knox') {
   include knox_gateway
+}
+
+if hasrole($roles, 'hbase-master') {
+  include hbase_master
+}
+if hasrole($roles, 'hbase-regionserver') {
+  include hbase_regionserver
 }
 
 if hasrole($roles, 'ambari-server') {

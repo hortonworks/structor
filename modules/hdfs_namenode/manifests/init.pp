@@ -155,6 +155,25 @@ class hdfs_namenode {
     user => "hdfs",
   }
   ->
+  exec {"hbase-warehouse":
+    command => "hadoop fs -mkdir -p /apps/hbase",
+    unless => "hadoop fs -test -e /apps/hbase",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hbase-warehouse-chown":
+    command => "hadoop fs -chown hbase:hbase /apps/hbase",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hbase-warehouse-chmod":
+    command => "hadoop fs -chmod 1777 /apps/hbase",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
   exec {"hdfs-tmp":
     command => "hadoop fs -mkdir /tmp",
     unless => "hadoop fs -test -e /tmp",
