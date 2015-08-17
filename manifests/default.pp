@@ -13,12 +13,23 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-include repos_setup
+# Initializations.
+stage { 'pre':
+  before => Stage["main"],
+}
+class { 'repos_setup':
+  stage => 'pre',
+} ->
+class { 'jdk':
+  stage => 'pre',
+}
+
 include vm_users
 include ip_setup
 include selinux
 include weak_random
 include ntp
+include ssh_keygen
 
 if $security == "true" {
   include kerberos_client
@@ -86,6 +97,10 @@ if hasrole($roles, 'hbase-master') {
 }
 if hasrole($roles, 'hbase-regionserver') {
   include hbase_regionserver
+}
+
+if hasrole($roles, 'spark') {
+  include spark
 }
 
 if hasrole($roles, 'ambari-server') {
