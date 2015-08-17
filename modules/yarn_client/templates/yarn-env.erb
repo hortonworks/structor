@@ -17,7 +17,7 @@
 
 export YARN_LOG_DIR=<%= scope.lookupvar('hdfs_client::log_dir') %>/$USER
 export YARN_PID_DIR=<%= scope.lookupvar('hdfs_client::pid_dir') %>/$USER
-export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export JAVA_HOME=<%= scope.lookupvar('java_home') %>
 export YARN_IDENT_STRING="$HADOOP_IDENT_STRING"
 
 # User for YARN daemons

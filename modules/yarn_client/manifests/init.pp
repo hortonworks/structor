@@ -15,7 +15,6 @@
 
 class yarn_client {
   require repos_setup
-  require jdk
   require hdfs_client
 
   $user_logs = "/user/yarn/"

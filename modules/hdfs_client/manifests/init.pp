@@ -16,10 +16,9 @@
 class hdfs_client {
   require repos_setup
   require hdp_select
-  require jdk
 
   $conf_dir="/etc/hadoop/hdp"
-  $path="${jdk::HOME}/bin:/bin:/usr/bin"
+  $path="${java_home}/bin:/bin:/usr/bin"
   $log_dir="/var/log/hadoop"
   $data_dir="/var/lib/hadoop"
   $pid_dir="/var/run/pid"
@@ -130,7 +129,7 @@ class hdfs_client {
     require ssl_ca
 
     # bless the generated ca cert for java clients
-    exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${jdk::HOME}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
+    exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${java_home}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
       cwd => "/vagrant/generated/ssl-ca",
       path => "$path",
     }

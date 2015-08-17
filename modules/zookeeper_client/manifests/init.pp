@@ -16,7 +16,6 @@
 class zookeeper_client {
   require repos_setup
   require hdp_select
-  require jdk
 
   $conf_dir="/etc/zookeeper/hdp"
   $log_dir="/var/log/zookeeper"

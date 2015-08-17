@@ -22,7 +22,7 @@ class kerberos_http {
     Class['kerberos_kdc'] -> Class['kerberos_http']
   }
 
-  $path = "${jdk::HOME}/bin:/bin:/usr/bin"
+  $path = "${java_home}/bin:/bin:/usr/bin"
 
   file { "${hdfs_client::keytab_dir}":
     ensure => directory,
