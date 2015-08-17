@@ -13,33 +13,16 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class hive_db {
-  $PATH = "/bin:/usr/bin"
+class oozie_client {
+  require repos_setup
+  require hdp_select
 
-  package { 'mysql-server':
+  package { "oozie_${rpm_version}-client":
     ensure => installed,
   }
-  ->
-  service { 'mysqld':
-    ensure => running,
-    enable => true,
-  }
-  ->
-  exec { "secure-mysqld":
-    command => "mysql_secure_installation < files/secure-mysql.txt",
-    path => "${PATH}",
-    cwd => "/vagrant/modules/hive_db",
-  }
-  ->
-  exec { "add-remote-root":
-    command => "/vagrant/modules/hive_db/files/add-remote-root.sh",
-    path => $PATH,
-  }
-  ->
-  exec { "create-hivedb":
-    command => "mysql -u root --password=vagrant < files/setup-hive.txt",
-    path => "${PATH}",
-    cwd => "/vagrant/modules/hive_db",
-    creates => "/var/lib/mysql/hive",
+
+  file { "/etc/profile.d/oozie.sh":
+    ensure => file,
+    content => template('oozie_client/oozie.erb'),
   }
 }

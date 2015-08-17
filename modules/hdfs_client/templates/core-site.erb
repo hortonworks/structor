@@ -24,6 +24,9 @@
       map{|node| node[:hostname] + "." + @domain}.join(",");
    @hcat_servers = eval(@nodes).select {|node| node[:roles].include? 'hcat'
        }.map{|node| node[:hostname] + "." + @domain}.join(",");
+   @oozie_servers = eval(@nodes).
+      select {|node| node[:roles].include? 'oozie'}.
+      map{|node| node[:hostname] + "." + @domain}.join(",");
   -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -86,6 +89,18 @@
     <value>30000</value>
   </property>
     
+<% if @oozie_servers.length > 0 -%>
+  <property>
+    <name>hadoop.proxyuser.oozie.groups</name>
+    <value>oozie,users</value>
+  </property>
+    
+  <property>
+    <name>hadoop.proxyuser.oozie.hosts</name>
+    <value><%= @oozie_servers %></value>
+  </property>
+<% end -%>
+
 <% if @security == "true" -%>
   <property>
     <name>hadoop.security.auth_to_local</name>

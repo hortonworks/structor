@@ -31,6 +31,10 @@ class hadoop_server {
   ->
   group { 'yarn':
     ensure => present,
+  }
+  ->
+  group { 'oozie':
+    ensure => present,
   } 
   ->
   user { 'hdfs':
@@ -53,6 +57,12 @@ class hadoop_server {
   user { 'hive':
     ensure => present,
     gid => hadoop,
+  }
+  ->
+  user { 'oozie':
+    ensure => present,
+    groups => ['hadoop'],
+    gid => 'oozie',
   }
 
   file { "${hdfs_client::data_dir}":

@@ -134,6 +134,19 @@ class hdfs_namenode {
     user => "hdfs",
   }
   ->
+  exec {"oozie-home":
+    command => "hadoop fs -mkdir -p /user/oozie",
+    unless => "hadoop fs -test -e /user/oozie",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"oozie-home-chown":
+    command => "hadoop fs -chown oozie:oozie /user/oozie",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
   exec {"hive-warehouse":
     command => "hadoop fs -mkdir -p /apps/hive/warehouse",
     unless => "hadoop fs -test -e /apps/hive/warehouse",

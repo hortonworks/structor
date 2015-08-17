@@ -13,33 +13,12 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class hive_db {
-  $PATH = "/bin:/usr/bin"
+class load_hdfs_keytab {
+  require hdfs_datanode
+  $PATH="/bin:/usr/bin"
 
-  package { 'mysql-server':
-    ensure => installed,
-  }
-  ->
-  service { 'mysqld':
-    ensure => running,
-    enable => true,
-  }
-  ->
-  exec { "secure-mysqld":
-    command => "mysql_secure_installation < files/secure-mysql.txt",
-    path => "${PATH}",
-    cwd => "/vagrant/modules/hive_db",
-  }
-  ->
-  exec { "add-remote-root":
-    command => "/vagrant/modules/hive_db/files/add-remote-root.sh",
+  exec { "kinit -k -t ${hdfs_client::keytab_dir}/dn.keytab dn/${hostname}.${domain}":
     path => $PATH,
-  }
-  ->
-  exec { "create-hivedb":
-    command => "mysql -u root --password=vagrant < files/setup-hive.txt",
-    path => "${PATH}",
-    cwd => "/vagrant/modules/hive_db",
-    creates => "/var/lib/mysql/hive",
+    user => "hdfs",
   }
 }

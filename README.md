@@ -46,12 +46,13 @@ For each host in nodes, you define the name, ip address, and the roles for
 that node. The available roles are:
 
 * client - client machine
+* hive-db - Hive Metastore and Oozie backing mysql
+* hive-meta - Hive Metastore
 * kdc - kerberos kdc
 * nn - HDFS NameNode
-* yarn - Yarn Resource Manager and MapReduce Job History Server
+* oozie - Oozie master
 * slave - HDFS DataNode & Yarn NodeManager
-* hive-db - Hive MetaStore backing mysql
-* hive-meta - Hive MetaStore
+* yarn - Yarn Resource Manager and MapReduce Job History Server
 * zk - Zookeeper Server
 
 This is an example of the current default.profile

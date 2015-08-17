@@ -44,4 +44,11 @@ class ssl_ca {
     content => "01",
     mode => "600",
   }
+
+  file {"${cadir}/ca.ser":
+    replace => no,
+    ensure => present,
+    content => "01",
+    mode => "600",
+  }
 }

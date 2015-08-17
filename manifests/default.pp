@@ -20,6 +20,8 @@ include selinux
 include weak_random
 include ntp
 
+# determine the required modules based on the roles.
+
 if $security == "true" {
   include kerberos_client
 }
@@ -28,15 +30,27 @@ if $security == "true" and hasrole($roles, 'kdc') {
   include kerberos_kdc
 }
 
+if hasrole($roles, 'ambari-agent') {
+  include ambari_agent
+}
+
+if hasrole($roles, 'ambari-server') {
+  include ambari_server
+}
+
+if hasrole($roles, 'cert') {
+   include certification
+}
+
 if hasrole($roles, 'client') {
   if hasrole($clients, 'hdfs') {
     include hdfs_client
   }
-  if hasrole($clients, 'yarn') {
-    include yarn_client
-  }
   if hasrole($clients, 'hive') {
     include hive_client
+  }
+  if hasrole($clients, 'oozie') {
+    include oozie_client
   }
   if hasrole($clients, 'pig') {
     include pig_client
@@ -44,13 +58,32 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'tez') {
     include tez_client
   }
+  if hasrole($clients, 'yarn') {
+    include yarn_client
+  }
   if hasrole($clients, 'zk') {
     include zookeeper_client
   }
 }
 
+if hasrole($roles, 'hive-db') {
+  include hive_db
+}
+
+if hasrole($roles, 'hive-meta') {
+  include hive_meta
+}
+
+if hasrole($roles, 'knox') {
+  include knox_gateway
+}
+
 if hasrole($roles, 'nn') {
   include hdfs_namenode
+}
+
+if hasrole($roles, 'oozie') {
+  include oozie_server
 }
 
 if hasrole($roles, 'slave') {
@@ -62,31 +95,8 @@ if hasrole($roles, 'yarn') {
   include yarn_resource_manager
 }
 
-if hasrole($roles, 'hive-meta') {
-  include hive_meta
-}
-
-if hasrole($roles, 'hive-db') {
-  include hive_db
-}
-
 if hasrole($roles, 'zk') {
   include zookeeper_server
-}
-
-if hasrole($roles, 'knox') {
-  include knox_gateway
-}
-
-if hasrole($roles, 'ambari-server') {
-  include ambari_server
-}
-if hasrole($roles, 'ambari-agent') {
-  include ambari_agent
-}
-
-if hasrole($roles, 'cert') {
-   include certification
 }
 
 if islastslave($nodes, $hostname) {
@@ -104,7 +114,7 @@ if $security == "true" and hasrole($roles, 'kdc') {
   }
 }
 
-# Ensure the namenode is brought up before the slaves, jobtracker or metastore
+# Ensure the namenode is brought up before the slaves, jobtracker, metastore, and oozie
 if hasrole($roles, 'nn') {
   if hasrole($roles, 'slave') {
     Class['hdfs_namenode'] -> Class['hdfs_datanode']
@@ -117,4 +127,24 @@ if hasrole($roles, 'nn') {
   if hasrole($roles, 'hive-meta') {
     Class['hdfs_namenode'] -> Class['hive_meta']
   }
+
+  if hasrole($roles, 'oozie') {
+    Class['hdfs_namenode'] -> Class['oozie_server']
+  }
+}
+
+# Ensure the db is started before oozie and hive metastore
+if hasrole($roles, 'hive-db') {
+  if hasrole($roles, 'hive-meta') {
+    Class['hive_db'] -> Class['hive_meta']
+  }
+
+  if hasrole($roles, 'oozie') {
+    Class['hive_db'] -> Class['oozie_server']
+  }
+}
+
+# Ensure oozie runs after the datanode on the same node
+if hasrole($roles, 'slave') and hasrole($roles, 'oozie') {
+  Class['hdfs_datanode'] -> Class['oozie_server']
 }

@@ -18,6 +18,10 @@ class install_hdfs_tarballs {
 
   $PATH="/bin:/usr/bin"
 
+  if $security == "true" {
+    require load_hdfs_keytab
+  }
+
   if hasrole($clients, 'yarn') {
     require yarn_client
 
