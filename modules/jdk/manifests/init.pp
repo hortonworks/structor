@@ -14,15 +14,14 @@
 #   limitations under the License.
 
 class jdk {
-  $HOME = "/usr/java/default"
-
-  file { "${HOME}":
-    ensure => "link",
-    target => "/usr/java/jdk1.6.0_31",
+  class { 'java':
+    package => $java_version,
   }
-
   file { "/etc/profile.d/java.sh":
-    ensure => "file",
-    content => template('jdk/java.erb'),
+    ensure => file,
+    content => "export JAVA_HOME=/etc/alternatives/jre\n",
+    owner => root,
+    group => root,
+    mode => '644',
   }
 }
