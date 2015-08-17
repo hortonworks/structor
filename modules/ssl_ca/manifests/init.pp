@@ -16,10 +16,7 @@
 # This module create a generated certificate authority that can be used to 
 # make certificates for all of the servers.
 class ssl_ca {
-  require jdk
-
-  $java="/usr/java/default"
-  $path="${java}/bin:/bin:/usr/bin"
+  $path="${java_home}/bin:/bin:/usr/bin"
   $cadir="/vagrant/generated/ssl-ca"
 
   file { "${cadir}":

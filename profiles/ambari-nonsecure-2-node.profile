@@ -1,4 +1,6 @@
 {
+  "ambari_version": "2.1.0",
+  "java_version": "java-1.8.0-openjdk",
   "domain": "example.com",
   "realm": "EXAMPLE.COM",
   "security": false,
@@ -8,8 +10,6 @@
   "clients" : [ ],
   "nodes": [ 
     { "hostname": "ambari",  "ip": "10.0.10.10", "roles": [ "ambari-server" ] },
-    { "hostname": "master",  "ip": "10.0.10.11", "roles": [ ] },
-    { "hostname": "slave1",  "ip": "10.0.10.12", "roles": [ ] },
-    { "hostname": "slave2",  "ip": "10.0.10.13", "roles": [ ] }
+    { "hostname": "slave1",  "ip": "10.0.10.11", "roles": [ ] }
   ]
 }

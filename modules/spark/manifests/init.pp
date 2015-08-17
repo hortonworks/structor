@@ -13,33 +13,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class ambari_agent {
-  require repos_setup
-
-  $tmp_dir = "/tmp"
-  $conf_dir = "/etc/ambari-agent/conf"
-
-  package { "ambari-agent":
-    ensure => installed
+class spark {
+  $path="/usr/bin"
+  package { "spark_${rpm_version}" :
+    ensure => installed,
   }
-  ->  
-  file { "${tmp_dir}/ambari-agent":
-    ensure => directory,
-    owner => 'root',
-    group => 'root',
-    mode => '755',
+  ->
+  exec { "hdp-select set spark ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
-  ->  
-  file { "${conf_dir}/ambari-agent.ini":
-    ensure => file,
-    content => template('ambari_agent/ambari-agent.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '755',
-  }
-  ->  
-  exec { "ambari-agent-start":
-    command => "/usr/sbin/ambari-agent start"
-  }
-
 }

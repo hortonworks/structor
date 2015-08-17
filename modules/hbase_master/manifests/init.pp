@@ -13,33 +13,31 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class ambari_agent {
-  require repos_setup
+class hbase_master {
+  require hdfs_client
+  require zookeeper_client
+  require hbase_client
 
-  $tmp_dir = "/tmp"
-  $conf_dir = "/etc/ambari-agent/conf"
-
-  package { "ambari-agent":
-    ensure => installed
+  $path="/usr/bin"
+  package { "hbase_${rpm_version}-master" :
+    ensure => installed,
   }
-  ->  
-  file { "${tmp_dir}/ambari-agent":
-    ensure => directory,
-    owner => 'root',
-    group => 'root',
-    mode => '755',
+  ->
+  exec { "hdp-select set hbase-master ${hdp_version}":
+    cwd => "/",
+    path => "$path",
   }
-  ->  
-  file { "${conf_dir}/ambari-agent.ini":
+  ->
+  file { "/etc/init.d/hbase-master":
     ensure => file,
-    content => template('ambari_agent/ambari-agent.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '755',
+    source => "puppet:///files/init.d/hbase-master",
+    owner => root,
+    group => root,
   }
-  ->  
-  exec { "ambari-agent-start":
-    command => "/usr/sbin/ambari-agent start"
+  ->
+  service {"hbase-master":
+    ensure => running,
+    enable => true,
+    subscribe => File['/etc/hbase/conf/hbase-site.xml'],
   }
-
 }

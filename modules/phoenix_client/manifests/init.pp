@@ -13,33 +13,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class ambari_agent {
-  require repos_setup
+class phoenix_client {
+  $path="/usr/bin"
 
-  $tmp_dir = "/tmp"
-  $conf_dir = "/etc/ambari-agent/conf"
-
-  package { "ambari-agent":
-    ensure => installed
-  }
-  ->  
-  file { "${tmp_dir}/ambari-agent":
-    ensure => directory,
-    owner => 'root',
-    group => 'root',
-    mode => '755',
-  }
-  ->  
-  file { "${conf_dir}/ambari-agent.ini":
-    ensure => file,
-    content => template('ambari_agent/ambari-agent.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '755',
-  }
-  ->  
-  exec { "ambari-agent-start":
-    command => "/usr/sbin/ambari-agent start"
+  file { "/etc/environment":
+    content => inline_template("HBASE_CONF_PATH=/etc/hbase/conf")
   }
 
+  package { "phoenix_${rpm_version}":
+    ensure => installed,
+  }
 }

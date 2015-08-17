@@ -15,7 +15,6 @@
 
 class knox_gateway {
   require repos_setup
-  require jdk
   
   package { "knox.noarch" :
     ensure => installed,

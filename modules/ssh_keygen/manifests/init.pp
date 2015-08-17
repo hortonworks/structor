@@ -13,33 +13,41 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class ambari_agent {
-  require repos_setup
+class ssh_keygen {
+  $path = "/bin:/usr/bin"
 
-  $tmp_dir = "/tmp"
-  $conf_dir = "/etc/ambari-agent/conf"
-
-  package { "ambari-agent":
-    ensure => installed
-  }
-  ->  
-  file { "${tmp_dir}/ambari-agent":
+  file { '/root/.ssh':
     ensure => directory,
-    owner => 'root',
-    group => 'root',
-    mode => '755',
+    mode => 'go-rwx',
   }
-  ->  
-  file { "${conf_dir}/ambari-agent.ini":
+  ->
+  file { '/root/.ssh/id_rsa':
     ensure => file,
-    content => template('ambari_agent/ambari-agent.erb'),
-    owner => 'root',
-    group => 'root',
-    mode => '755',
+    source => 'puppet:///modules/ssh_keygen/id_rsa',
+    owner => root,
+    group => root,
+    mode => '600',
   }
-  ->  
-  exec { "ambari-agent-start":
-    command => "/usr/sbin/ambari-agent start"
+  ->
+  file { '/root/.ssh/id_rsa.pub':
+    ensure => file,
+    source => 'puppet:///modules/ssh_keygen/id_rsa.pub',
+    owner => root,
+    group => root,
+    mode => '644',
   }
-
+  ->
+  file { '/root/.ssh/authorized_keys':
+    ensure => file,
+    source => 'puppet:///modules/ssh_keygen/authorized_keys',
+    owner => root,
+    group => root,
+    mode => '644',
+  }
+  ->
+  exec { 'known_hosts' :
+    path => $path,
+    command => 'ssh-keyscan -H `hostname` > /root/.ssh/known_hosts',
+    unless => 'test -f /root/.ssh/known_hosts',
+  }
 }
