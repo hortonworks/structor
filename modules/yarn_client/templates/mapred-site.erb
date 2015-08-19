@@ -40,6 +40,11 @@
   </property>
 
   <property>
+    <name>yarn.app.mapreduce.am.admin.user.env</name>
+    <value>LD_LIBRARY_PATH=/usr/hdp/${hdp.version}/hadoop/lib/native:/usr/hdp/${hdp.version}/hadoop/lib/native/Linux-amd64-64</value>
+  </property>
+
+  <property>
     <name>mapreduce.jobhistory.address</name>
     <value><%= @yarn %>:10020</value>
   </property>
