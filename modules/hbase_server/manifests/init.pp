@@ -13,14 +13,23 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class phoenix_client {
-  $path="/usr/bin"
+class hbase_server {
+  require hdfs_client
+  require zookeeper_client
+  require hbase_client
 
-  file { "/etc/environment":
-    content => inline_template("HBASE_CONF_PATH=/etc/hbase/conf")
+  $keytab_dir="/etc/security/hadoop"
+
+  if $security == "true" {
+    require kerberos_http
+
+    file { "${keytab_dir}/hbase.keytab":
+      ensure => file,
+      source => "/vagrant/generated/keytabs/${hostname}/hbase.keytab",
+      owner => hbase,
+      group => hadoop,
+      mode => '400',
+    }
   }
 
-  package { "phoenix_${rpm_version}":
-    ensure => installed,
-  }
 }

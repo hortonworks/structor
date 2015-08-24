@@ -43,6 +43,9 @@ if hasrole($roles, 'cert') {
 }
 
 if hasrole($roles, 'client') {
+  if hasrole($clients, 'hbase') {
+    include hbase_client
+  }
   if hasrole($clients, 'hdfs') {
     include hdfs_client
   }
@@ -51,9 +54,6 @@ if hasrole($roles, 'client') {
   }
   if hasrole($clients, 'oozie') {
     include oozie_client
-  }
-  if hasrole($clients, 'phoenix') {
-    include phoenix_client
   }
   if hasrole($clients, 'pig') {
     include pig_client
@@ -123,9 +123,18 @@ if $security == "true" and hasrole($roles, 'kdc') {
   if hasrole($roles, 'hive-meta') {
     Class['kerberos_kdc'] -> Class['hive_meta']
   }
+
+  if hasrole($roles, 'hbase-master') {
+    Class['kerberos_kdc'] -> Class['hbase_master']
+  }
+
+  if hasrole($roles, 'hbase-regionserver') {
+    Class['kerberos_kdc'] -> Class['hbase_regionserver']
+  }
 }
 
-# Ensure the namenode is brought up before the slaves, jobtracker, metastore, and oozie
+# Ensure the namenode is brought up before the slaves, jobtracker, metastore,
+# and oozie
 if hasrole($roles, 'nn') {
   if hasrole($roles, 'slave') {
     Class['hdfs_namenode'] -> Class['hdfs_datanode']
@@ -141,6 +150,14 @@ if hasrole($roles, 'nn') {
 
   if hasrole($roles, 'oozie') {
     Class['hdfs_namenode'] -> Class['oozie_server']
+  }
+
+  if hasrole($roles, 'hbase-master') {
+    Class['hdfs_namenode'] -> Class['hbase_master']
+  }
+
+  if hasrole($roles, 'hbase-regionserver') {
+    Class['hdfs_namenode'] -> Class['hbase_regionserver']
   }
 }
 
@@ -158,4 +175,15 @@ if hasrole($roles, 'hive-db') {
 # Ensure oozie runs after the datanode on the same node
 if hasrole($roles, 'slave') and hasrole($roles, 'oozie') {
   Class['hdfs_datanode'] -> Class['oozie_server']
+}
+
+if hasrole($roles, 'hbase-master') {
+  if hasrole($roles, 'hbase-regionserver') {
+    Class['hbase_master'] -> Class['hbase_regionserver']
+  }
+
+  # The master needs a datanode before it can start up
+  if hasrole($roles, 'slave') {
+    Class['hdfs_datanode'] -> Class['hbase_master']
+  }
 }

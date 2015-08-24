@@ -64,6 +64,11 @@ class hadoop_server {
     groups => ['hadoop'],
     gid => 'oozie',
   }
+  ->
+  user { 'hbase':
+    ensure => present,
+    gid => 'hadoop',
+  }
 
   file { "${hdfs_client::data_dir}":
     ensure => directory,
@@ -138,6 +143,20 @@ class hadoop_server {
   file { "${hdfs_client::log_dir}/yarn":
     ensure => directory,
     owner => 'yarn',
+    group => 'hadoop',
+    mode => '755',
+  }
+
+  file { "${hdfs_client::log_dir}/hbase":
+    ensure => directory,
+    owner => 'hbase',
+    group => 'hadoop',
+    mode => '755',
+  }
+
+  file { "${hdfs_client::pid_dir}/hbase":
+    ensure => directory,
+    owner => 'hbase',
     group => 'hadoop',
     mode => '755',
   }

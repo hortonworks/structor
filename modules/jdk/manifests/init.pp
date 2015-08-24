@@ -14,11 +14,14 @@
 #   limitations under the License.
 
 class jdk {
-  $HOME = "/usr/java/default"
+  $HOME = "/usr/lib/jvm/java"
 
-  file { "${HOME}":
-    ensure => "link",
-    target => "/usr/java/jdk1.6.0_31",
+  package { "java-1.7.0-openjdk":
+    ensure => installed,
+  }
+
+  package { "java-1.7.0-openjdk-devel":
+    ensure => installed,
   }
 
   file { "/etc/profile.d/java.sh":
