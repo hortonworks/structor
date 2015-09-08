@@ -14,20 +14,35 @@
 #   limitations under the License.
 
 class hbase_regionserver {
-<<<<<<< HEAD
-  require hdfs_client
-  require zookeeper_client
-  require hbase_client
-
-  $path="/usr/bin"
-=======
   require hbase_server
 
-  $path="/usr/bin"
+  $path="/bin:/sbin:/usr/bin"
 
->>>>>>> upstream/master
-  package { "hbase_${rpm_version}-regionserver" :
-    ensure => installed,
+  case $operatingsystem {
+    'centos': {
+      package { "hbase${package_version}-regionserver" :
+        ensure => installed,
+      }
+    }
+    # XXX: Work around BUG-39010.
+    'ubuntu': {
+      exec { "apt-get download hbase${package_version}-regionserver":
+        cwd => "/tmp",
+        path => "$path",
+      }
+      ->
+      exec { "dpkg -i --force-overwrite hbase${package_version}*.deb":
+        cwd => "/tmp",
+        path => "$path",
+        user => "root",
+      }
+      # Fix incorrect startup script permissions (XXX: Is a bug filed for this?).
+      ->
+      file { "/usr/hdp/${hdp_version}/etc/init.d/hbase-regionserver":
+        ensure => file,
+        mode => '755',
+      }
+    }
   }
   ->
   exec { "hdp-select set hbase-regionserver ${hdp_version}":

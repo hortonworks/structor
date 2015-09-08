@@ -15,12 +15,13 @@
 
 class yarn_client {
   require repos_setup
+  require jdk
   require hdfs_client
 
   $user_logs = "/user/yarn/"
   $path="/usr/bin"
 
-  package { "hadoop_${rpm_version}-yarn":
+  package { "hadoop${package_version}-yarn":
     ensure => installed,
   }
   ->
@@ -29,7 +30,7 @@ class yarn_client {
     target => "/usr/hdp/${hdp_version}/hadoop/libexec",
   }
 
-  package { "hadoop_${rpm_version}-mapreduce":
+  package { "hadoop${package_version}-mapreduce":
     ensure => installed,
   }
   ->

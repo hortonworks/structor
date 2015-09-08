@@ -21,11 +21,6 @@ VAGRANTFILE_API_VERSION = "2"
 $profile_path = ["current.profile",
                  "profiles/3node-nonsecure.profile"]
 
-# Default versions.
-default_hdp_short_version = "2.3.0"
-default_ambari_version = "2.1.0"
-default_java_version = "java-1.7.0-openjdk"
-
 ###############################################################################
 # Loads a profile, which is a JSON file describing a specific configuation.
 #
@@ -40,9 +35,15 @@ def loadProfile()
   }
 end
 
-# Pull the HDP version out of the hdp.repo file
-def findVersion(version)
-  fileObj = File.new('files/repos/hdp.repo.%s' % version, 'r')
+# Pull the HDP version out of the repository file.
+def findVersion(profile)
+  if (profile[:os] == "centos")
+    path = 'files/repos/hdp.repo.%s' % profile[:hdp_short_version]
+  elsif (profile[:os] == "ubuntu")
+    path = 'files/repos/hdp.list.%s' % profile[:hdp_short_version]
+  end
+  
+  fileObj = File.new(path, 'r')
   match = /^#VERSION_NUMBER=(?<ver>[-0-9.]*)/.match(fileObj.gets)
   fileObj.close()
   result = match['ver']
@@ -52,17 +53,20 @@ end
 
 ###############################################################################
 # Define cluster
+
 profile = loadProfile()
 
-# Versions
-hdp_short_version = profile[:hdp_short_version] || default_hdp_short_version
-ambari_version = profile[:ambari_version] || default_ambari_version
-java_version = profile[:java_version] || default_java_version
-java_home = "/etc/alternatives/jre"
-puts "Ambari Version = %s\n" % ambari_version
-puts "Java Version = %s\n" % java_version
-hdp_version = findVersion(hdp_short_version)
-rpm_version = hdp_version.gsub /[.-]/, '_'
+# Set defaults.
+default_os = "centos"
+default_hdp_short_version = "2.2.6"
+default_ambari_version = "2.1.0"
+default_java_version = "java-1.7.0-openjdk"
+
+profile[:hdp_short_version] ||= default_hdp_short_version
+profile[:ambari_version] ||= default_ambari_version
+profile[:java_version] ||= default_java_version
+profile[:os] ||= default_os
+hdp_version = findVersion(profile)
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -72,7 +76,15 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # All Vagrant configuration is done here. The most common configuration
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "omalley/centos6_x64"
+  if (profile[:os] == "centos")
+    config.vm.box = "omalley/centos6_x64"
+    package_version = "_" + (hdp_version.gsub /[.-]/, '_')
+    start_script_path = "rc.d/init.d"
+  elsif (profile[:os] == "ubuntu")
+    config.vm.box = "ubuntu/trusty64"
+    package_version = "-" + (hdp_version.gsub /[.-]/, '-')
+    start_script_path = "init.d"
+  end
 
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", profile[:vm_mem] ]
@@ -87,41 +99,28 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.vm.hostname = node[:hostname] + "." + profile[:domain]
       node_config.vm.network :private_network, ip: node[:ip]
       node_config.ssh.forward_agent = true
-
-      node_config.vm.provision :shell do |shell|
-        shell.inline = "
-          if [ ! -d /etc/puppet/modules/java ] ; then
-            mkdir -p /etc/puppet/modules;
-            puppet module install puppetlabs/java;
-          fi"
-      end
-
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
         puppet.options = ["--libdir", "/vagrant", 
 	    "--verbose", "--debug",
             "--fileserverconfig=/vagrant/fileserver.conf"]
         puppet.facter = {
-          "hdp_short_version" => hdp_short_version,
-          "hdp_version" => hdp_version,
-          "ambari_version" => ambari_version,
-          "java_version" => java_version,
-	  "java_home" => java_home,
-	  "rpm_version" => rpm_version,
-
-          "server_mem" => profile[:server_mem],
-          "client_mem" => profile[:client_mem],
-          "hbase_master_mem" => profile[:hbase_master_mem],
-          "hbase_regionserver_mem" => profile[:hbase_regionserver_mem],
+          "hdp_short_version" => profile[:hdp_short_version],
+          "ambari_version" => profile[:ambari_version],
+	  "package_version" => package_version,
+          "start_script_path" => start_script_path,
 
           "hostname" => node[:hostname],
           "roles" => node[:roles],
           "nodes" => profile[:nodes],
+	  "hdp_version" => hdp_version,
           "domain" => profile[:domain],
           "security" => profile[:security],
           "realm" => profile[:realm],
           "clients" => profile[:clients],
-          "profile" => profile
+          "server_mem" => profile[:server_mem],
+          "client_mem" => profile[:client_mem],
+          "profile" => profile,
         }
       end
     end

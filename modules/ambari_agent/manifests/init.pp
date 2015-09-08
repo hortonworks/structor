@@ -14,6 +14,7 @@
 #   limitations under the License.
 
 class ambari_agent {
+
   require repos_setup
 
   $tmp_dir = "/tmp"

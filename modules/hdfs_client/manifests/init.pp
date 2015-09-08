@@ -16,15 +16,16 @@
 class hdfs_client {
   require repos_setup
   require hdp_select
+  require jdk
 
   $conf_dir="/etc/hadoop/hdp"
-  $path="${java_home}/bin:/bin:/usr/bin"
+  $path="${jdk::HOME}/bin:/bin:/usr/bin"
   $log_dir="/var/log/hadoop"
   $data_dir="/var/lib/hadoop"
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 
-  package { "hadoop_${rpm_version}":
+  package { "hadoop${package_version}":
     ensure => installed,
   }
   ->
@@ -33,22 +34,30 @@ class hdfs_client {
     path => "$path",
   }
 
-  package { "hadoop_${rpm_version}-libhdfs":
-    ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+  if ($operatingsystem == "centos") {
+    package { "hadoop${package_version}-libhdfs":
+      ensure => installed,
+      require => Package["hadoop${package_version}"],
+    }
+  }
+  elsif ($operatingsystem == "ubuntu") {
+    package { "libhdfs0${package_version}":
+      ensure => installed,
+      require => Package["hadoop${package_version}"],
+    }
   }
 
-  package { "hadoop_${rpm_version}-client":
+  package { "hadoop${package_version}-client":
     ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
   }
 
-  package { "hadooplzo_${rpm_version}":
+  package { "hadooplzo${package_version}":
     ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
   }
   ->
-  package { "hadooplzo_${rpm_version}-native":
+  package { "hadooplzo${package_version}-native":
     ensure => installed,
   }
 
@@ -60,8 +69,15 @@ class hdfs_client {
     ensure => installed,
   }
 
-  package { 'lzo':
-    ensure => installed,
+  if ($operatingsystem == "centos") {
+    package { 'lzo':
+      ensure => installed,
+    }
+  }
+  elsif ($operatingsystem == "ubuntu") {
+    package { 'liblzo2-2':
+      ensure => installed,
+    }
   }
 
   file { '/etc/hadoop':
@@ -75,7 +91,7 @@ class hdfs_client {
   file { '/etc/hadoop/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
     force => true
   }
 
@@ -129,7 +145,7 @@ class hdfs_client {
     require ssl_ca
 
     # bless the generated ca cert for java clients
-    exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${java_home}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
+    exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${jdk::HOME}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
       cwd => "/vagrant/generated/ssl-ca",
       path => "$path",
       unless => "keytool -list -alias horton-ca -keystore /usr/java/default/jre/lib/security/cacerts -storepass changeit",

@@ -16,10 +16,27 @@
 class hbase_master {
   require hbase_server
 
-  $path="/usr/bin"
+  $path="/bin:/sbin:/usr/bin"
 
-  package { "hbase_${rpm_version}-master" :
-    ensure => installed,
+  case $operatingsystem {
+    'centos': {
+      package { "hbase${package_version}-master" :
+        ensure => installed,
+      }
+    }
+    # XXX: Work around BUG-39010.
+    'ubuntu': {
+      exec { "apt-get download hbase${package_version}-master":
+        cwd => "/tmp",
+        path => "$path",
+      }
+      ->
+      exec { "dpkg -i --force-overwrite hbase${package_version}*master*.deb":
+        cwd => "/tmp",
+        path => "$path",
+        user => "root",
+      }
+    }
   }
   ->
   exec { "hdp-select set hbase-master ${hdp_version}":

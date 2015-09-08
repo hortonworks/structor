@@ -16,12 +16,35 @@
 class jdk {
   $HOME = "/usr/lib/jvm/java"
 
-  package { "java-1.7.0-openjdk":
-    ensure => installed,
-  }
+  if ($operatingsystem == "centos") {
+    package { "java-1.7.0-openjdk":
+      ensure => installed,
+    }
 
-  package { "java-1.7.0-openjdk-devel":
-    ensure => installed,
+    package { "java-1.7.0-openjdk-devel":
+      ensure => installed,
+    }
+  }
+  elsif ($operatingsystem == "ubuntu") {
+    package { "openjdk-7-jdk":
+      ensure => installed,
+    }
+    ->
+    file { $HOME:
+      ensure => 'link',
+      target => '/usr/lib/jvm/java-7-openjdk-amd64',
+      force => true
+    }
+    ->
+    file { "/usr/java":
+      ensure => 'directory'
+    }
+    ->
+    file { "/usr/java/default":
+      ensure => 'link',
+      target => '/usr/lib/jvm/java',
+      force => true
+    }
   }
 
   file { "/etc/profile.d/java.sh":

@@ -16,14 +16,14 @@
 class zookeeper_server {
   require zookeeper_client
 
-  $path="/usr/bin"
+  $path="/bin:/sbin:/usr/bin"
 
   if $security == "true" {
     file { "${zookeeper_client::conf_dir}/zookeeper-server.jaas":
       ensure => file,
       content => template('zookeeper_server/zookeeper-server.erb'),
     }
-    -> Package["zookeeper_${rpm_version}-server"]
+    -> Service["zookeeper-server"]
 
     file { "${hdfs_client::keytab_dir}/zookeeper.keytab":
       ensure => file,
@@ -32,12 +32,34 @@ class zookeeper_server {
       group => hadoop,
       mode => '400',
     }
-    ->
-    Package["zookeeper_${rpm_version}-server"]
+    -> Service["zookeeper-server"]
   }
 
-  package { "zookeeper_${rpm_version}-server":
-    ensure => installed,
+  case $operatingsystem {
+    'centos': {
+      package { "zookeeper${package_version}-server":
+        ensure => installed,
+      }
+    }
+    # XXX: Work around BUG-39010.
+    'ubuntu': {
+      exec { "apt-get download zookeeper${package_version}-server":
+        cwd => "/tmp",
+        path => "$path",
+      }
+      ->
+      exec { "dpkg -i --force-overwrite zookeeper${package_version}*.deb":
+        cwd => "/tmp",
+        path => "$path",
+        user => "root",
+      }
+      # Fix incorrect startup script permissions (XXX: Is a bug filed for this?).
+      ->
+      file { "/usr/hdp/${hdp_version}/etc/init.d/zookeeper-server":
+        ensure => file,
+        mode => '755',
+      }
+    }
   }
   ->
   exec { "hdp-select set zookeeper-server ${hdp_version}":
@@ -52,7 +74,7 @@ class zookeeper_server {
   ->
   file { "/etc/init.d/zookeeper-server":
     ensure => 'link',
-    target => "/usr/hdp/current/zookeeper-server/../etc/rc.d/init.d/zookeeper-server",
+    target => "/usr/hdp/current/zookeeper-server/../etc/${start_script_path}/zookeeper-server",
   }
   ->
   file { "${zookeeper_client::data_dir}":

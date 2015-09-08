@@ -16,13 +16,36 @@
 class hive_db {
   $PATH = "/bin:/usr/bin"
 
-  package { 'mysql-server':
-    ensure => installed,
-  }
-  ->
-  service { 'mysqld':
-    ensure => running,
-    enable => true,
+  case $operatingsystem {
+    'centos': {
+      package { 'mysql-server':
+        ensure => installed,
+      }
+      ->
+      service { 'mysqld':
+        ensure => running,
+        enable => true,
+      }
+    }
+    'ubuntu': {
+      package { 'mysql-server':
+        ensure => installed,
+      }
+      ->
+      file { '/etc/mysql/my.cnf':
+        ensure => file,
+        source => 'puppet:///modules/hive_db/my.cnf',
+        owner => root,
+        group => root,
+        mode => '644',
+        notify  => Service["mysql"],
+      }
+
+      service { 'mysql':
+        ensure => running,
+        enable => true,
+      }
+    }
   }
   ->
   exec { "secure-mysqld":

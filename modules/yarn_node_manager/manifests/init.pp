@@ -17,7 +17,7 @@ class yarn_node_manager {
   require yarn_client
   require hadoop_server
 
-  $path="/usr/bin"
+  $path="/bin:/usr/bin"
 
   if $security == "true" {
     require kerberos_http
@@ -38,10 +38,10 @@ class yarn_node_manager {
       mode => 400,
     }
     ->
-    Package["hadoop_${rpm_version}-yarn-nodemanager"]
+    Package["hadoop${package_version}-yarn-nodemanager"]
   }
 
-  package { "hadoop_${rpm_version}-yarn-nodemanager" :
+  package { "hadoop${package_version}-yarn-nodemanager" :
     ensure => installed,
   }
   ->
@@ -52,7 +52,19 @@ class yarn_node_manager {
   ->
   file { "/etc/init.d/hadoop-yarn-nodemanager":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-yarn-nodemanager/../etc/rc.d/init.d/hadoop-yarn-nodemanager",
+    target => "/usr/hdp/current/hadoop-yarn-nodemanager/../etc/${start_script_path}/hadoop-yarn-nodemanager",
+  }
+  ->
+  exec { "chgrp yarn /usr/hdp/${hdp_version}/hadoop-yarn/bin/container-executor":
+    # Bug: The Ubuntu packages don't work on secure cluster due to wrong group membership.
+    cwd => "/",
+    path => "$path",
+  }
+  ->
+  exec { "chmod 6050 /usr/hdp/${hdp_version}/hadoop-yarn/bin/container-executor":
+    # Bug: Puppet can't deal with a mode of 6050.
+    cwd => "/",
+    path => "$path",
   }
   ->
   service {"hadoop-yarn-nodemanager":

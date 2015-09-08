@@ -14,6 +14,7 @@
 #   limitations under the License.
 
 class ambari_server {
+
   require repos_setup
 
   package { "ambari-server":
@@ -21,7 +22,7 @@ class ambari_server {
   }
   ->
   exec { "ambari-server-setup":
-    command => "/usr/sbin/ambari-server setup --silent -j /etc/alternatives/jre"
+    command => "/usr/sbin/ambari-server setup --silent"
   }
   ->
   exec { "ambari-server-start":

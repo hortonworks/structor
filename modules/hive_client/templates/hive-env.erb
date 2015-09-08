@@ -45,6 +45,6 @@ export HADOOP_HEAPSIZE=${HADOOP_HEAPSIZE:-1024}
 
 # Hive Configuration Directory can be controlled by:
 export HIVE_CONF_DIR=/etc/hive/conf
-export JAVA_HOME=<%= scope.lookupvar('java_home') %>
+export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
 # Folder containing extra ibraries required for hive compilation/execution can be controlled by:
 export HIVE_AUX_JARS_PATH=
