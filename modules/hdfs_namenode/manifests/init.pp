@@ -47,10 +47,8 @@ class hdfs_namenode {
   }
   ->
   file { "/etc/init.d/hadoop-hdfs-namenode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-namenode",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-hdfs-namenode/../etc/rc.d/init.d/hadoop-hdfs-namenode",
   }
   ->
   exec {"namenode-format":
@@ -132,6 +130,32 @@ class hdfs_namenode {
   ->
   exec {"vagrant-home-chown":
     command => "hadoop fs -chown vagrant:vagrant /user/vagrant",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hive-home-mkdir":
+    command => "hadoop fs -mkdir /user/hive",
+    unless => "hadoop fs -test -e /user/hive",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"hive-home-chown":
+    command => "hadoop fs -chown hive:hive /user/hive",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"oozie-home":
+    command => "hadoop fs -mkdir -p /user/oozie",
+    unless => "hadoop fs -test -e /user/oozie",
+    path => "$PATH",
+    user => "hdfs",
+  }
+  ->
+  exec {"oozie-home-chown":
+    command => "hadoop fs -chown oozie:oozie /user/oozie",
     path => "$PATH",
     user => "hdfs",
   }

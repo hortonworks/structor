@@ -31,6 +31,11 @@ class hive_db {
     cwd => "/vagrant/modules/hive_db",
   }
   ->
+  exec { "add-remote-root":
+    command => "/vagrant/modules/hive_db/files/add-remote-root.sh",
+    path => $PATH,
+  }
+  ->
   exec { "create-hivedb":
     command => "mysql -u root --password=vagrant < files/setup-hive.txt",
     path => "${PATH}",

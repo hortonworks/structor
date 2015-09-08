@@ -43,10 +43,8 @@ class hdfs_datanode {
   }
   ->
   file { "/etc/init.d/hadoop-hdfs-datanode":
-    ensure => file,
-    source => "puppet:///files/init.d/hadoop-hdfs-datanode",
-    owner => root,
-    group => root,
+    ensure => 'link',
+    target => "/usr/hdp/current/hadoop-hdfs-datanode/../etc/rc.d/init.d/hadoop-hdfs-datanode",
   }
   ->
   service {"hadoop-hdfs-datanode":

@@ -132,6 +132,7 @@ class hdfs_client {
     exec {"keytool -importcert -noprompt -alias horton-ca -keystore ${java_home}/jre/lib/security/cacerts -storepass changeit -file ca.crt":
       cwd => "/vagrant/generated/ssl-ca",
       path => "$path",
+      unless => "keytool -list -alias horton-ca -keystore /usr/java/default/jre/lib/security/cacerts -storepass changeit",
     }
 
     file {"${conf_dir}/ssl-client.xml":

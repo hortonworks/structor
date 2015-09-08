@@ -40,6 +40,11 @@
   </property>
 
   <property>
+    <name>yarn.app.mapreduce.am.admin.user.env</name>
+    <value>LD_LIBRARY_PATH=/usr/hdp/${hdp.version}/hadoop/lib/native:/usr/hdp/${hdp.version}/hadoop/lib/native/Linux-amd64-64</value>
+  </property>
+
+  <property>
     <name>mapreduce.jobhistory.address</name>
     <value><%= @yarn %>:10020</value>
   </property>
@@ -201,7 +206,7 @@
     
   <property>
     <name>mapreduce.admin.reduce.child.java.opts</name>
-    <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+    <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Dhdp.version=${hdp.version}</value>
   </property>
     
   <property>
@@ -211,7 +216,7 @@
     
   <property>
     <name>mapreduce.admin.map.child.java.opts</name>
-    <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN</value>
+    <value>-server -XX:NewRatio=8 -Djava.net.preferIPv4Stack=true -Dhadoop.metrics.log.level=WARN -Dhdp.version=${hdp.version}</value>
   </property>
     
   <property>

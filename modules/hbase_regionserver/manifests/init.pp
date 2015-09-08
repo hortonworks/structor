@@ -14,11 +14,18 @@
 #   limitations under the License.
 
 class hbase_regionserver {
+<<<<<<< HEAD
   require hdfs_client
   require zookeeper_client
   require hbase_client
 
   $path="/usr/bin"
+=======
+  require hbase_server
+
+  $path="/usr/bin"
+
+>>>>>>> upstream/master
   package { "hbase_${rpm_version}-regionserver" :
     ensure => installed,
   }

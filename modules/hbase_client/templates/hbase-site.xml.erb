@@ -1,3 +1,19 @@
+<%#
+   Licensed to the Apache Software Foundation (ASF) under one or more
+   contributor license agreements.  See the NOTICE file distributed with
+   this work for additional information regarding copyright ownership.
+   The ASF licenses this file to You under the Apache License, Version 2.0
+   (the "License"); you may not use this file except in compliance with
+   the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+-%>
 <% @namenode = eval(@nodes).
      select {|node| node[:roles].include? 'nn'}[0][:hostname] + "." + @domain;
    @zookeeper_servers = eval(@nodes).
@@ -17,14 +33,17 @@
     <name>phoenix.functions.allowUserDefinedFunctions</name>
     <value>true</value>
   </property>
+
   <property>
     <name>phoenix.query.timeoutMs</name>
     <value>60000</value>
   </property>
+
   <property>
     <name>phoenix.sequence.saltBuckets</name>
     <value>8</value>
   </property>
+
   <property>
     <name>hbase.regionserver.wal.codec</name>
     <value>org.apache.hadoop.hbase.regionserver.wal.IndexedWALEditCodec</value>
@@ -34,13 +53,67 @@
     <name>hbase.cluster.distributed</name>
     <value>true</value>
   </property>
+
   <property>
     <name>hbase.zookeeper.quorum</name>
     <value><%= @zookeeper_servers %></value>
   </property>
+
   <property>
     <name>zookeeper.znode.parent</name>
     <value>/hbase</value>
   </property>
+
+<% if @security == "true" -%>
+  <property>
+    <name>hbase.security.authentication</name>
+    <value>kerberos</value>
+  </property>
+
+  <property>
+    <name>hbase.security.authorization</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hbase.rpc.engine</name>
+    <value>org.apache.hadoop.hbase.ipc.SecureRpcEngine</value>
+  </property>
+
+  <property>
+    <name>hbase.master.keytab.file</name>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/hbase.keytab</value>
+  </property>
+
+  <property>
+    <name>hbase.master.kerberos.principal</name>
+    <value>hbase/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>hbase.regionserver.keytab.file</name>
+    <value><%= scope.lookupvar('hdfs_client::keytab_dir') %>/hbase.keytab</value>
+  </property>
+
+  <property>
+    <name>hbase.regionserver.kerberos.principal</name>
+    <value>hbase/_HOST@<%= @realm %></value>
+  </property>
+
+  <property>
+    <name>hbase.superuser</name>
+    <value>hbase</value>
+  </property>
+
+  <property>
+    <name>hbase.coprocessor.master.classes</name>
+    <value>org.apache.hadoop.hbase.security.access.AccessController</value>
+  </property>
+
+  <property>
+    <name>hbase.coprocessor.region.classes</name>
+    <value>org.apache.hadoop.hbase.security.token.TokenProvider,org.apache.hadoop.hbase.security.access.AccessController</value>
+  </property>
+<% end -%>
 
 </configuration>

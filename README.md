@@ -10,14 +10,18 @@ The currently supported OSes and the providers:
 We'd like to get Ubuntu and SUSE support as well.
 
 The currently supported projects:
+* Ambari
+* Hbase
 * HDFS
-* Yarn
-* MapReduce
 * Hive
+* MapReduce
+* Oozie
 * Pig
+* Tez
+* Yarn
 * Zookeeper
 
-We'd love to support Tez, HBase, Storm, etc. as well.
+We'd love to support Spark, Storm, etc. as well.
 
 ## Modify the cluster
 
@@ -29,9 +33,9 @@ links to the desired profile.
 
 Current profiles:
 * 1node-nonsecure - a single node non-secure Hadoop cluster
+* 3node-nonsecure - a three node non-secure Hadoop cluster
 * 3node-secure - a three node secure Hadoop cluster
 * 5node-nonsecure - a five node secure Hadoop cluster
-* default - a three node non-secure Hadoop cluster
 
 You are encouraged to contribute new working profiles that can be
 shared by others.
@@ -45,13 +49,16 @@ The types of control knob in the profile file are:
 For each host in nodes, you define the name, ip address, and the roles for 
 that node. The available roles are:
 
-* client - client machine
+* client - client/gateway machine
+* hbase-master - HBase master
+* hbase-regionmaster - HBase region master
+* hive-db - Hive Metastore and Oozie backing mysql
+* hive-meta - Hive Metastore
 * kdc - kerberos kdc
 * nn - HDFS NameNode
-* yarn - Yarn Resource Manager and MapReduce Job History Server
+* oozie - Oozie master
 * slave - HDFS DataNode & Yarn NodeManager
-* hive-db - Hive MetaStore backing mysql
-* hive-meta - Hive MetaStore
+* yarn - Yarn Resource Manager and MapReduce Job History Server
 * zk - Zookeeper Server
 
 This is an example of the current default.profile
@@ -63,11 +70,12 @@ This is an example of the current default.profile
   "vm_mem": 2048,
   "server_mem": 300,
   "client_mem": 200,
-  "clients" : [ "hdfs", "yarn", "pig", "hive", "zk" ],
+  "clients" : [ "hdfs", "hive", "oozie", "pig", "tez", "yarn", "zk" ],
   "nodes": [
     { "hostname": "gw", "ip": "240.0.0.10", "roles": [ "client" ] },
-    { "hostname": "nn", "ip": "240.0.0.11", "roles": [ "kdc", "nn", "yarn", "hive-meta", "hive-db", "zk" ] },
-    { "hostname": "slave1", "ip": "240.0.0.12", "roles": [ "slave" ] }
+    { "hostname": "nn", "ip": "240.0.0.11",
+      "roles": [ "kdc", "hive-db", "hive-meta", "nn", "yarn", "zk" ] },
+    { "hostname": "slave1", "ip": "240.0.0.12", "roles": [ "oozie", "slave" ] }
   ]
 }
 ```

@@ -14,14 +14,18 @@
 #   limitations under the License.
 
 class jdk {
-  class { 'java':
-    package => $java_version,
+  $HOME = "/usr/lib/jvm/java"
+
+  package { "java-1.7.0-openjdk":
+    ensure => installed,
   }
+
+  package { "java-1.7.0-openjdk-devel":
+    ensure => installed,
+  }
+
   file { "/etc/profile.d/java.sh":
-    ensure => file,
-    content => "export JAVA_HOME=/etc/alternatives/jre\n",
-    owner => root,
-    group => root,
-    mode => '644',
+    ensure => "file",
+    content => template('jdk/java.erb'),
   }
 }

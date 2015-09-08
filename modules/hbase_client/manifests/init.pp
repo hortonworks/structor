@@ -16,23 +16,33 @@
 class hbase_client {
   require hdfs_client
   require zookeeper_client
-  require phoenix_client
 
-  $path="/usr/bin"
+  file { "/etc/profile.d/hbase.sh":
+    content => "export HBASE_CONF_PATH=/etc/hbase/conf\n"
+  }
 
   if $security == "true" {
-    require kerberos_http
-
-    file { "${hbase_client::keytab_dir}/hbase.keytab":
-      ensure => file,
-      source => "/vagrant/generated/keytabs/${hostname}/hbase.keytab",
-      owner => hbase,
-      group => hadoop,
-      mode => '400',
+    file { "/etc/hbase":
+      ensure => directory,
     }
+    ->
+    file { "/etc/hbase/conf":
+      ensure => directory,
+    }
+    ->
+    file { "/etc/hbase/conf/zk-jaas.conf":
+      ensure => file,
+      content => template('hbase_client/zk-jaas.erb'),
+    }
+    ->
+    Package["hbase_${rpm_version}"]
   }
 
   package { "hbase_${rpm_version}":
+    ensure => installed,
+  }
+  ->
+  package { "phoenix_${rpm_version}":
     ensure => installed,
   }
   ->
