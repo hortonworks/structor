@@ -110,6 +110,10 @@ if hasrole($roles, 'zk') {
   include zookeeper_server
 }
 
+if hasrole($roles, 'kafka') {
+  include kafka_server
+}
+
 if islastslave($nodes, $hostname) {
   include install_hdfs_tarballs
 }

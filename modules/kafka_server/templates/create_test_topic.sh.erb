@@ -1,0 +1,11 @@
+<%
+   @zookeeper_servers = eval(@nodes).
+      select {|node| node[:roles].include? 'zk'}.
+      map{|node| node[:hostname] + "." + @domain + ":2181"}.join(",");
+-%>
+#!/bin/sh
+
+# Wait to settle a bit.
+sleep 3
+
+/usr/hdp/current/kafka-broker/bin/kafka-topics.sh --create --topic test --replication-factor 1 --partitions 1 --zookeeper <%= @zookeeper_servers %>
