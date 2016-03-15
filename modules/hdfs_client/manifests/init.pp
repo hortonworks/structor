@@ -25,7 +25,7 @@ class hdfs_client {
   $pid_dir="/var/run/pid"
   $keytab_dir="/etc/security/hadoop"
 
-  package { "hadoop_${rpm_version}":
+  package { "hadoop${package_version}":
     ensure => installed,
   }
   ->
@@ -34,22 +34,30 @@ class hdfs_client {
     path => "$path",
   }
 
-  package { "hadoop_${rpm_version}-libhdfs":
-    ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+  if ($operatingsystem == "centos") {
+    package { "hadoop${package_version}-libhdfs":
+      ensure => installed,
+      require => Package["hadoop${package_version}"],
+    }
+  }
+  elsif ($operatingsystem == "ubuntu") {
+    package { "libhdfs0${package_version}":
+      ensure => installed,
+      require => Package["hadoop${package_version}"],
+    }
   }
 
-  package { "hadoop_${rpm_version}-client":
+  package { "hadoop${package_version}-client":
     ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
   }
 
-  package { "hadooplzo_${rpm_version}":
+  package { "hadooplzo${package_version}":
     ensure => installed,
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
   }
   ->
-  package { "hadooplzo_${rpm_version}-native":
+  package { "hadooplzo${package_version}-native":
     ensure => installed,
   }
 
@@ -61,8 +69,15 @@ class hdfs_client {
     ensure => installed,
   }
 
-  package { 'lzo':
-    ensure => installed,
+  if ($operatingsystem == "centos") {
+    package { 'lzo':
+      ensure => installed,
+    }
+  }
+  elsif ($operatingsystem == "ubuntu") {
+    package { 'liblzo2-2':
+      ensure => installed,
+    }
   }
 
   file { '/etc/hadoop':
@@ -76,7 +91,7 @@ class hdfs_client {
   file { '/etc/hadoop/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package["hadoop_${rpm_version}"],
+    require => Package["hadoop${package_version}"],
     force => true
   }
 

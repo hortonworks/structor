@@ -16,19 +16,33 @@
 class kerberos_client {
   require ntp
 
-
-  package { 'krb5-auth-dialog':
-    ensure => installed,
+  case $operatingsystem {
+    'centos': {
+      package { 'krb5-auth-dialog':
+        ensure => installed,
+        before => File['/etc/krb5.conf'],
+      }
+      package { 'krb5-workstation':
+        ensure => installed,
+        before => File['/etc/krb5.conf'],
+      }
+      package { 'krb5-libs':
+        ensure => installed,
+        before => File['/etc/krb5.conf'],
+      }
+    }
+    'ubuntu': {
+      package { 'krb5-user':
+        ensure => installed,
+        before => File['/etc/krb5.conf'],
+      }
+      package { 'krb5-config':
+        ensure => installed,
+        before => File['/etc/krb5.conf'],
+      }
+    }
   }
 
-  package { 'krb5-workstation':
-    ensure => installed,
-  }
-
-  package { 'krb5-libs':
-    ensure => installed,
-  }
-  ->
   file { '/etc/krb5.conf':
     ensure => file,
     content => template('kerberos_client/krb5.erb'),

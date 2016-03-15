@@ -13,42 +13,41 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-class jdk {
-  $HOME = "/usr/lib/jvm/java"
+class ssh_keygen {
+  $path = "/bin:/usr/bin"
 
-  if ($operatingsystem == "centos") {
-    package { "java-1.7.0-openjdk":
-      ensure => installed,
-    }
-
-    package { "java-1.7.0-openjdk-devel":
-      ensure => installed,
-    }
+  file { '/root/.ssh':
+    ensure => directory,
+    mode => 'go-rwx',
   }
-  elsif ($operatingsystem == "ubuntu") {
-    package { "openjdk-7-jdk":
-      ensure => installed,
-    }
-    ->
-    file { $HOME:
-      ensure => 'link',
-      target => '/usr/lib/jvm/java-7-openjdk-amd64',
-      force => true
-    }
-    ->
-    file { "/usr/java":
-      ensure => 'directory'
-    }
-    ->
-    file { "/usr/java/default":
-      ensure => 'link',
-      target => '/usr/lib/jvm/java',
-      force => true
-    }
+  ->
+  file { '/root/.ssh/id_rsa':
+    ensure => file,
+    source => 'puppet:///modules/ssh_keygen/id_rsa',
+    owner => root,
+    group => root,
+    mode => '600',
   }
-
-  file { "/etc/profile.d/java.sh":
-    ensure => "file",
-    content => template('jdk/java.erb'),
+  ->
+  file { '/root/.ssh/id_rsa.pub':
+    ensure => file,
+    source => 'puppet:///modules/ssh_keygen/id_rsa.pub',
+    owner => root,
+    group => root,
+    mode => '644',
+  }
+  ->
+  file { '/root/.ssh/authorized_keys':
+    ensure => file,
+    source => 'puppet:///modules/ssh_keygen/authorized_keys',
+    owner => root,
+    group => root,
+    mode => '644',
+  }
+  ->
+  exec { 'known_hosts' :
+    path => $path,
+    command => 'ssh-keyscan -H `hostname` > /root/.ssh/known_hosts',
+    unless => 'test -f /root/.ssh/known_hosts',
   }
 }

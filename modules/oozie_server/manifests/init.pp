@@ -39,20 +39,55 @@ class oozie_server {
       user => 'oozie',
     }
     ->
-    Package["oozie_${rpm_version}"]
+    Package["oozie${package_version}"]
 
     $prepare_war_opts = "-secure"
   }
 
-  package { "oozie_${rpm_version}":
+  # XXX: Uncaptured dependencies on Ubuntu (needs Bug filed).
+  case $operatingsystem {
+    'ubuntu': {
+      package { "zip":
+        ensure => installed,
+        before => Package["oozie${package_version}"],
+      }
+      package { "unzip":
+        ensure => installed,
+        before => Package["oozie${package_version}"],
+      }
+    }
+    default: {}
+  }
+
+  package { "oozie${package_version}":
     ensure => installed,
   }
   ->
+  case $operatingsystem {
+    # XXX: More packaging bugs.
+    'ubuntu': {
+      file { "/var/run/oozie":
+        ensure => directory,
+        owner => oozie,
+        group => oozie,
+        mode => '755',
+      }
+      file { "/var/tmp/oozie":
+        ensure => directory,
+        owner => oozie,
+        group => oozie,
+        mode => '755',
+      }
+    }
+    default: {}
+  }
+
   file { "/etc/oozie":
     ensure => directory,
     owner => "root",
     group => "oozie",
     mode => "0750",
+    require => Package["oozie${package_version}"],
   }
   ->
   file { "${conf_dir}/adminusers.txt":

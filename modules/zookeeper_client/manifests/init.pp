@@ -24,7 +24,7 @@ class zookeeper_client {
   $pid_dir="/var/run/pid/zookeeper"
   $path="/usr/bin"
 
-  package { "zookeeper_${rpm_version}":
+  package { "zookeeper${package_version}":
     ensure => installed,
   }
   ->
@@ -44,7 +44,7 @@ class zookeeper_client {
   file { '/etc/zookeeper/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package["zookeeper_${rpm_version}"],
+    require => Package["zookeeper${package_version}"],
     force => true
   }
 

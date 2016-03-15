@@ -30,7 +30,7 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package["hadoop_${rpm_version}-mapreduce-historyserver"]
+    Package["hadoop${package_version}-mapreduce-historyserver"]
 
     file { "${hdfs_client::keytab_dir}/jhs.keytab":
       ensure => file,
@@ -40,10 +40,10 @@ class yarn_resource_manager {
       mode => '400',
     }
     ->
-    Package["hadoop_${rpm_version}-yarn-resourcemanager"]
+    Package["hadoop${package_version}-yarn-resourcemanager"]
   }
 
-  package { "hadoop_${rpm_version}-yarn-resourcemanager" :
+  package { "hadoop${package_version}-yarn-resourcemanager" :
     ensure => installed,
   }
   ->
@@ -54,7 +54,7 @@ class yarn_resource_manager {
   ->
   file { "/etc/init.d/hadoop-yarn-resourcemanager":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-yarn-resourcemanager/../etc/rc.d/init.d/hadoop-yarn-resourcemanager",
+    target => "/usr/hdp/current/hadoop-yarn-resourcemanager/../etc/${start_script_path}/hadoop-yarn-resourcemanager",
   }
   ->
   service {"hadoop-yarn-resourcemanager":
@@ -62,7 +62,7 @@ class yarn_resource_manager {
     enable => true,
   }
 
-  package { "hadoop_${rpm_version}-mapreduce-historyserver" :
+  package { "hadoop${package_version}-mapreduce-historyserver" :
     ensure => installed,
   }
   ->
@@ -73,7 +73,7 @@ class yarn_resource_manager {
   ->
   file { "/etc/init.d/hadoop-mapreduce-historyserver":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-mapreduce-historyserver/../etc/rc.d/init.d/hadoop-mapreduce-historyserver",
+    target => "/usr/hdp/current/hadoop-mapreduce-historyserver/../etc/${start_script_path}/hadoop-mapreduce-historyserver",
   }
   ->
   service {"hadoop-mapreduce-historyserver":

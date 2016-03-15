@@ -30,10 +30,10 @@ class hdfs_datanode {
       mode => '400',
     }
     ->
-    Package["hadoop_${rpm_version}-hdfs-datanode"]
+    Package["hadoop${package_version}-hdfs-datanode"]
   }
 
-  package { "hadoop_${rpm_version}-hdfs-datanode" :
+  package { "hadoop${package_version}-hdfs-datanode" :
     ensure => installed,
   }
   ->
@@ -44,7 +44,7 @@ class hdfs_datanode {
   ->
   file { "/etc/init.d/hadoop-hdfs-datanode":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-hdfs-datanode/../etc/rc.d/init.d/hadoop-hdfs-datanode",
+    target => "/usr/hdp/current/hadoop-hdfs-datanode/../etc/${start_script_path}/hadoop-hdfs-datanode",
   }
   ->
   service {"hadoop-hdfs-datanode":

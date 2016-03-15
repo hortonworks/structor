@@ -17,7 +17,7 @@ class oozie_client {
   require repos_setup
   require hdp_select
 
-  package { "oozie_${rpm_version}-client":
+  package { "oozie${package_version}-client":
     ensure => installed,
   }
 

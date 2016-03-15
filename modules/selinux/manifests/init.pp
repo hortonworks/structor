@@ -15,8 +15,10 @@
 
 # Turns of selinux so that mapreduce's task controller will work correctly
 class selinux {
-  file { '/etc/selinux/config':
-    ensure => file,
-    content => template('selinux/selinux.erb'),
+  if ($operatingsystem == "centos") {
+    file { '/etc/selinux/config':
+      ensure => file,
+      content => template('selinux/selinux.erb'),
+    }
   }
 }

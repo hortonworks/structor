@@ -18,11 +18,33 @@ class kerberos_kdc {
   $path="/bin:/usr/bin:/sbin:/usr/sbin"
   $password="vagrant"
 
-  package { 'krb5-server':
-    ensure => installed,
+  if ($operatingsystem == "centos") {
+    $kdcpath = "/var/kerberos/krb5kdc"
   }
-  ->
-  file { '/var/kerberos/krb5kdc/kdc.conf':
+  elsif ($operatingsystem == "ubuntu") {
+    $kdcpath = "/etc/krb5kdc"
+  }
+
+  case $operatingsystem {
+    'centos': {
+      package { 'krb5-server':
+        ensure => installed,
+        before => File["$kdcpath/kdc.conf"]
+      }
+    }
+    'ubuntu': {
+      package { 'krb5-kdc':
+        ensure => installed,
+      }
+      ->
+      package { 'krb5-admin-server':
+        ensure => installed,
+        before => File["$kdcpath/kdc.conf"]
+      }
+    }
+  }
+
+  file { "$kdcpath/kdc.conf":
     ensure => file,
     content => template('kerberos_kdc/kdc.erb'),
   }
@@ -40,12 +62,24 @@ class kerberos_kdc {
   ->
   exec { 'kdc-init':
     command => "/vagrant/generated/create-kerberos-db",
-    creates => "/var/kerberos/krb5kdc/principal",
+    creates => "$kdcpath/principal",
     path => $path,
   }
-  ->
-  service { 'krb5kdc':
-    ensure => running,
-    enable => true,
+
+  case $operatingsystem {
+    'centos': {
+      service { 'krb5kdc':
+        ensure => running,
+        enable => true,
+        require => Exec['kdc-init'],
+      }
+    }
+    'ubuntu': {
+      service { 'krb5-kdc':
+        ensure => running,
+        enable => true,
+        require => Exec['kdc-init'],
+      }
+    }
   }
 }
