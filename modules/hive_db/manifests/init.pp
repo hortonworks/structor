@@ -26,9 +26,10 @@ class hive_db {
   }
   ->
   exec { "secure-mysqld":
-    command => "mysql_secure_installation < files/secure-mysql.txt",
+    command => "mysql_secure_installation < /vagrant/modules/hive_db/files/secure-mysql.txt",
     path => "${PATH}",
-    cwd => "/vagrant/modules/hive_db",
+    cwd => "/tmp",
+    onlyif => "mysql -u root -e ';'",
   }
   ->
   exec { "add-remote-root":
