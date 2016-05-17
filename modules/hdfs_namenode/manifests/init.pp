@@ -48,7 +48,7 @@ class hdfs_namenode {
   ->
   file { "/etc/init.d/hadoop-hdfs-namenode":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-hdfs-namenode/../etc/rc.d/init.d/hadoop-hdfs-namenode",
+    target => "/usr/hdp/current/hadoop-hdfs-namenode/etc/rc.d/init.d/hadoop-hdfs-namenode",
   }
   ->
   exec {"namenode-format":

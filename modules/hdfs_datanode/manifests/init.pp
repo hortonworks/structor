@@ -44,7 +44,7 @@ class hdfs_datanode {
   ->
   file { "/etc/init.d/hadoop-hdfs-datanode":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-hdfs-datanode/../etc/rc.d/init.d/hadoop-hdfs-datanode",
+    target => "/usr/hdp/current/hadoop-hdfs-datanode/etc/rc.d/init.d/hadoop-hdfs-datanode",
   }
   ->
   service {"hadoop-hdfs-datanode":
