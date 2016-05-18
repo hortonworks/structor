@@ -46,7 +46,7 @@ KNOX_NAME=knox
 GATEWAY_NAME=gateway
 
 # start/stop script location
-KNOX_SCRIPT_DIR="/usr/lib/$KNOX_NAME/bin"
+KNOX_SCRIPT_DIR="/usr/hdp/current/knox-server/bin"
 
 #Name of PID file
 PID_DIR="/var/run/$KNOX_NAME"

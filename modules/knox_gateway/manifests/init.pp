@@ -17,6 +17,8 @@ class knox_gateway {
   require repos_setup
   require jdk
   
+  $java_home="${jdk::HOME}"
+
   package { "knox.noarch" :
     ensure => installed,
   }
@@ -30,12 +32,16 @@ class knox_gateway {
   ->
   exec { 'start-ldap' :
     path   => "/usr/bin:/usr/sbin:/bin",
-    command => 'su -l knox -c "/usr/lib/knox/bin/ldap.sh start"',
+    command => "bash -x /usr/hdp/${hdp_version}/knox/bin/ldap.sh start",
+    user => "knox",
+    environment => "JAVA_HOME=${java_home}",
   }
   ->
   exec { 'setup-gateway' :
     path   => "/usr/bin:/usr/sbin:/bin",
-    command => 'su -l knox -c "/usr/lib/knox/bin/knoxcli.sh create-master --master test-master-secret"',
+    command => "/usr/hdp/${hdp_version}/knox/bin/knoxcli.sh create-master --master test-master-secret",
+    user => "knox",
+    environment => "JAVA_HOME=${java_home}",
   }
   ->
   service {"knox-gateway":
