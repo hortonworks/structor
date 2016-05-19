@@ -22,6 +22,7 @@ class oozie_server {
   $conf_dir = "/etc/oozie/conf"
   $keytab_dir = "/etc/security/hadoop"
   $path="/bin:/usr/bin:/usr/hdp/${hdp_version}/oozie/bin"
+  $java_home="${jdk::HOME}"
 
   if $security == "true" {
     require kerberos_http
@@ -115,6 +116,7 @@ class oozie_server {
   ->
   exec { "oozie-createdb":
     path => $path,
+    environment => "JAVA_HOME=${java_home}",
     command => "ooziedb.sh create -sqlfile /tmp/oozie.sql -run",
     creates => "/tmp/oozie.sql",
     user => 'oozie',

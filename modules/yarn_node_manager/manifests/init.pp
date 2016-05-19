@@ -52,7 +52,7 @@ class yarn_node_manager {
   ->
   file { "/etc/init.d/hadoop-yarn-nodemanager":
     ensure => 'link',
-    target => "/usr/hdp/current/hadoop-yarn-nodemanager/../etc/rc.d/init.d/hadoop-yarn-nodemanager",
+    target => "/usr/hdp/current/hadoop-yarn-nodemanager/etc/rc.d/init.d/hadoop-yarn-nodemanager",
   }
   ->
   service {"hadoop-yarn-nodemanager":

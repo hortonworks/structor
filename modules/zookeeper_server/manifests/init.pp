@@ -52,7 +52,7 @@ class zookeeper_server {
   ->
   file { "/etc/init.d/zookeeper-server":
     ensure => 'link',
-    target => "/usr/hdp/current/zookeeper-server/../etc/rc.d/init.d/zookeeper-server",
+    target => "/usr/hdp/current/zookeeper-server/etc/rc.d/init.d/zookeeper-server",
   }
   ->
   file { "${zookeeper_client::data_dir}":
