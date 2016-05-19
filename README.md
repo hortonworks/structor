@@ -33,8 +33,14 @@ links to the desired profile.
 
 Current profiles:
 * 1node-nonsecure - a single node non-secure Hadoop cluster
+* 1node-secure - a single node secure Hadoop cluster
+* 1node-hbase-nonsecure - a single node non-secure Hadoop cluster with HBase
+* 1node-hbase-secure - a single node secure Hadoop cluster with HBase
+* 3node-analytics-nonsecure - a three node non-secure cluster with HiveServer2 set up.  Note that this does not have a gateway machine, it expects you to use JDBC to get to HS2 from the outside.
 * 3node-nonsecure - a three node non-secure Hadoop cluster
 * 3node-secure - a three node secure Hadoop cluster
+* 3node-hbase-nonsecure - a three node non-secure Hadoop cluster with HBase
+* 3node-hbase-secure - a three node secure Hadoop cluster with HBase
 * 5node-nonsecure - a five node secure Hadoop cluster
 
 You are encouraged to contribute new working profiles that can be
@@ -54,6 +60,7 @@ that node. The available roles are:
 * hbase-regionmaster - HBase region master
 * hive-db - Hive Metastore and Oozie backing mysql
 * hive-meta - Hive Metastore
+* hive-hs2 - HiveServer2
 * kdc - kerberos kdc
 * nn - HDFS NameNode
 * oozie - Oozie master
@@ -108,6 +115,11 @@ in /etc/hosts:
 | NameNode    | http://nn.example.com:50070/ | https://nn.example.com:50470/ |
 | ResourceMgr | http://nn.example.com:8088/  | https://nn.example.com:8090/  |
 | JobHistory  | http://nn.example.com:19888/ | https://nn.example.com:19890/ |
+
+### Connecting a JDBC client to HiveServer2 
+HiveServer2 is operating on the default thrift port (10000) on the nn machine speaking thrift
+binary protocol.  Starting beeline on your laptop and doing `!connect jdbc:hive2://nn.example.com:10000` 
+will enable you to connect to the system.
 
 ### Set up Kerberos (for security)
 

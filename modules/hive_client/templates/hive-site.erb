@@ -20,6 +20,10 @@
    @is_metastore = @metastores.include? @hostname;
    @dblist = eval(@nodes).select {|node| node[:roles].include? 'hive-db'};
    @db = (@dblist.size == 0 ? "unknown" : @dblist[0][:hostname]) +"."+ @domain;
+   @hs2s =
+     eval(@nodes).select {|node| node[:roles].include? 'hive-hs2'}.
+       map {|node| node[:hostname]};
+   @is_hs2 = @hs2s.include? @hostname;
  -%>
 <?xml version="1.0"?>
 <?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
@@ -33,7 +37,7 @@
   </property>
 <% end %>
 
-<% if @is_metastore -%>
+<% if @is_metastore or @is_hs2 -%>
   <property>
     <name>javax.jdo.option.ConnectionDriverName</name>
     <value>com.mysql.jdbc.Driver</value>
@@ -58,6 +62,14 @@
     <description>password to use against metastore database</description>
   </property>
 
+  <property>
+    <name>hive.users.in.admin.role</name>
+    <value>hive</value>
+    <description>users in the admin role for security</description>
+  </property>
+<% end -%>
+
+<% if @is_metastore -%>
   <property>
     <name>hive.compactor.initiator.on</name>
     <value>true</value>
