@@ -85,6 +85,10 @@ if hasrole($roles, 'hive-meta') {
   include hive_meta
 }
 
+if hasrole($roles, 'hive-hs2') {
+  include hive_hs2
+}
+
 if hasrole($roles, 'knox') {
   include knox_gateway
 }

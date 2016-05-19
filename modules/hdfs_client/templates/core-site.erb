@@ -18,7 +18,7 @@
       eval(@nodes).select {|node| node[:roles].include? 'nn'}[0][:hostname] +
       "." + @domain;
    # The list of roles and hive servers that need to proxy for others
-   @hive_roles = ['hive-meta', 'hs2'];
+   @hive_roles = ['hive-meta', 'hive-hs2'];
    @hive_servers = eval(@nodes).
       select {|node| (node[:roles] & @hive_roles).length > 0}.
       map{|node| node[:hostname] + "." + @domain}.join(",");
@@ -101,6 +101,18 @@
   </property>
 <% end -%>
 
+<% if @hive_servers.length > 0 -%>
+  <property>
+    <name>hadoop.proxyuser.hive.groups</name>
+    <value>hive,users</value>
+  </property>
+    
+  <property>
+    <name>hadoop.proxyuser.hive.hosts</name>
+    <value><%= @hive_servers %></value>
+  </property>
+<% end -%>
+
 <% if @security == "true" -%>
   <property>
     <name>hadoop.security.auth_to_local</name>
@@ -120,16 +132,6 @@ DEFAULT</value>
     <value><%= @hcat_servers %></value>
   </property>
     
-  <property>
-    <name>hadoop.proxyuser.hive.groups</name>
-    <value>users</value>
-  </property>
-
-  <property>
-    <name>hadoop.proxyuser.hive.hosts</name>
-    <value><%= @hive_servers %></value>
-  </property>
-
   <property>
     <name>hadoop.proxyuser.hcat.groups</name>
     <value>users</value>
