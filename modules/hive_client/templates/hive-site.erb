@@ -185,4 +185,141 @@
     <value>true</value>
   </property>
 
+<% if @is_hs2 -%>
+<!-- Performance optimizations for interactive -->
+  <property>
+    <name>hive.auto.convert.join</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.auto.convert.join.noconditionaltask</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.auto.convert.sortmerge.join</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.auto.convert.sortmerge.join.to.mapjoin</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.cbo.enable</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.compute.query.using.stats</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.stats.fetch.column.stats</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.convert.join.bucket.mapjoin.tez</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.execution.engine</name>
+    <value>tez</value>
+  </property>
+
+  <property>
+    <name>hive.mapjoin.optimized.hashtable</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.optimize.constant.propagation</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.optimize.index.filter</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.optimize.metadataonly</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.vectorized.execution.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.vectorized.execution.reduce.enabled</name>
+    <value>true</value>
+  </property>
+
+  <property>
+    <name>hive.vectorized.groupby.checkinterval</name>
+    <value>4096</value>
+  </property>
+
+  <property>
+    <name>hive.vectorized.groupby.flush.percent</name>
+    <value>0.1</value>
+  </property>
+
+  <property>
+    <name>hive.vectorized.groupby.maxentries</name>
+    <value>10000</value>
+  </property>
+
+  <property>
+    <name>hive.tez.container.size</name>
+    <value><%= @client_mem.to_i %></value>
+  </property>
+
+  <property>
+    <name>hive.mapjoin.hybridgrace.hashtable</name>
+    <value>false</value>
+  </property>
+
+  <property>
+    <name>hive.server2.tez.initialize.default.sessions</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.server2.tez.default.queues</name>
+    <value>default</value>
+  </property>
+  <property>
+    <name>hive.server2.tez.sessions.per.default.queue</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>hive.server2.enable.doAs</name>
+    <value>false</value>
+  </property>
+  <property>
+    <name>hive.prewarm.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hive.prewarm.numcontainers</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>tez.am.session.min.held-containers</name>
+    <value>1</value>
+  </property>
+  <property>
+    <name>tez.session.am.dag.submit.timeout.secs</name>
+    <value>14400</value>
+  </property>
+
+<% end -%>
+
 </configuration>
