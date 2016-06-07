@@ -44,12 +44,6 @@ class hive_hs2 {
     path => "$path",
   }
   ->
-  exec { "schematool -dbType mysql -initSchema":
-    user => "hive",
-    cwd => "/",
-    path => "/usr/hdp/current/hive-server2/bin:$path",
-  }
-  ->
   service { 'hive-server2':
     ensure => running,
     enable => true,
