@@ -27,16 +27,17 @@ class hive_hs2 {
       mode => '400',
     }
     ->
-    Package["hive_${rpm_version}-server2"]
+    Package["hive${package_version}-server2"]
   }
 
-  package { "hive_${rpm_version}-server2":
+  package { "hive${package_version}-server2":
     ensure => installed,
   }
   ->
   file { '/etc/init.d/hive-server2':
     ensure => file,
     source => "/usr/hdp/${hdp_version}/hive/etc/rc.d/init.d/hive-server2",
+    mode => 'a+rx',
   }
   ->
   exec { "hdp-select set hive-server2 ${hdp_version}":

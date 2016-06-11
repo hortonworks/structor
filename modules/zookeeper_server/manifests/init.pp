@@ -23,7 +23,7 @@ class zookeeper_server {
       ensure => file,
       content => template('zookeeper_server/zookeeper-server.erb'),
     }
-    -> Package["zookeeper_${rpm_version}-server"]
+    -> Package["zookeeper${package_version}-server"]
 
     file { "${hdfs_client::keytab_dir}/zookeeper.keytab":
       ensure => file,
@@ -33,10 +33,10 @@ class zookeeper_server {
       mode => '400',
     }
     ->
-    Package["zookeeper_${rpm_version}-server"]
+    Package["zookeeper${package_version}-server"]
   }
 
-  package { "zookeeper_${rpm_version}-server":
+  package { "zookeeper${package_version}-server":
     ensure => installed,
   }
   ->

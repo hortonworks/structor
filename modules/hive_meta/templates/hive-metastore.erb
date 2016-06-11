@@ -37,7 +37,7 @@ BIGTOP_DEFAULTS_DIR=${BIGTOP_DEFAULTS_DIR-/etc/default}
 [ -n "${BIGTOP_DEFAULTS_DIR}" -a -r ${BIGTOP_DEFAULTS_DIR}/hadoop ] && . ${BIGTOP_DEFAULTS_DIR}/hadoop
 [ -n "${BIGTOP_DEFAULTS_DIR}" -a -r ${BIGTOP_DEFAULTS_DIR}/hive-metastore ] && . ${BIGTOP_DEFAULTS_DIR}/hive-metastore
 
-export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export JAVA_HOME=<%= scope.lookupvar('jdk::home') %>
 
 RETVAL_SUCCESS=0
 

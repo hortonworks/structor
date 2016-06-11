@@ -15,10 +15,10 @@
 
 class load_hdfs_keytab {
   require hdfs_datanode
-  $PATH="/bin:/usr/bin"
+  $path="/bin:/usr/bin"
 
   exec { "kinit -k -t ${hdfs_client::keytab_dir}/dn.keytab dn/${hostname}.${domain}":
-    path => $PATH,
+    path => $path,
     user => "hdfs",
   }
 }

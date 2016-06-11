@@ -22,7 +22,7 @@ class oozie_server {
   $conf_dir = "/etc/oozie/conf"
   $keytab_dir = "/etc/security/hadoop"
   $path="/bin:/usr/bin:/usr/hdp/${hdp_version}/oozie/bin"
-  $java_home="${jdk::HOME}"
+  $java_home="${jdk::home}"
 
   if $security == "true" {
     require kerberos_http
@@ -40,12 +40,16 @@ class oozie_server {
       user => 'oozie',
     }
     ->
-    Package["oozie_${rpm_version}"]
+    Package["oozie${package_version}"]
 
     $prepare_war_opts = "-secure"
   }
 
-  package { "oozie_${rpm_version}":
+  package { 'mysql':
+    ensure => installed,
+  }
+  ->
+  package { "oozie${package_version}":
     ensure => installed,
   }
   ->
@@ -105,7 +109,7 @@ class oozie_server {
   file { "/tmp/create-oozie-db-user.sh":
     ensure => file,
     owner => root,
-    mode => 0700,
+    mode => '0700',
     content => template('oozie_server/create-oozie-db-user.erb'),
   }
   ->

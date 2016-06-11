@@ -16,6 +16,7 @@
 class ambari_server {
 
   require repos_setup
+  require jdk
 
   package { "ambari-server":
     ensure => installed

@@ -17,7 +17,7 @@
 ### END INIT INFO
 
 . /lib/lsb/init-functions
-export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export JAVA_HOME=<%= scope.lookupvar('jdk::home') %>
 
 RETVAL_SUCCESS=0
 

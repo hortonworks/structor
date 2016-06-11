@@ -21,7 +21,7 @@
 
 <property>
   <name>ssl.client.truststore.location</name>
-  <value>/usr/java/default/jre/lib/security/cacerts</value>
+  <value><%= scope.lookupvar('jdk::home') %>/jre/lib/security/cacerts</value>
   <description>Truststore to be used by clients like distcp. Must be
   specified.
   </description>

@@ -18,7 +18,7 @@ class hbase_regionserver {
 
   $path="/usr/bin"
 
-  package { "hbase_${rpm_version}-regionserver" :
+  package { "hbase${package_version}-regionserver" :
     ensure => installed,
   }
   ->
@@ -32,6 +32,7 @@ class hbase_regionserver {
     source => "puppet:///files/init.d/hbase-regionserver",
     owner => root,
     group => root,
+    mode => '755',
   }
   ->
   service {"hbase-regionserver":

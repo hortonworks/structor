@@ -35,13 +35,13 @@ class yarn_node_manager {
       content => template('yarn_node_manager/container-executor.erb'),
       owner => root,
       group => mapred,
-      mode => 400,
+      mode => '400',
     }
     ->
-    Package["hadoop_${rpm_version}-yarn-nodemanager"]
+    Package["hadoop${package_version}-yarn-nodemanager"]
   }
 
-  package { "hadoop_${rpm_version}-yarn-nodemanager" :
+  package { "hadoop${package_version}-yarn-nodemanager" :
     ensure => installed,
   }
   ->

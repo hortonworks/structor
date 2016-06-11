@@ -16,11 +16,11 @@
 class repos_setup {
   file { '/etc/yum.repos.d/hdp.repo':
     ensure => file,
-    source => 'puppet:///files/repos/hdp.repo',
+    source => "puppet:///files/repos/centos6.hdp.repo.${hdp_short_version}",
   }
   file { '/etc/yum.repos.d/ambari.repo':
     ensure => file,
-    source => 'puppet:///files/repos/ambari.repo',
+    source => "puppet:///files/repos/centos6.ambari.repo.${ambari_version}",
   }
   package { 'epel-release-6-8':
     ensure => absent,

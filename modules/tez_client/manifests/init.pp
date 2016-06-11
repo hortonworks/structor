@@ -18,7 +18,7 @@ class tez_client {
 
   $conf_dir="/etc/tez/hdp"
 
-  package { "tez_${rpm_version}":
+  package { "tez${package_version}":
     ensure => installed,
   }
   ->

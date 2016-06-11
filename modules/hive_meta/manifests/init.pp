@@ -28,10 +28,10 @@ class hive_meta {
       mode => '400',
     }
     ->
-    Package["hive_${rpm_version}-metastore"]
+    Package["hive${package_version}-metastore"]
   }
 
-  package { "hive_${rpm_version}-metastore":
+  package { "hive${package_version}-metastore":
     ensure => installed,
   }
   ->
