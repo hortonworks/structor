@@ -37,7 +37,7 @@
 
 # The heap size of the jvm stared by hive shell script can be controlled via:
 HBASE_CONF_DIR=${HBASE_CONF_DIR:-/etc/hbase/conf}
-export HADOOP_HEAPSIZE=${HADOOP_HEAPSIZE:-1024}
+export HADOOP_HEAPSIZE=${HADOOP_HEAPSIZE:-<%= @server_mem.to_i %>}
 
 # Larger heap size may be required when running queries over large number of files or partitions.
 # By default hive shell scripts use a heap size of 256 (MB).  Larger heap size would also be
@@ -45,6 +45,6 @@ export HADOOP_HEAPSIZE=${HADOOP_HEAPSIZE:-1024}
 
 # Hive Configuration Directory can be controlled by:
 export HIVE_CONF_DIR=/etc/hive/conf
-export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export JAVA_HOME=<%= scope.lookupvar('jdk::home') %>
 # Folder containing extra ibraries required for hive compilation/execution can be controlled by:
 export HIVE_AUX_JARS_PATH=

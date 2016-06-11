@@ -17,7 +17,7 @@ class knox_gateway {
   require repos_setup
   require jdk
   
-  $java_home="${jdk::HOME}"
+  $java_home="${jdk::home}"
 
   package { "knox.noarch" :
     ensure => installed,

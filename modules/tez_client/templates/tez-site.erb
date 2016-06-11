@@ -51,7 +51,7 @@
 
   <property>
     <name>tez.am.resource.memory.mb</name>
-    <value><%= client_mem %></value>
+    <value><%= @client_mem %></value>
     <description>The amount of memory to be used by the AppMaster.
       Used only if the value is not specified explicitly by the DAG definition.
     </description>
@@ -83,7 +83,7 @@
 
   <property>
     <name>tez.task.resource.memory.mb</name>
-    <value><%= client_mem %></value>
+    <value><%= @client_mem %></value>
     <description>The amount of memory to be used by launched tasks.
       Used only if the value is not specified explicitly by the DAG definition.
     </description>

@@ -31,7 +31,7 @@ class hive_meta {
     Package["hive_${rpm_version}-metastore"]
   }
 
-  package { "hive_${rpm_version}-metastore":
+  package { "hive${package_version}-metastore":
     ensure => installed,
   }
   ->

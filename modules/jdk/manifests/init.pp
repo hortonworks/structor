@@ -14,7 +14,7 @@
 #   limitations under the License.
 
 class jdk {
-  $HOME = "/usr/lib/jvm/java"
+  $home = "/usr/lib/jvm/java"
 
   package { "java-1.7.0-openjdk":
     ensure => installed,

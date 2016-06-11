@@ -35,14 +35,14 @@ class hbase_client {
       content => template('hbase_client/zk-jaas.erb'),
     }
     ->
-    Package["hbase_${rpm_version}"]
+    Package["hbase${package_version}"]
   }
 
-  package { "hbase_${rpm_version}":
+  package { "hbase${package_version}":
     ensure => installed,
   }
   ->
-  package { "phoenix_${rpm_version}":
+  package { "phoenix${package_version}":
     ensure => installed,
   }
   ->

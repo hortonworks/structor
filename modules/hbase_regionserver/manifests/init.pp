@@ -18,7 +18,7 @@ class hbase_regionserver {
 
   $path="/usr/bin"
 
-  package { "hbase_${rpm_version}-regionserver" :
+  package { "hbase${package_version}-regionserver" :
     ensure => installed,
   }
   ->

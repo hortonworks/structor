@@ -19,7 +19,7 @@ class pig_client {
   $conf_dir="/etc/pig/hdp"
   $path="/usr/bin"
 
-  package { "pig_${rpm_version}":
+  package { "pig${package_version}":
     ensure => present,
   }
 
@@ -34,7 +34,7 @@ class pig_client {
   file { '/etc/pig/conf':
     ensure => 'link',
     target => "${conf_dir}",
-    require => Package["pig_${rpm_version}"],
+    require => Package["pig${package_version}"],
     force => true
   }
 

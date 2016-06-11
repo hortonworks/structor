@@ -18,7 +18,7 @@ class hbase_master {
 
   $path="/usr/bin"
 
-  package { "hbase_${rpm_version}-master" :
+  package { "hbase${package_version}-master" :
     ensure => installed,
   }
   ->

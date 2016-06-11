@@ -36,21 +36,47 @@ def loadProfile()
 end
 
 # Pull the HDP version out of the hdp.repo file
-def findVersion()
-  fileObj = File.new('files/repos/hdp.repo', 'r')
+def findVersion(profile)
+  if (profile[:os] == "centos6")
+    path = 'files/repos/centos6.hdp.repo.%s' % profile[:hdp_short_version]
+# elsif (profile[:os] == "centos7")
+#   path = 'files/repos/centos7.hdp.repo.%s' % profile[:hdp_short_version]
+# elsif (profile[:os] == "ubuntu14")
+#   path = 'files/repos/ubuntu14.hdp.list.%s' % profile[:hdp_short_version]
+  end
+  
+  fileObj = File.new(path, 'r')
   match = /^#VERSION_NUMBER=(?<ver>[-0-9.]*)/.match(fileObj.gets)
   fileObj.close()
-  result = match['ver']
-  puts "HDP Version = %s\n" % result
-  return result
+  version = match['ver']
+  versions = version.split(".")
+  major = versions[0].to_i
+  minor = versions[1].to_i
+  patch = versions[2].to_i
+  puts "HDP Build = %s\n" % version
+  return [version, major, minor, patch]
 end
 
 ###############################################################################
 # Define cluster
 
 profile = loadProfile()
-hdp_version = findVersion()
-rpm_version = hdp_version.gsub /[.-]/, '_'
+
+# Set defaults.
+default_os = "centos6"
+default_hdp_short_version = "2.4.2"
+default_ambari_version = "2.1.0"
+default_java_version = "java-1.7.0-openjdk"
+
+profile[:hdp_short_version] ||= default_hdp_short_version
+profile[:ambari_version] ||= default_ambari_version
+profile[:java_version] ||= default_java_version
+profile[:os] ||= default_os
+profile[:vm_cpus] ||= 2
+profile[:am_mem] ||= 512
+profile[:server_mem] ||= 768
+profile[:client_mem] ||= 1024
+(hdp_version, hdp_version_major, hdp_version_minor, hdp_version_patch) = findVersion(profile)
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   if Vagrant.has_plugin?("vagrant-cachier")
@@ -60,14 +86,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # All Vagrant configuration is done here. The most common configuration
   # Every Vagrant virtual environment requires a box to build off of.
-  config.vm.box = "omalley/centos6_x64"
+  if (profile[:os] == "centos6")
+    config.vm.box = "puppetlabs/centos-6.6-64-puppet"
+    package_version = "_" + (hdp_version.gsub /[.-]/, '_')
+    platform_start_script_path = "rc.d/init.d"
+# elsif (profile[:os] == "centos7")
+#   config.vm.box = "puppetlabs/centos-7.0-64-puppet"
+#   package_version = "_" + (hdp_version.gsub /[.-]/, '_')
+#   platform_start_script_path = "rc.d/init.d"
+# elsif (profile[:os] == "ubuntu")
+#   config.vm.box = "ubuntu/trusty64"
+#   package_version = "-" + (hdp_version.gsub /[.-]/, '-')
+#   platform_start_script_path = "init.d"
+  end
 
   config.vm.provider :virtualbox do |vb|
     vb.customize ["modifyvm", :id, "--memory", profile[:vm_mem] ]
-  end
-
-  config.vm.provider :vmware_fusion do |vm|
-    vm.vmx["memsize"] = profile[:vm_mem]
+    vb.customize ["modifyvm", :id, "--cpus", profile[:vm_cpus] ]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
   end
 
   profile[:nodes].each do |node|
@@ -77,22 +113,41 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       node_config.ssh.forward_agent = true
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
+        puppet.environment_path = "environments"
+        puppet.environment = "structor"
         puppet.options = ["--libdir", "/vagrant", 
 	    "--verbose", "--debug",
             "--fileserverconfig=/vagrant/fileserver.conf"]
         puppet.facter = {
-          "hostname" => node[:hostname],
-          "roles" => node[:roles],
-          "nodes" => profile[:nodes],
-	  "hdp_version" => hdp_version,
-	  "rpm_version" => rpm_version,
+          "hdp_short_version" => profile[:hdp_short_version],
+          "ambari_version" => profile[:ambari_version],
+          "package_version" => package_version,
+          "java_version" => profile[:java_version],
+          "platform_start_script_path" => platform_start_script_path,
+
+          "am_mem" => profile[:am_mem],
+          "client_mem" => profile[:client_mem],
+          "server_mem" => profile[:server_mem],
+          "vm_mem" => profile[:vm_mem],
+          "vm_cpus" => profile[:vm_cpus],
+
           "domain" => profile[:domain],
           "security" => profile[:security],
           "realm" => profile[:realm],
+
           "clients" => profile[:clients],
-          "server_mem" => profile[:server_mem],
-          "client_mem" => profile[:client_mem],
-          "profile" => profile
+          "extras" => profile[:extras],
+          "hostname" => node[:hostname],
+          "nodes" => profile[:nodes],
+          "profile" => profile,
+          "roles" => node[:roles],
+
+          "hdp_version" => hdp_version,
+          "hdp_version_major" => hdp_version_major,
+          "hdp_version_minor" => hdp_version_minor,
+	        "hdp_version_patch" => hdp_version_patch,
+
+          "hive_options" => profile[:hive_options],
         }
       end
     end

@@ -22,7 +22,7 @@ class kerberos_http {
     Class['kerberos_kdc'] -> Class['kerberos_http']
   }
 
-  $path = "${jdk::HOME}/bin:/bin:/usr/bin"
+  $path = "${jdk::home}/bin:/bin:/usr/bin"
 
   file { "${hdfs_client::keytab_dir}":
     ensure => directory,
@@ -37,7 +37,7 @@ class kerberos_http {
     content => vagrant,
     owner => root,
     group => hadoop,
-    mode => 440,
+    mode => '440',
   }
   ->
   file { "${hdfs_client::keytab_dir}/http.keytab":

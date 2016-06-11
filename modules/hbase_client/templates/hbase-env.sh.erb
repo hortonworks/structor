@@ -1,7 +1,7 @@
 # Set environment variables here.
 
 # The java implementation to use. Java 1.6 required.
-export JAVA_HOME=<%= scope.lookupvar('jdk::HOME') %>
+export JAVA_HOME=<%= scope.lookupvar('jdk::home') %>
 
 # HBase Configuration directory
 export HBASE_CONF_DIR=${HBASE_CONF_DIR:-/usr/hdp/current/hbase-client/conf}
@@ -36,7 +36,7 @@ export HBASE_REGIONSERVERS=${HBASE_CONF_DIR}/regionservers
 export HBASE_LOG_DIR=<%= scope.lookupvar('hdfs_client::log_dir') %>/hbase
 
 # A string representing this instance of hbase. $USER by default.
-export HBASE_IDENT_STRING=structor
+export HBASE_IDENT_STRING=hbase
 
 # The scheduling priority for daemon processes. See 'man nice'.
 # export HBASE_NICENESS=10
