@@ -45,6 +45,10 @@ class oozie_server {
     $prepare_war_opts = "-secure"
   }
 
+  package { 'mysql':
+    ensure => installed,
+  }
+  ->
   package { "oozie${package_version}":
     ensure => installed,
   }
