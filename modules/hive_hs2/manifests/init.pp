@@ -27,10 +27,10 @@ class hive_hs2 {
       mode => '400',
     }
     ->
-    Package["hive_${rpm_version}-server2"]
+    Package["hive${package_version}-server2"]
   }
 
-  package { "hive_${rpm_version}-server2":
+  package { "hive${package_version}-server2":
     ensure => installed,
   }
   ->

@@ -18,7 +18,7 @@
 KEYDIR=/vagrant/generated/keytabs
 <% require 'set';
    password = scope.lookupvar('kerberos_kdc::password');
-   nodelist = eval(nodes); 
+   nodelist = eval(@nodes); 
    # a map from roles to required users
    users = {'nn' => ['nn', 'HTTP'],
             'yarn' => ['rm', 'jhs', 'HTTP'],
@@ -44,8 +44,8 @@ addprinc -pw <%= password %>  vagrant
 <% nodelist.each do |node|
      node[:roles].map{|r| users[r]}.flatten.to_set.select {|n| n != nil}.
         each do |user| -%>
-addprinc -randkey <%= user %>/<%= node[:hostname] %>.<%= domain %>@<%= realm %>
-xst -norandkey -k $KEYDIR/<%= node[:hostname] %>/<%= user %>.keytab <%= user %>/<%= node[:hostname] %>.<%= domain %>@<%= realm %>
+addprinc -randkey <%= user %>/<%= node[:hostname] %>.<%= @domain %>@<%= @realm %>
+xst -norandkey -k $KEYDIR/<%= node[:hostname] %>/<%= user %>.keytab <%= user %>/<%= node[:hostname] %>.<%= @domain %>@<%= @realm %>
 <%   end
    end -%>
 EOF

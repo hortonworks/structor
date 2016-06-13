@@ -19,8 +19,8 @@ export PATH=<%= @path %>
 umask 077
 keytool -genkey -alias http -keyalg RSA -keystore server.jks -keysize 4096 \
   -validity 36525 -storepass changeit << EOF
-<%= hostname %>.<%= domain %>
-<%= hostname %>
+<%= @hostname %>.<%= @domain %>
+<%= @hostname %>
 Example Corp
 Palo Alto
 CA
