@@ -32,6 +32,7 @@ class hbase_regionserver {
     source => "puppet:///files/init.d/hbase-regionserver",
     owner => root,
     group => root,
+    mode => '755',
   }
   ->
   service {"hbase-regionserver":

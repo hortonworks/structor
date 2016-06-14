@@ -17,6 +17,7 @@ class hbase_server {
   require hdfs_client
   require zookeeper_client
   require hbase_client
+  require hadoop_server
 
   $keytab_dir="/etc/security/hadoop"
 

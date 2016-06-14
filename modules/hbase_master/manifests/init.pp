@@ -32,6 +32,8 @@ class hbase_master {
     source => "puppet:///files/init.d/hbase-master",
     owner => root,
     group => root,
+    mode => '755',
+    # TODO when we move to 2.5 grab Carter's change to use script from package
   }
   ->
   service {"hbase-master":
