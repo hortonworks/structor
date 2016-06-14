@@ -37,6 +37,7 @@ class hive_hs2 {
   file { '/etc/init.d/hive-server2':
     ensure => file,
     source => "/usr/hdp/${hdp_version}/hive/etc/rc.d/init.d/hive-server2",
+    mode => 'a+rx',
   }
   ->
   exec { "hdp-select set hive-server2 ${hdp_version}":
