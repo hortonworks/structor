@@ -28,6 +28,7 @@ class knox_gateway {
     source => "puppet:///files/init.d/knox-gateway",
     owner => root,
     group => root,
+    mode => '755',
   }
   ->
   exec { 'start-ldap' :
