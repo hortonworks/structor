@@ -19,19 +19,35 @@ import os
 import json
 from optparse import OptionParser
 
+subnet = "240.0.0."
+gw_ip = subnet + "10"
+nn_ip = subnet + "11"
+slave_base_ip = 12
+ambari_ip = subnet + "100"
+
+
 def main():
   parser = OptionParser()
   
   # General options
-  parser.add_option("-o", "--output", help="output file, default to current.profile", default="current.profile")
+  parser.add_option("-o", "--output", help="output file, defaults to current.profile", default="current.profile")
 
   # Cluster size and makeup related options
-  parser.add_option("-a", "--ambari", help="Install Ambari on this cluster", default=False)
-  parser.add_option("-G", "--no-gateway", help="Set the cluster to not have a gateway node", default=False, dest="no_gateway")
-  parser.add_option("-n", "--node-cnt", help="Number of nodes in the cluster, all nodes included", type="int", default=3, dest="nodes")
+  parser.add_option("-a", "--ambari", help="Install Ambari on this cluster", default=False, action="store_true")
+  parser.add_option("-G", "--no-gateway", help="Set the cluster to not have a gateway node", default=False,
+      dest="no_gateway", action="store_true")
+  parser.add_option("-n", "--node-cnt", help="Number of nodes in the cluster, all nodes included", type="int",
+      default=3, dest="nodes")
 
   # Security options
-  parser.add_option("-s", "--secure", help="Setup a secure cluster", default=False)
+  parser.add_option("-s", "--secure", help="Setup a secure cluster", default=False, action="store_true")
+
+  # Module options
+  parser.add_option("-j", "--hive-server2", help="Include HiveServer2", default=False, action="store_true", dest="hs2")
+  parser.add_option("-p", "--pig", help="Include Pig", default=False, action="store_true")
+  parser.add_option("-v", "--hive", help="Include the Hive client", default=False, action="store_true")
+  parser.add_option("-x", "--knox", help="Include Knox", default=False, action="store_true")
+  parser.add_option("-z", "--oozie", help="Include Oozie", default=False, action="store_true")
 
   (options, args) = parser.parse_args()
 
@@ -74,7 +90,7 @@ def buildNodes(options):
 
   # Put Ambari server in if asked for
   if (options.ambari):
-    nodes.append(buildAmbariServer)
+    nodes.append(buildAmbariServer())
 
   # If there are nodes left and they didn't say no gateway, add a gateway
   if (num_machines > 1 and not options.no_gateway):
@@ -83,8 +99,8 @@ def buildNodes(options):
 
   num_slaves = num_machines - 1 # take away one for the namenode
   # We've already substracted one from the machines for the Ambari server if its there
-  if (options.no_gateway):
-    num_slaves += 1
+  if (not options.no_gateway):
+    num_slaves -= 1
 
   if (num_slaves > 0):
     for i in range(num_slaves):
@@ -95,23 +111,31 @@ def buildNodes(options):
 
 def determineClients(options):
   clients = ["hdfs", "tez", "yarn", "zk"] # These three are always there
-  # TODO add hive client if asked for
-  # TODO add oozie client if asked for
-  # TODO add pig client if asked for
-  # TODO add ambari agent if asked 
+  if (options.pig):
+    clients.append("pig")
+  if (options.hive):
+    clients.append("hive")
+  if (options.oozie):
+    clients.append("oozie")
   return clients
 
 def buildNamenode(options, num_machines):
   # Build the NameNode
   nn = {}
   nn["hostname"] = "nn"
-  nn["ip"] = "240.0.0.11"
+  nn["ip"] = nn_ip
   nn["roles"] = ["nn", "yarn", "zk"]
+
   if (options.secure):
     nn["roles"].append("kdc")
+
   if (options.ambari):
     nn["roles"].append("ambari-agent")  # Add Ambari agent if we're installing Ambari
-  # TODO add hive-db and hive-meta if asked for
+
+  # add hive-db and hive-meta if hive is asked for
+  if (options.hive or options.hs2):
+    nn["roles"].append("hive-db")
+    nn["roles"].append("hive-meta")
 
   # If we only have one machine then we need to put a slave and gw on here as well
   if (num_machines == 1):
@@ -123,27 +147,36 @@ def buildNamenode(options, num_machines):
 def buildAmbariServer():
   ambari = {}
   ambari["hostname"] = "ambari"
-  ambari["ip"] = "240.0.0.15"
+  ambari["ip"] = ambari_ip
   ambari["roles"] = [ "ambari-server" ]
   return ambari
 
 def buildGateway(options):
   gw = {}
   gw["hostname"] = "gw"
-  gw["ip"] = "240.0.0.10"
+  gw["ip"] = gw_ip
   gw["roles"] = [ "client" ]
-  # TODO add knox if asked for
+  # If Knox was requested put it on the gateway machine
+  if (options.knox):
+    gw["roles"].append("knox")
   return gw
 
 def buildSlave(options, slave_num):
   slave = {}
   slave["hostname"] = "slave%d" % (slave_num + 1)
-  slave["ip"] = "240.0.0.%d" % (slave_num + 12)
+  slave["ip"] = "%s%d" % (subnet, slave_num + 12)
   slave["roles"] = ["slave"]
+
   if (options.ambari):
     slave["roles"].append("ambari-agent")
-  # TODO add hive-server2 to slave1 if requested
-  # TODO add oozie to slave1 if requested
+
+  # If HS2 or Oozie are in this cluster the servers need to be put on slave1
+  if (slave_num == 0):
+    if (options.hs2):
+      slave["roles"].append("hive-hs2")
+    if (options.oozie):
+      slave["roles"].append("oozie")
+
   return slave
 
 if __name__ == "__main__":

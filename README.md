@@ -46,6 +46,11 @@ Current profiles:
 You are encouraged to contribute new working profiles that can be
 shared by others.
 
+There is also a tool for creating profiles in `bin/profile-builder.py` that will create a profile file for you.  Its
+command line switches allow you to determine cluster size, whether the cluster is secure, and which modules are in
+your cluster.  Running `profile-builder.py -h` will return a list of available options.
+
+
 The types of control knob in the profile file are:
 * nodes - a list of virtual machines to create
 * security - a boolean for whether kerberos is enabled
