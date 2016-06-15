@@ -118,7 +118,7 @@ def buildNodes(options):
         nodes.append(buildSlave(options, i))
 
   if (options.kafka_nodes != None):
-    nodes.append(buildKafkaNodes(options))
+    nodes += buildKafkaNodes(options)
 
   return (nodes, clients)
 

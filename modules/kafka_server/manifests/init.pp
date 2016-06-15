@@ -51,11 +51,11 @@ class kafka_server {
   }
 
   # Create a topic called test.
-  file { "/tmp/create_test_topic.sh":
-    ensure => "file",
-    mode => '755',
-    content => template('kafka_server/create_test_topic.sh.erb'),
-  }
+# file { "/tmp/create_test_topic.sh":
+#   ensure => "file",
+#   mode => '755',
+#   content => template('kafka_server/create_test_topic.sh.erb'),
+# }
 
   # Startup.
   if ($operatingsystem == "centos" and $operatingsystemmajrelease == "7") {
