@@ -27,25 +27,35 @@ ambari_ip = subnet + "100"
 
 
 def main():
-  parser = OptionParser()
+  usage = """Usage: %prog [options]
+
+NOTE: It is possible to produce a nonsensical profile with this tool.
+It does not do sanity checking such as making sure you have provided at least
+one node in the profile.  Don't do stupid stuff.  You've been warned."""
+
+  parser = OptionParser(usage=usage)
   
   # General options
   parser.add_option("-o", "--output", help="output file, defaults to current.profile", default="current.profile")
 
   # Cluster size and makeup related options
+  parser.add_option("-1", "--single-node-cluster", help="Install cluster on a single node", default=False,
+      dest="single_node", action="store_true")
   parser.add_option("-a", "--ambari", help="Install Ambari on this cluster", default=False, action="store_true")
   parser.add_option("-G", "--no-gateway", help="Set the cluster to not have a gateway node", default=False,
       dest="no_gateway", action="store_true")
-  parser.add_option("-n", "--node-cnt", help="Number of nodes in the cluster, all nodes included", type="int",
-      default=3, dest="nodes")
+  parser.add_option("-H", "--no-hadoop", help="Do not create a Hadoop cluster", default=False,
+      dest="no_hadoop", action="store_true")
+  parser.add_option("-n", "--node-cnt", help="Number of data nodes in the cluster, cannot be used with -1", type="int",
+      default=1, dest="num_data_nodes")
 
   # Security options
   parser.add_option("-s", "--secure", help="Setup a secure cluster", default=False, action="store_true")
 
   # Module options
+  parser.add_option("-v", "--hive", help="Include the Hive client", default=False, action="store_true")
   parser.add_option("-j", "--hive-server2", help="Include HiveServer2", default=False, action="store_true", dest="hs2")
   parser.add_option("-p", "--pig", help="Include Pig", default=False, action="store_true")
-  parser.add_option("-v", "--hive", help="Include the Hive client", default=False, action="store_true")
   parser.add_option("-x", "--knox", help="Include Knox", default=False, action="store_true")
   parser.add_option("-z", "--oozie", help="Include Oozie", default=False, action="store_true")
 
@@ -70,46 +80,40 @@ def main():
   output["nodes"] = nodes
 
   fd = open(options.output, "w")
-  fd.write(json.dumps(output, sort_keys=True, indent=2))
+  fd.write(json.dumps(output, indent=2))
   fd.close()
 
 def buildNodes(options):
   nodes = []
 
-  num_machines = options.nodes
-
-  if (options.ambari):
-    num_machines -= 1
-
-  if (num_machines < 1):
-    raise Exception("You cannot have a cluster with no machines.  You specified %d nodes, and if you specified Ambari that needs its own node." % options.nodes)
+  if (options.num_data_nodes < 1 and not options.single_node):
+    raise Exception("You cannot have a cluster with no data nodes.")
 
   clients = determineClients(options)
-
-  nodes.append(buildNamenode(options, num_machines))
 
   # Put Ambari server in if asked for
   if (options.ambari):
     nodes.append(buildAmbariServer())
 
-  # If there are nodes left and they didn't say no gateway, add a gateway
-  if (num_machines > 1 and not options.no_gateway):
-    nodes.append(buildGateway(options))
+  if (not options.no_hadoop):
+    nodes.append(buildNamenode(options))
+
+    # If they didn't say no gateway and we're not in the special single node cluster case, add a gateway
+    if (not options.single_node and not options.no_gateway):
+      nodes.append(buildGateway(options))
 
 
-  num_slaves = num_machines - 1 # take away one for the namenode
-  # We've already substracted one from the machines for the Ambari server if its there
-  if (not options.no_gateway):
-    num_slaves -= 1
-
-  if (num_slaves > 0):
-    for i in range(num_slaves):
-      nodes.append(buildSlave(options, i))
+    if (not options.single_node):
+      for i in range(options.num_data_nodes):
+        nodes.append(buildSlave(options, i))
 
   return (nodes, clients)
 
 
 def determineClients(options):
+  if (options.no_hadoop):
+    return []
+
   clients = ["hdfs", "tez", "yarn", "zk"] # These three are always there
   if (options.pig):
     clients.append("pig")
@@ -119,7 +123,7 @@ def determineClients(options):
     clients.append("oozie")
   return clients
 
-def buildNamenode(options, num_machines):
+def buildNamenode(options):
   # Build the NameNode
   nn = {}
   nn["hostname"] = "nn"
@@ -129,8 +133,9 @@ def buildNamenode(options, num_machines):
   if (options.secure):
     nn["roles"].append("kdc")
 
+  # Add Ambari agent if we're installing Ambari
   if (options.ambari):
-    nn["roles"].append("ambari-agent")  # Add Ambari agent if we're installing Ambari
+    nn["roles"].append("ambari-agent")
 
   # add hive-db and hive-meta if hive is asked for
   if (options.hive or options.hs2):
@@ -138,7 +143,7 @@ def buildNamenode(options, num_machines):
     nn["roles"].append("hive-meta")
 
   # If we only have one machine then we need to put a slave and gw on here as well
-  if (num_machines == 1):
+  if (options.single_node):
     nn["roles"].append("slave")
     nn["roles"].append("client")
 
