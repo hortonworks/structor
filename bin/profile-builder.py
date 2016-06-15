@@ -205,6 +205,10 @@ def buildKafkaNodes(options):
     knode["ip"] = "%s%d" % (subnet, kafka_base_ip + i)
     knode["roles"] = ["kafka"]
 
+    # If there's no Hadoop cluster we will need to install a ZooKeeper server
+    if (options.no_hadoop and i == 0):
+      knode["roles"].append("zk")
+
     # Does Ambari support Kafka yet?
     if (options.ambari):
       knode["roles"].append("ambari-agent")

@@ -15,7 +15,7 @@
 
 class kafka_server {
   require repos_setup
-  require zookeeper_server
+  require zookeeper_client
   require jdk
 
   $path="/bin:/usr/bin"
@@ -81,6 +81,7 @@ class kafka_server {
       replace => true,
       require => Package['kafka'],
       before => Service['kafka'],
+      mode => '755',
     }
   }
 }
