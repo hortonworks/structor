@@ -18,46 +18,56 @@
 import os
 import json
 from optparse import OptionParser
+from optparse import OptionGroup
 
 subnet = "240.0.0."
 gw_ip = subnet + "10"
 nn_ip = subnet + "11"
 slave_base_ip = 12
 ambari_ip = subnet + "100"
+kafka_base_ip = 101
 
 
 def main():
-  usage = """Usage: %prog [options]
-
-NOTE: It is possible to produce a nonsensical profile with this tool.
+  usage = """NOTE: It is possible to produce a nonsensical profile with this tool.
 It does not do sanity checking such as making sure you have provided at least
 one node in the profile.  Don't do stupid stuff.  You've been warned."""
 
-  parser = OptionParser(usage=usage)
+  parser = OptionParser(description=usage)
   
   # General options
   parser.add_option("-o", "--output", help="output file, defaults to current.profile", default="current.profile")
 
-  # Cluster size and makeup related options
-  parser.add_option("-1", "--single-node-cluster", help="Install cluster on a single node", default=False,
-      dest="single_node", action="store_true")
-  parser.add_option("-a", "--ambari", help="Install Ambari on this cluster", default=False, action="store_true")
-  parser.add_option("-G", "--no-gateway", help="Set the cluster to not have a gateway node", default=False,
-      dest="no_gateway", action="store_true")
-  parser.add_option("-H", "--no-hadoop", help="Do not create a Hadoop cluster", default=False,
-      dest="no_hadoop", action="store_true")
-  parser.add_option("-n", "--node-cnt", help="Number of data nodes in the cluster, cannot be used with -1", type="int",
+  group = OptionGroup(parser, "Hadoop cluster options")
+  group.add_option("-n", "--node-cnt",
+      help="Number of data nodes in the cluster. Defaults to 1. Cannot be used with -1", type="int",
       default=1, dest="num_data_nodes")
+  group.add_option("-1", "--single-node-cluster", help="Install cluster on a single node", default=False,
+      dest="single_node", action="store_true")
+  group.add_option("-a", "--ambari", help="Install Ambari on this cluster.  Adds a node for Ambari server.",
+      default=False, action="store_true")
+  group.add_option("-G", "--no-gateway", help="Set the cluster to not have a gateway node", default=False,
+      dest="no_gateway", action="store_true")
+  group.add_option("-H", "--no-hadoop", help="Do not create a Hadoop cluster", default=False,
+      dest="no_hadoop", action="store_true")
+  parser.add_option_group(group)
 
-  # Security options
-  parser.add_option("-s", "--secure", help="Setup a secure cluster", default=False, action="store_true")
+  group = OptionGroup(parser, "Security options")
+  group.add_option("-s", "--secure", help="Setup a secure cluster", default=False, action="store_true")
+  parser.add_option_group(group)
 
-  # Module options
-  parser.add_option("-v", "--hive", help="Include the Hive client", default=False, action="store_true")
-  parser.add_option("-j", "--hive-server2", help="Include HiveServer2", default=False, action="store_true", dest="hs2")
-  parser.add_option("-p", "--pig", help="Include Pig", default=False, action="store_true")
-  parser.add_option("-x", "--knox", help="Include Knox", default=False, action="store_true")
-  parser.add_option("-z", "--oozie", help="Include Oozie", default=False, action="store_true")
+  group = OptionGroup(parser, "Hadoop cluster and client module options")
+  group.add_option("-v", "--hive", help="Include the Hive client", default=False, action="store_true")
+  group.add_option("-j", "--hive-server2", help="Include HiveServer2", default=False, action="store_true", dest="hs2")
+  group.add_option("-p", "--pig", help="Include Pig", default=False, action="store_true")
+  group.add_option("-x", "--knox", help="Include Knox", default=False, action="store_true")
+  group.add_option("-z", "--oozie", help="Include Oozie", default=False, action="store_true")
+  parser.add_option_group(group)
+
+  group = OptionGroup(parser, "HDF options")
+  group.add_option("-k", "--kafka-nodes", help="Number of Kafka brokers to install, default is 0.  These will be "
+      "installed on non-cluster nodes.", type="int", dest="kafka_nodes")
+  parser.add_option_group(group)
 
   (options, args) = parser.parse_args()
 
@@ -106,6 +116,9 @@ def buildNodes(options):
     if (not options.single_node):
       for i in range(options.num_data_nodes):
         nodes.append(buildSlave(options, i))
+
+  if (options.kafka_nodes != None):
+    nodes.append(buildKafkaNodes(options))
 
   return (nodes, clients)
 
@@ -183,6 +196,23 @@ def buildSlave(options, slave_num):
       slave["roles"].append("oozie")
 
   return slave
+
+def buildKafkaNodes(options):
+  knodes = []
+  for i in range(options.kafka_nodes):
+    knode = {}
+    knode["hostname"] = "kafka%d" % (i + 1)
+    knode["ip"] = "%s%d" % (subnet, kafka_base_ip + i)
+    knode["roles"] = ["kafka"]
+
+    # Does Ambari support Kafka yet?
+    if (options.ambari):
+      knode["roles"].append("ambari-agent")
+
+    knodes.append(knode)
+
+  return knodes
+  
 
 if __name__ == "__main__":
   main()
