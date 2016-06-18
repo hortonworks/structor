@@ -118,6 +118,14 @@ if hasrole($roles, 'kafka') {
   include kafka_server
 }
 
+if hasrole($roles, 'storm_nimbus') {
+  include storm_server
+}
+
+if hasrole($roles, 'storm_worker') {
+  include storm_server
+}
+
 if islastslave($nodes, $hostname) {
   include install_hdfs_tarballs
 }
