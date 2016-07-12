@@ -37,6 +37,8 @@ one node in the profile.  Don't do stupid stuff.  You've been warned."""
   
   # General options
   parser.add_option("-o", "--output", help="output file, defaults to current.profile", default="current.profile")
+  parser.add_option("-d", "--debug", help="Return stack trace on failure", default=False,
+      action="store_true")
 
   group = OptionGroup(parser, "Hadoop cluster options")
   group.add_option("-n", "--node-cnt",
@@ -67,11 +69,23 @@ one node in the profile.  Don't do stupid stuff.  You've been warned."""
   group = OptionGroup(parser, "HDF options")
   group.add_option("-k", "--kafka-nodes", help="Number of Kafka brokers to install, default is 0.  These will be "
       "installed on non-cluster nodes.", type="int", dest="kafka_nodes")
+  group.add_option("-t", "--storm", help="Install storm on kafka nodes.  There must be kafka "
+      "nodes to use this option.", action="store_true")
   parser.add_option_group(group)
 
   (options, args) = parser.parse_args()
 
-  if (os.path.exists(options.output)):
+  # If debug is on don't put the try/except around it so that we get the traceback
+  if (options.debug):
+    build(options)
+  else:
+    try:
+      build(options)
+    except Exception as e:
+      print e
+
+def build(options):
+  if os.path.exists(options.output):
     raise Exception("Output file %s exists, we wouldn't want to overwrite it!" % options.output)
 
   (nodes, clients) = buildNodes(options)
@@ -79,7 +93,7 @@ one node in the profile.  Don't do stupid stuff.  You've been warned."""
   output = {}
   output["domain"] = "example.com"
   output["realm"] = "EXAMPLE.COM"
-  if (options.secure):
+  if options.secure:
     output["security"] = True
   else:
     output["security"] = False
@@ -90,49 +104,56 @@ one node in the profile.  Don't do stupid stuff.  You've been warned."""
   output["nodes"] = nodes
 
   fd = open(options.output, "w")
-  fd.write(json.dumps(output, indent=2))
+  fd.write(json.dumps(output, indent=2) + "\n")
   fd.close()
 
 def buildNodes(options):
   nodes = []
 
-  if (options.num_data_nodes < 1 and not options.single_node):
+  if options.num_data_nodes < 1 and not options.single_node:
     raise Exception("You cannot have a cluster with no data nodes.")
 
   clients = determineClients(options)
 
   # Put Ambari server in if asked for
-  if (options.ambari):
+  if options.ambari:
     nodes.append(buildAmbariServer())
 
-  if (not options.no_hadoop):
+  if not options.no_hadoop:
     nodes.append(buildNamenode(options))
 
     # If they didn't say no gateway and we're not in the special single node cluster case, add a gateway
-    if (not options.single_node and not options.no_gateway):
+    if not options.single_node and not options.no_gateway:
       nodes.append(buildGateway(options))
 
 
-    if (not options.single_node):
+    if not options.single_node:
       for i in range(options.num_data_nodes):
         nodes.append(buildSlave(options, i))
 
-  if (options.kafka_nodes != None):
-    nodes.append(buildKafkaNodes(options))
+  kafka_nodes = None
+  if options.kafka_nodes != None:
+    kafka_nodes = buildKafkaNodes(options)
+
+  if options.storm:
+    addStorm(kafka_nodes)
+
+  if kafka_nodes != None:
+    nodes += kafka_nodes
 
   return (nodes, clients)
 
 
 def determineClients(options):
-  if (options.no_hadoop):
+  if options.no_hadoop:
     return []
 
   clients = ["hdfs", "tez", "yarn", "zk"] # These three are always there
-  if (options.pig):
+  if options.pig:
     clients.append("pig")
-  if (options.hive):
+  if options.hive:
     clients.append("hive")
-  if (options.oozie):
+  if options.oozie:
     clients.append("oozie")
   return clients
 
@@ -143,20 +164,20 @@ def buildNamenode(options):
   nn["ip"] = nn_ip
   nn["roles"] = ["nn", "yarn", "zk"]
 
-  if (options.secure):
+  if options.secure:
     nn["roles"].append("kdc")
 
   # Add Ambari agent if we're installing Ambari
-  if (options.ambari):
+  if options.ambari:
     nn["roles"].append("ambari-agent")
 
   # add hive-db and hive-meta if hive is asked for
-  if (options.hive or options.hs2):
+  if options.hive or options.hs2:
     nn["roles"].append("hive-db")
     nn["roles"].append("hive-meta")
 
   # If we only have one machine then we need to put a slave and gw on here as well
-  if (options.single_node):
+  if options.single_node:
     nn["roles"].append("slave")
     nn["roles"].append("client")
 
@@ -175,7 +196,7 @@ def buildGateway(options):
   gw["ip"] = gw_ip
   gw["roles"] = [ "client" ]
   # If Knox was requested put it on the gateway machine
-  if (options.knox):
+  if options.knox:
     gw["roles"].append("knox")
   return gw
 
@@ -185,14 +206,14 @@ def buildSlave(options, slave_num):
   slave["ip"] = "%s%d" % (subnet, slave_num + 12)
   slave["roles"] = ["slave"]
 
-  if (options.ambari):
+  if options.ambari:
     slave["roles"].append("ambari-agent")
 
   # If HS2 or Oozie are in this cluster the servers need to be put on slave1
-  if (slave_num == 0):
-    if (options.hs2):
+  if slave_num == 0:
+    if options.hs2:
       slave["roles"].append("hive-hs2")
-    if (options.oozie):
+    if options.oozie:
       slave["roles"].append("oozie")
 
   return slave
@@ -205,14 +226,31 @@ def buildKafkaNodes(options):
     knode["ip"] = "%s%d" % (subnet, kafka_base_ip + i)
     knode["roles"] = ["kafka"]
 
+    # If there's no Hadoop cluster we will need to install a ZooKeeper server
+    if options.no_hadoop and i == 0:
+      knode["roles"].append("zk")
+
     # Does Ambari support Kafka yet?
-    if (options.ambari):
+    if options.ambari:
       knode["roles"].append("ambari-agent")
 
     knodes.append(knode)
 
   return knodes
   
+def addStorm(kafka_nodes):
+  if kafka_nodes == None:
+    raise Exception("You cannot install Storm without Kafka")
+
+  added_nimbus = False
+  for knode in kafka_nodes:
+    if added_nimbus:
+      knode["roles"].append("storm_worker")
+    else:
+      knode["roles"].append("storm_nimbus")
+      added_nimbus = True
+
 
 if __name__ == "__main__":
   main()
+

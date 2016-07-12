@@ -15,7 +15,7 @@
 
 class kafka_server {
   require repos_setup
-  require zookeeper_server
+  require zookeeper_client
   require jdk
 
   $path="/bin:/usr/bin"
@@ -51,11 +51,11 @@ class kafka_server {
   }
 
   # Create a topic called test.
-  file { "/tmp/create_test_topic.sh":
-    ensure => "file",
-    mode => '755',
-    content => template('kafka_server/create_test_topic.sh.erb'),
-  }
+# file { "/tmp/create_test_topic.sh":
+#   ensure => "file",
+#   mode => '755',
+#   content => template('kafka_server/create_test_topic.sh.erb'),
+# }
 
   # Startup.
   if ($operatingsystem == "centos" and $operatingsystemmajrelease == "7") {
@@ -81,6 +81,7 @@ class kafka_server {
       replace => true,
       require => Package['kafka'],
       before => Service['kafka'],
+      mode => '755',
     }
   }
 }
