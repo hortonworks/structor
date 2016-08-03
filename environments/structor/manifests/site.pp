@@ -69,6 +69,10 @@ if hasrole($roles, 'client') {
   }
 }
 
+if hasrole($roles, 'dev') {
+  include dev
+}
+
 if hasrole($roles, 'hbase-master') {
   include hbase_master
 }

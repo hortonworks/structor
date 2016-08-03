@@ -88,7 +88,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # All Vagrant configuration is done here. The most common configuration
   # Every Vagrant virtual environment requires a box to build off of.
   if (profile[:os] == "centos6")
-    config.vm.box = "puppetlabs/centos-6.6-64-puppet"
+    # config.vm.box = "puppetlabs/centos-6.6-64-puppet"
+    config.vm.box = "structor/centos-6.7"
     package_version = "_" + (hdp_version.gsub /[.-]/, '_')
     platform_start_script_path = "rc.d/init.d"
 # elsif (profile[:os] == "centos7")
