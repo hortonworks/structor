@@ -57,6 +57,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Configure cached packages to be shared between instances of the same base box.
     config.cache.scope = :box
   end
+  config.ssh.insert_key = false
 
   # All Vagrant configuration is done here. The most common configuration
   # Every Vagrant virtual environment requires a box to build off of.
