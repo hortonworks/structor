@@ -49,6 +49,10 @@ class oozie_server {
     ensure => installed,
   }
   ->
+  package { 'unzip':
+    ensure => installed,
+  }
+  ->
   package { "oozie${package_version}":
     ensure => installed,
   }
