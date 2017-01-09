@@ -13,6 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+Vagrant.require_version ">= 1.9.1"
+
 require 'json'
 
 VAGRANTFILE_API_VERSION = "2"
@@ -58,6 +60,8 @@ def findVersion(profile)
 end
 
 ###############################################################################
+
+
 # Define cluster
 
 profile = loadProfile()

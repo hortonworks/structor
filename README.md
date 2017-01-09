@@ -7,6 +7,8 @@ both with and without security.
 The currently supported OSes and the providers:
 * centos 6 (virtualbox and vmware_fusion)
 
+Vagrant version 1.9.1
+
 We'd like to get Ubuntu and SUSE support as well.
 
 The currently supported projects:
