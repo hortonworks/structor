@@ -46,6 +46,9 @@ if hasrole($roles, 'client') {
   if hasrole($clients, 'hbase') {
     include hbase_client
   }
+  if hasrole($clients, 'spark') {
+    include spark_client
+  }
   if hasrole($clients, 'hdfs') {
     include hdfs_client
   }
