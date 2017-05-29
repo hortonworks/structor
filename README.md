@@ -5,7 +5,7 @@ Vagrant files for creating virtual multi-node Hadoop clusters on various OSes,
 both with and without security.
 
 The currently supported OSes and the providers:
-* centos 6 (virtualbox and vmware_fusion)
+* centos 6 (virtualbox, vmware_fusion and remote cluster)
 
 Vagrant version 1.9.1
 
@@ -101,6 +101,69 @@ a 3 node cluster depending on your hardware and network connection.
 
 Use `vagrant ssh gw`` to login to the gateway machine. If you configured 
 security, you'll need to kinit before you run any hadoop commands.
+
+## Remote cluster (Experimental)
+
+With the help of vagrant managed server provider and puppet apply it also possible 
+to install the components to existing remote cluster on any cloud provider.
+
+First, install the vagrant managed server provider:
+
+```
+vagrant plugin install vagrant-managed-servers
+```
+
+Start remote servers (for example centos6)
+
+Note:
+Make sure that the puppet is installed. For centos6 it could be installed with:
+
+```
+rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+yum install puppet
+```
+
+Also check the `/etc/sudoers`. It shouldn't require tty:
+
+```
+cat /etc/sudoers | grep tty
+Defaults    !requiretty
+```
+
+Set the `remote: true` flag in the current profile:
+
+```
+{
+  "domain": "clouddomain",
+  "realm": "EXAMPLE.COM",
+  "security": false,
+  "remote":" true,
+  "vm_mem": 3072,
+  "server_mem": 300,
+  "client_mem": 200,
+  "clients" : [ "spark", "hdfs", "yarn" ],
+  "nodes": [
+    {"hostname": "melek-structor-1", "ip": "192.168.96.41", "roles": ["client", "nn", "slave", "yarn"]},
+	{"hostname": "melek-structor-2", "ip": "192.168.96.45", "roles": ["slave"]}
+  ]
+}
+
+```
+Initialize vagrant:
+
+```
+vagrant up --provider=managed
+```
+
+Do the provisioning:
+
+```
+vagrant provision
+```
+
+Please make sure that the current.profile contains the right hostnames.
+
+Note: Kerberos/secure support is not tested yet for remote clusters.
 
 ## Set up on Mac
 

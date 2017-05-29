@@ -1,4 +1,5 @@
 .vagrant
+id_rsa.pem
 current.profile
 generated/
 *~
