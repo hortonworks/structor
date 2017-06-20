@@ -16,7 +16,7 @@
 class knox_gateway {
   require repos_setup
   require jdk
-  
+
   $java_home="${jdk::home}"
 
   package { "knox.noarch" :
@@ -42,6 +42,7 @@ class knox_gateway {
     path   => "/usr/bin:/usr/sbin:/bin",
     command => "/usr/hdp/${hdp_version}/knox/bin/knoxcli.sh create-master --master test-master-secret",
     user => "knox",
+    creates => "/usr/hdp/${hdp_version}/knox/data/security/master",
     environment => "JAVA_HOME=${java_home}",
   }
   ->
