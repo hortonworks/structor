@@ -80,6 +80,7 @@ profile[:vm_cpus] ||= 2
 profile[:am_mem] ||= 512
 profile[:server_mem] ||= 768
 profile[:client_mem] ||= 1024
+profile[:remote] ||= false
 (hdp_version, hdp_version_major, hdp_version_minor, hdp_version_patch) = findVersion(profile)
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -93,7 +94,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # Every Vagrant virtual environment requires a box to build off of.
   if (profile[:os] == "centos6")
     # config.vm.box = "puppetlabs/centos-6.6-64-puppet"
-    config.vm.box = "omalley/structor-centos6.7"
+    if profile[:remote]
+       config.vm.box = "tknerr/managed-server-dummy"
+    else
+       config.vm.box = "omalley/structor-centos6.7"
+    end
     package_version = "_" + (hdp_version.gsub /[.-]/, '_')
     platform_start_script_path = "rc.d/init.d"
 # elsif (profile[:os] == "centos7")
@@ -114,8 +119,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   profile[:nodes].each do |node|
     config.vm.define node[:hostname] do |node_config|
+      if profile[:remote]
+        node_config.vm.provider :managed do |managed, override|
+          managed.server = node[:hostname] + "." + profile[:domain]
+          override.ssh.username = "root"
+          override.ssh.private_key_path = "id_rsa.pem"
+        end
+      else
+        node_config.vm.network :private_network, ip: node[:ip]
+      end
       node_config.vm.hostname = node[:hostname] + "." + profile[:domain]
-      node_config.vm.network :private_network, ip: node[:ip]
       node_config.ssh.forward_agent = true
       node_config.vm.provision "puppet" do |puppet|
         puppet.module_path = "modules"
