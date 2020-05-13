@@ -94,11 +94,6 @@ class oozie_server {
     target => "/usr/share/HDP-oozie/ext-2.2.zip",
   }
   ->
-  file { "/usr/hdp/${hdp_version}/oozie/libext/hadoop-lzo.jar":
-    ensure => link,
-    target => "/usr/hdp/${hdp_version}/hadoop/lib/hadoop-lzo-0.6.0.${hdp_version}.jar",
-  }
-  ->
   file { "/usr/hdp/${hdp_version}/oozie/libext/mysql-connector-java.jar":
     ensure => link,
     target => "/usr/share/java/mysql-connector-java.jar",

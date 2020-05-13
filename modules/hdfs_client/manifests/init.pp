@@ -44,24 +44,11 @@ class hdfs_client {
     require => Package["hadoop${package_version}"],
   }
 
-  package { "hadooplzo${package_version}":
-    ensure => installed,
-    require => Package["hadoop${package_version}"],
-  }
-  ->
-  package { "hadooplzo${package_version}-native":
-    ensure => installed,
-  }
-
   package { 'openssl':
     ensure => installed,
   }
 
   package { 'snappy':
-    ensure => installed,
-  }
-
-  package { 'lzo':
     ensure => installed,
   }
 
