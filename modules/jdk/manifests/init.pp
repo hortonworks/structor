@@ -16,11 +16,11 @@
 class jdk {
   $home = "/usr/lib/jvm/java"
 
-  package { "java-1.7.0-openjdk":
+  package { "java-1.8.0-openjdk":
     ensure => installed,
   }
 
-  package { "java-1.7.0-openjdk-devel":
+  package { "java-1.8.0-openjdk-devel":
     ensure => installed,
   }
 
